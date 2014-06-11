@@ -30,6 +30,9 @@ class Building(models.Model):
     floors = models.SmallIntegerField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __unicode__(self):
+        return self.name
+
 
 class Zone(models.Model):
     """
@@ -40,6 +43,9 @@ class Zone(models.Model):
     name = models.CharField(max_length=128)
     floors = models.SmallIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Room(models.Model):
@@ -53,3 +59,6 @@ class Room(models.Model):
     number = models.CharField(max_length=16)
     company_name = models.CharField(max_length=128, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.number

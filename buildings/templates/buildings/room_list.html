@@ -1,0 +1,58 @@
+{% extends "page.html" %}
+
+{% block title %}{{ headline }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "title.html" with title=headline %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li><a href="{% url 'buildings:list' %}">所有写字楼</a></li>
+                <li class="active">{{ headline }}</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            {% if building.is_multiple %}
+                <a href="{% url 'buildings:create_room' building_pk=building.id zone_pk=zone.pk %}" class="btn btn-primary">添加新办公室</a>
+            {% else %}
+                <a href="{% url 'buildings:create_room' building_pk=building.id %}" class="btn btn-primary">添加新办公室</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <th>楼层</th>
+                    <th>室号</th>
+                    <th>公司</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                        <td>{{ object.floor }}</td>
+                        <td>{{ object.number }}</td>
+                        <td>{{ object.company_name }}</td>
+                        <td>
+                            {% if building.is_multiple %}
+                                <a href="{% url 'buildings:update_room' building_pk=building.id zone_pk=zone.id pk=object.id %}">修改</a>
+                                <a href="{% url 'buildings:delete_room' building_pk=building.id zone_pk=zone.id pk=object.id %}">删除</a>
+                            {% else %}
+                                <a href="{% url 'buildings:update_room' building_pk=building.id pk=object.id %}">修改</a>
+                                <a href="{% url 'buildings:delete_room' building_pk=building.id pk=object.id %}">删除</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

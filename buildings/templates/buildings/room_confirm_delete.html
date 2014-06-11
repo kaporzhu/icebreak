@@ -1,0 +1,36 @@
+{% extends "page.html" %}
+{% load handsome_template_tags %}
+
+{% block title %}删除{{ object }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "title.html" with title="确定删除？" %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <ol class="breadcrumb">
+                <li><a href="{% url 'buildings:list' %}">所有写字楼</a></li>
+                <li>
+                    {% if building.is_multiple %}
+                        <a href="{% url 'buildings:room_list' building_pk=building.id zone_pk=zone.id %}">{{ building }}{{ zone }}的所有办公室</a>
+                    {% else %}
+                        <a href="{% url 'buildings:room_list' building_pk=building.id %}">{{ building }}的所有办公室</a>
+                    {% endif %}
+                </li>
+                <li class="active">{{ object.number }}</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <form method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
+                {% csrf_token %}
+                <p>确定要删除 {{ object }}?</p>
+                <input type="submit" value="确定删除" class="btn btn-primary" />
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

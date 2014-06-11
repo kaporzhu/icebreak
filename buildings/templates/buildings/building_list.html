@@ -1,0 +1,55 @@
+{% extends "page.html" %}
+
+{% block title %}所有写字楼{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    {% include "title.html" with title="所有写字楼" %}
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <a href="{% url 'buildings:create' %}" class="btn btn-primary">添加新写字楼</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <th>写字楼</th>
+                    <th>分店</th>
+                    <th>楼层</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                        <td>{{ object.name }}</td>
+                        <td>{{ object.shop.name }}</td>
+                        <td>
+                            {% if object.is_multiple %}
+                                <ul class="list-unstyled">
+                                    {% for zone in object.zone_set.all %}
+                                    <li>
+                                        <span>{{ zone.name }}: {{ zone.floors }}层</span>
+                                        <a href="{% url 'buildings:update_zone' building_pk=object.id pk=zone.id %}">修改</a>
+                                        <a href="{% url 'buildings:room_list' building_pk=object.id zone_pk=zone.id %}">查看办公室</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                <a href="{% url 'buildings:create_zone' building_pk=object.id %}">添加分区</a>
+                            {% else %}
+                                <span>独栋: {{ object.floors }}楼</span>
+                                <a href="{% url 'buildings:room_list' building_pk=object.id %}">查看办公室</a>
+                            {% endif %}
+                        </td>
+                        <td><a href="{% url 'buildings:update' pk=object.id %}">修改</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
