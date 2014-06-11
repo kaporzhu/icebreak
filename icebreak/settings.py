@@ -29,6 +29,11 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+LOCAL_APPS = (
+    'icebreak',
+    'shops',
+)
+
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,7 +46,7 @@ INSTALLED_APPS = (
     'compressor',
     'easy_thumbnails',
     'south',
-)
+) + LOCAL_APPS
 
 SOUTH_MIGRATION_MODULES = {
     'easy_thumbnails': 'easy_thumbnails.south_migrations'

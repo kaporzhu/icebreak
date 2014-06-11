@@ -1,0 +1,41 @@
+{% extends "page.html" %}
+
+{% block title %}所有店面{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    {% include "title.html" with title="所有店面" %}
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <a href="{% url 'shops:create' %}" class="btn btn-primary">添加新店</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <th>店面</th>
+                    <th>地址</th>
+                    <th>联系电话</th>
+                    <th>开店日期</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                        <td>{{ object.name }}</td>
+                        <td>{{ object.address }}</td>
+                        <td>{{ object.phone }}</td>
+                        <td>{{ object.open_at }}</td>
+                        <td><a href="{% url 'shops:update' pk=object.id %}">修改</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
