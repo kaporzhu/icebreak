@@ -12,9 +12,9 @@ class BuildingMixin(object):
         If building_pk is existed, set building to current object.
         If zone_pk is existed, set building to current object.
         """
-        if kwargs['building_pk']:
+        if kwargs.get('building_pk'):
             self.building = Building.objects.get(pk=kwargs['building_pk'])
-        if kwargs['zone_pk']:
+        if kwargs.get('zone_pk'):
             self.zone = Zone.objects.get(pk=kwargs['zone_pk'])
         return super(BuildingMixin, self).dispatch(request, *args, **kwargs)
 

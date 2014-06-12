@@ -16,16 +16,16 @@ urlpatterns = patterns(
 
     url(r'^(?P<building_pk>\d+)/zones/create/$',
         CreateZoneView.as_view(), name='create_zone'),
-    url(r'^(?P<building_pk>\d+)/zones/update/(?P<pk>\d+)/$',
+    url(r'^(?P<building_pk>\d+)/zones/(?P<pk>\d+)/update/$',
         UpdateZoneView.as_view(), name='update_zone'),
 
     url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/create/$',
         CreateRoomView.as_view(), name='create_room'),
     url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/list/$',
         RoomListView.as_view(), name='room_list'),
-    url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/update/(?P<pk>\d+)/$',  # noqa
+    url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/(?P<pk>\d+)/update/$',  # noqa
         UpdateRoomView.as_view(), name='update_room'),
-    url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/delete/(?P<pk>\d+)/$',  # noqa
+    url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/(?P<pk>\d+)/delete/$',  # noqa
         DeleteRoomView.as_view(), name='delete_room'),
 
     url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/chart/$',

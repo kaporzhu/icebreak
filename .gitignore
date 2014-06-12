@@ -54,4 +54,5 @@ docs/_build/
 
 # Local files
 local_settings.py
+media/
 .settings/

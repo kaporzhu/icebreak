@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 LOCAL_APPS = (
     'buildings',
+    'foods',
     'icebreak',
     'shops',
 )
@@ -97,11 +98,27 @@ CACHES = {
     }
 }
 
+THUMBNAIL_ALIASES = {
+    '': {
+        'small': {
+            'size': (128, 128)
+        },
+        'medium': {
+            'size': (256, 256)
+        },
+        'large': {
+            'size': (512, 512)
+        },
+    }
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 try:
     from local_settings import *  # noqa
