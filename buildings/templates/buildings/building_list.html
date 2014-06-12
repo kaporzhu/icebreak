@@ -35,6 +35,7 @@
                                         <span>{{ zone.name }}: {{ zone.floors }}层</span>
                                         <a href="{% url 'buildings:update_zone' building_pk=object.id pk=zone.id %}">修改</a>
                                         <a href="{% url 'buildings:room_list' building_pk=object.id zone_pk=zone.id %}">查看办公室</a>
+                                        <a href="{% url 'buildings:rooms_chart' building_pk=object.id zone_pk=zone.id %}">查看结构图</a>
                                     </li>
                                     {% endfor %}
                                 </ul>
@@ -42,6 +43,7 @@
                             {% else %}
                                 <span>独栋: {{ object.floors }}楼</span>
                                 <a href="{% url 'buildings:room_list' building_pk=object.id %}">查看办公室</a>
+                                <a href="{% url 'buildings:rooms_chart' building_pk=object.id %}">查看结构图</a>
                             {% endif %}
                         </td>
                         <td><a href="{% url 'buildings:update' pk=object.id %}">修改</a></td>

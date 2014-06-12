@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 from .views import(
     CreateBuildingView, UpdateBuildingView, BuildingListView, CreateZoneView,
     UpdateZoneView, CreateRoomView, UpdateRoomView, DeleteRoomView,
-    RoomListView
+    RoomListView, RoomsChartView
 )
 
 
@@ -27,4 +27,7 @@ urlpatterns = patterns(
         UpdateRoomView.as_view(), name='update_room'),
     url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/delete/(?P<pk>\d+)/$',  # noqa
         DeleteRoomView.as_view(), name='delete_room'),
+
+    url(r'^(?P<building_pk>\d+)/(?:zones/(?P<zone_pk>\d+)/)?rooms/chart/$',
+        RoomsChartView.as_view(), name='rooms_chart'),
 )

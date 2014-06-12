@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse_lazy
+from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 
@@ -134,3 +135,32 @@ class RoomListView(SuperuserRequiredMixin, BuildingMixin, SetHeadlineMixin,
             qs = qs.filter(building=self.building)
 
         return qs.order_by('floor')
+
+
+class RoomsChartView(SuperuserRequiredMixin, BuildingMixin, TemplateView):
+    """
+    Display the all the rooms by floor
+    """
+    template_name = 'buildings/rooms_chart.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Add rooms to the context
+        """
+        data = super(RoomsChartView, self).get_context_data(**kwargs)
+
+        if hasattr(self, 'zone'):
+            floors = self.zone.floors
+            rooms = self.zone.room_set.all()
+        elif hasattr(self, 'building'):
+            floors = self.building.floors
+            rooms = self.building.room_set.all()
+
+        # group rooms by floor
+        floor_rooms = {i+1: [] for i in range(floors)}
+        for room in rooms:
+            floor_rooms[room.floor].append(room)
+        floor_rooms = [[floor, floor_rooms[floor]] for floor in sorted(floor_rooms.keys(), reverse=True)]
+        data.update({'floor_rooms': floor_rooms})
+
+        return data
