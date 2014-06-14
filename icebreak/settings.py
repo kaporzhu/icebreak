@@ -30,9 +30,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 LOCAL_APPS = (
+    'accounts',
     'buildings',
+    'coupons',
     'foods',
     'icebreak',
+    'orders',
     'shops',
 )
 
