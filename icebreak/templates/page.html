@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 {% load staticfiles compress %}
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" ng-app>
     <head>
         <meta name="renderer" content="webkit">
         <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
@@ -10,6 +10,7 @@
         <title>{% block title %}{% endblock %}</title>
 
         <link rel="stylesheet" href="{% static 'libs/bootstrap/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
         {% block extracss %}{% endblock %}
         {% compress css %}
             {% block extracss_compressed %}
@@ -23,6 +24,7 @@
 
         <script src="{% static 'libs/jquery/jquery-1.11.1.min.js' %}"></script>
         <script src="{% static 'libs/bootstrap/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'libs/ractive/ractive-legacy.min.js' %}"></script>
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
           <script src="{% static 'libs/ie/html5shiv.min.js' %}"></script>

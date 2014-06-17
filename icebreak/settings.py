@@ -36,6 +36,7 @@ LOCAL_APPS = (
     'foods',
     'icebreak',
     'orders',
+    'portals',
     'shops',
 )
 

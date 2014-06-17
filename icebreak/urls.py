@@ -9,6 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
+    url(r'^', include('portals.urls', 'portals', 'portals')),
     url(r'^buildings/', include('buildings.urls', 'buildings', 'buildings')),
     url(r'^foods/', include('foods.urls', 'foods', 'foods')),
     url(r'^shops/', include('shops.urls', 'shops', 'shops')),

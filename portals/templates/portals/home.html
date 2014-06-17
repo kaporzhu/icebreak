@@ -1,0 +1,69 @@
+{% extends "page.html" %}
+{% load thumbnail static %}
+
+{% block extracss_compressed %}
+<link rel="stylesheet" href="{% static 'css/portal.css' %}">
+{% endblock %}
+
+{% block extrajs_compress %}
+<script src="{% static 'js/portal.js' %}"></script>
+<script src="{% static 'js/shopping-cart.js' %}"></script>
+{% endblock %}
+
+{% block title %}主页{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table">
+                <tbody>
+                    {% for food in foods %}
+                    <tr>
+                        <td>{{ food.name }}</td>
+                        <td>{{ food.price }}元</td>
+                        <td><img src="{{ food.image|thumbnail_url:'small' }}" /></td>
+                        <td><button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" class="btn btn-default btn-xs add-food-btn">￥{{ food.price }}</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="shopping-cart">
+    <div class="docker">
+        <span class="icon text-center"> <span class="glyphicon glyphicon-shopping-cart"></span> </span>
+        <span class="foods-overview">请选择</span>
+        <a id="checkout-btn" href="#" class="btn btn-default btn-sm pull-right">去结账 ></a>
+    </div>
+    <div class="foods-list-wrapper">
+        <p class="foods-list-title">购物车&nbsp;[<a id="empty-shoppingcart-btn" href="javascript:void(0)">清空</a>]</p>
+        <table class="table foods-list">
+        </table>
+        {% verbatim %}
+        <script id='foods-list-item-template' type='text/ractive'>
+            {{#foods}}
+            <tr>
+                <td class="food-name">{{ name }}</td>
+                <td>
+                    <div class="btn-group">
+                        <span class="btn btn-default btn-xs hidden-btn" data-id="{{ id }}" data-action="minusFood">‐</span>
+                        <span class="btn btn-default btn-xs food-count">{{ count }}</span>
+                        <span class="btn btn-default btn-xs hidden-btn" data-id="{{ id }}" data-action="addFood">+</span>
+                    </div>
+                </td>
+                <td class="food-price">￥{{ subtotal_price }}&nbsp;&nbsp;</td>
+                <td><a href="javascript:void(0)" class="hidden-btn" data-id="{{ id }}" data-action="removeFood">x</a></td>
+            </tr>
+            {{/foods}}
+        </script>
+        <script id='foods-overview-template' type='text/ractive'>
+            &nbsp;<span>{{ total_count }}份</span>&nbsp;<span>￥{{ total_price }}</span>
+        </script>
+        {% endverbatim %}
+    </div>
+</div>
+
+{% endblock %}
