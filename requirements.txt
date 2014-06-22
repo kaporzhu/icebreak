@@ -4,3 +4,4 @@ django-braces==1.4.0
 django-compressor==1.4
 easy-thumbnails==2.0.1
 mysql-python==1.2.5
+python-memcached==1.53

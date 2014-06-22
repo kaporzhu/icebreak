@@ -23,3 +23,14 @@ def add_attrs(field, attrs_str):
         attr_name, attr_value = attr.split(':')
         attrs[attr_name] = attr_value
     return field.as_widget(attrs=attrs)
+
+
+@register.filter
+def dim(s):
+    """
+    Hide some of the chars in this string
+    """
+    if len(s) > 4:
+        return s[:-4] + '**' + s[-2:]
+    else:
+        return s

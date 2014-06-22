@@ -1,0 +1,221 @@
+{% extends "page.html" %}
+{% load thumbnail static %}
+
+{% block extracss_compressed %}
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+{% endblock %}
+
+{% block extrajs_compress %}
+<script src="{% static 'js/shopping-cart.js' %}"></script>
+<script src="{% static 'js/order.js' %}"></script>
+{% endblock %}
+
+{% block title %}下单{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2" id="checkout">
+            <div class="row">
+                <h4>下单</h4>
+                <hr />
+            </div>
+            {% csrf_token %}
+            <div id="shopping-cart">
+                <div class="head row">
+                    <div class="col-sm-7">购物车</div>
+                    <div class="col-sm-1 text-center">单价</div>
+                    <div class="col-sm-3 text-center">数量</div>
+                    <div class="col-sm-1 text-center">总计</div>
+                </div>
+                <div class="row foods">
+                </div>
+                <div class="foot row">
+                </div>
+                {% verbatim %}
+                <script id='food-item-template' type='text/ractive'>
+                {{#foods}}
+                <div class="food-item col-sm-12" data-id="{{ id }}" data-count="{{ count }}">
+                    <div class="row">
+                        <div class="col-sm-7">{{ name }}</div>
+                        <div class="col-sm-1 text-center">￥{{ price }}</div>
+                        <div class="col-sm-3 text-center">
+                            <div class="btn-group">
+                                <span class="btn btn-default btn-xs hidden-btn" data-id="{{ id }}" data-action="minusFood">‐</span>
+                                <span class="btn btn-default btn-xs food-count">{{ count }}</span>
+                                <span class="btn btn-default btn-xs hidden-btn" data-id="{{ id }}" data-action="addFood">+</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 text-center subtotal-price">￥{{ subtotal_price }}&nbsp;<a href="#" class="hidden-btn" data-id="{{ id }}" data-action="removeFood">x</a></div>
+                    </div>
+                </div>
+                {{/foods}}
+                </script>
+                <script id="shopping-cart-overview-template" type='text/ractive'>
+                    <div class="col-sm-7"></div>
+                    <div class="col-sm-5 text-right">共{{ total_count }}份&nbsp;&nbsp;应付金额：<span class="total-price"><i>￥&nbsp;</i>{{ total_price }}</span></div>
+                </script>
+                {% endverbatim %}
+            </div>
+
+            <div id="order-detail">
+                <div class="row">
+                    <hr />
+                    <div class="address col-sm-12">
+                        <form class="form-inline" role="form" data-load-building-url="{% url 'buildings:load' %}">
+                            <div class="form-group">
+                                <b>配送地址：</b>
+                            </div>
+                            <div class="form-group overview {% if not user.address %}hidden{% endif %}" data-building="{{ user.address.building.id }}" data-zone="{{ user.address.zone.id }}" data-floor="{{ user.address.room.floor }}" data-room="{{ user.address.room.id }}">
+                                <span>{{ user.address }}</span>&nbsp;[<a href="#" class="edit-btn">修改</a>]
+                            </div>
+                            <div class="form-group wrapper {% if user.address %}hidden{% endif %}">
+                                <select class="form-control input-sm buildings">
+                                    {% if not user.address %}
+                                    <option disabled="disabled" selected="selected" value="-1" class="default">--写字楼--</option>
+                                    {% endif %}
+                                    {% for building in buildings %}
+                                        {% if building == user.address.building %}
+                                            <option selected="selected" value="{{ building.id }}">{{ building.name }}</option>
+                                        {% else %}
+                                            <option value="{{ building.id }}">{{ building.name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <button type="button" class="btn btn-primary btn-sm save-btn">保存</button>
+                                {% if user.address %}
+                                <button type="button" class="btn btn-sm cancel-btn">取消</button>
+                                {% endif %}
+                            </div>
+                            {% verbatim %}
+                            <script id='zones-select-template' type='text/ractive'>
+                                <select class="form-control input-sm zones" value>
+                                    <option disabled="disabled" selected="selected" value="-1" class="default">--区域--</option>
+                                    {{#zones}}
+                                    <option value="{{ id }}">{{ name }}</option>
+                                    {{/zones}}
+                                </select>
+                            </script>
+                            <script id='floors-select-template' type='text/ractive'>
+                                <select class="form-control input-sm floors" value>
+                                    <option disabled="disabled" selected="selected" value="-1" class="default">--楼层--</option>
+                                    {{#floors}}
+                                    <option value="{{ floor }}">{{ floor }}楼</option>
+                                    {{/floors}}
+                                </select>
+                            </script>
+                            <script id='rooms-select-template' type='text/ractive'>
+                                <select class="form-control input-sm rooms" value>
+                                    <option disabled="disabled" selected="selected" value="-1" class="default">--办公室--</option>
+                                    {{#rooms}}
+                                    <option value="{{ id }}">{{ number }}</option>
+                                    {{/rooms}}
+                                </select>
+                            </script>
+                            {% endverbatim %}
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <hr />
+                    <div class="contact col-sm-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <b>联系信息：</b>
+                            </div>
+                            <div class="form-group overview {% if not user.address %}hidden{% endif %}" data-phone="{{ user.address.phone }}" data-name="{{ user.address.name }}">
+                                <span>{{ user.address.phone }}, {{ user.address.name }}</span>&nbsp;[<a href="#" class="edit-btn">修改</a>]
+                            </div>
+                            <div class="form-group wrapper {% if user.address %}hidden{% endif %}">
+                                <input type="text" {% if user.address %}readonly="readonly"{% endif %} class="input-sm form-control phone" placeholder="手机号" value="{{ user.address.phone }}" />
+                                <input type="text" class="input-sm form-control name" placeholder="名字" value="{{ user.address.name }}" />
+                                <button type="button" class="btn btn-primary btn-sm save-btn">保存</button>
+                                {% if user.address %}
+                                <button type="button" class="btn btn-sm cancel-btn">取消</button>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <hr />
+                    <div class="deliver_time col-sm-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <b>送达时间：</b>
+                            </div>
+                            <div class="form-group">
+                                <select class="input-sm form-control">
+                                    <option disabled="disabled" selected="selected" value="-1">--请选择--</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <hr />
+                    <div class="payment col-sm-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <b>支付方式：</b>
+                            </div>
+                            <div class="form-group">
+                                <a class="selected">
+                                    <img width="50" src="{% static 'image/alipay.gif' %}" />
+                                    <span>在线支付</span>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <hr />
+                    <div class="submit col-sm-12">
+                        <form class="form-inline" role="form">
+                            <div class="form-group">
+                                <button id="create-order-btn" {% if not user.is_authenticated %}data-is-authenticated="false" data-validate-url="{% url 'accounts:validate_user' %}"{% endif %} data-url="{% url 'orders:create' %}" type="button" class="btn btn-yellow btn-sm">确认下单</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if not user.is_authenticated %}
+        <div class="modal fade" id="validate-phone-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="modal-label">验证手机号码</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <span class="col-sm-2 control-label">手机号：</span>
+                                <div class="col-sm-8">
+                                    <ul class="list-inline">
+                                        <li><input type="text" readonly="readonly" class="form-control input-sm phone" /></li>
+                                        <li><button id="send-validation-code-btn" data-url="{% url 'accounts:send_validation_code' %}" type="button" class="btn btn-default btn-sm">发送验证码</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="col-sm-2 control-label">验证码：</span>
+                                <div class="col-sm-8">
+                                    <ul class="list-inline">
+                                        <li><input type="text" class="form-control input-sm code" placeholder="验证码" /></li>
+                                        <li><button id="validate-phone-btn" data-url="{% url 'accounts:validate_code' %}" type="button" class="btn btn-primary btn-sm">提交</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -25,7 +25,6 @@ class Order(models.Model):
     user = models.ForeignKey(User)
     total_price = models.FloatField()
     coupon = models.ForeignKey(Coupon, blank=True, null=True)
-    foods = models.ManyToManyField(Food)
     status = models.CharField(max_length=32, choices=STATUS_CHOICES,
                               default=UNPAID, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -36,3 +35,15 @@ class Order(models.Model):
     building = models.ForeignKey(Building)
     zone = models.ForeignKey(Zone, blank=True, null=True)
     room = models.ForeignKey(Room)
+
+
+class OrderFood(models.Model):
+    """
+    Food for order
+    """
+    food = models.ForeignKey(Food)
+    order = models.ForeignKey(Order)
+    user = models.ForeignKey(User)
+    count = models.SmallIntegerField()
+    price = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)

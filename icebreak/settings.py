@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for icebreak project.
 
@@ -123,6 +124,14 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+SMS_NOTIFICATION_ENABLED = False
+SMS_SERVER_URL = 'http://106.ihuyi.cn/webservice/sms.php?method=Submit'
+SMS_SERVER_USERNAME = ''
+SMS_SERVER_PASSWORD = ''
+SMS_TEMPLATES = {
+    'validation_code': u'您的验证码是{}，三十分钟内有效'
+}
 
 try:
     from local_settings import *  # noqa

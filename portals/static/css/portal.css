@@ -49,14 +49,6 @@
     cursor: pointer;
 }
 
-#shopping-cart .docker .btn {
-    background-color: #fdda33;
-    color: #333;
-    margin: 5px;
-    padding-left: 30px;
-    padding-right: 30px;
-}
-
 #shopping-cart .foods-list-wrapper {
     position: absolute;
     margin-top: 5px;
@@ -106,6 +98,8 @@
 
 #shopping-cart .foods-list .food-count {
     cursor: default;
+    background-color: #fff;
+    border-color: #ccc;
 }
 
 #shopping-cart .foods-list .food-count:hover {

@@ -48,25 +48,28 @@ var ShoppingCart = window.ShoppingCart = {
     },
 
     removeFood: function(food_id) {
-        $.each(ShoppingCart.data, function(i, item){
-            if (item['id'] == food_id) {
-                ShoppingCart.data.pop(i);
+        for(var i=0; i<ShoppingCart.data.length; i++) {
+            if (ShoppingCart.data[i]['id'] == food_id) {
+                ShoppingCart.data.splice(i, 1);
+                break;
             }
-        });
+        }
         ShoppingCart.calculate();
         ShoppingCart.save();
     },
 
     minusFood: function(food_id){
-        $.each(ShoppingCart.data, function(i, item){
+        for (var i=0; i<ShoppingCart.data.length; i++) {
+            var item = ShoppingCart.data[i];
             if (item['id'] == food_id) {
                 item['count'] -= 1;
                 item['subtotal_price'] = item['count'] * item['price'];
                 if (item['count'] <= 0) {
-                    ShoppingCart.data.pop(i);
+                    ShoppingCart.data.splice(i, 1);
+                    break;
                 }
             }
-        });
+        }
         ShoppingCart.calculate();
         ShoppingCart.save();
     },

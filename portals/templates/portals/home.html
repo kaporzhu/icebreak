@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block extrajs_compress %}
-<script src="{% static 'js/portal.js' %}"></script>
 <script src="{% static 'js/shopping-cart.js' %}"></script>
+<script src="{% static 'js/portal.js' %}"></script>
 {% endblock %}
 
 {% block title %}主页{% endblock %}
@@ -23,7 +23,7 @@
                         <td>{{ food.name }}</td>
                         <td>{{ food.price }}元</td>
                         <td><img src="{{ food.image|thumbnail_url:'small' }}" /></td>
-                        <td><button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" class="btn btn-default btn-xs add-food-btn">￥{{ food.price }}</button></td>
+                        <td><button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" class="btn btn-yellow btn-xs add-food-btn">￥{{ food.price }}</button></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -36,7 +36,7 @@
     <div class="docker">
         <span class="icon text-center"> <span class="glyphicon glyphicon-shopping-cart"></span> </span>
         <span class="foods-overview">请选择</span>
-        <a id="checkout-btn" href="#" class="btn btn-default btn-sm pull-right">去结账 ></a>
+        <a id="checkout-btn" href="{% url 'orders:checkout' %}" class="btn btn-yellow btn-sm pull-right">去结账 ></a>
     </div>
     <div class="foods-list-wrapper">
         <p class="foods-list-title">购物车&nbsp;[<a id="empty-shoppingcart-btn" href="javascript:void(0)">清空</a>]</p>

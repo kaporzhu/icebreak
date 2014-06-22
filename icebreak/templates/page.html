@@ -26,12 +26,16 @@
         <script src="{% static 'libs/bootstrap/js/bootstrap.min.js' %}"></script>
         <script src="{% static 'libs/ractive/ractive-legacy.min.js' %}"></script>
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 10]>
+          <script src="{% static 'libs/placeholder/jquery.placeholder.js' %}"></script>
+        <![endif]-->
         <!--[if lt IE 9]>
           <script src="{% static 'libs/ie/html5shiv.min.js' %}"></script>
           <script src="{% static 'libs/ie/respond.min.js' %}"></script>
         <![endif]-->
         {% block extrajs %}{% endblock %}
         {% compress js %}
+            <script src="{% static 'js/base.js' %}"></script>
             {% block extrajs_compress %}{% endblock %}
         {% endcompress %}
     </body>

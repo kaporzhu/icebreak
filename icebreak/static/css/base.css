@@ -1,3 +1,19 @@
 body {
     font: 13px/1.6em "Helvetica Neue",Arial,"Microsoft Yahei",sans-serif;
 }
+
+.btn-yellow {
+    background-color: #fff28e;
+    background-image: -webkit-linear-gradient(top, #fffab8, #ffea64);
+    background-image: linear-gradient(to bottom, #fffab8, #ffea64);
+    border-color: #e2c78d;
+    color: #333;
+    margin: 5px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+a:hover {
+    cursor: pointer;
+    text-decoration: none;
+}

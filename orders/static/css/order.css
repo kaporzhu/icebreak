@@ -1,0 +1,95 @@
+#checkout {
+    background-color: #fff;
+    padding: 10px 35px 25px 35px;
+    box-sizing: border-box;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    border: 1px solid #e3e3e3;
+    zoom: 1;
+    -ms-filter: progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color=#888888);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color=#888888);
+}
+
+#shopping-cart .foods {
+    border-left: 1px solid #d0d0d0;
+    border-right: 1px solid #d0d0d0;
+}
+
+#shopping-cart .food-item {
+    border-bottom: 1px dotted #d0d0d0;
+    line-height: 58px;
+}
+
+#shopping-cart .food-item:last-child {
+    border-bottom: none;
+}
+
+#shopping-cart .head, #shopping-cart .foot {
+    color: #555;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 0;
+    background-color: #f5f5f5;
+    background-image: -webkit-linear-gradient(top, #fafafa, #f1f1f1);
+    background-image: linear-gradient(to bottom, #fafafa, #f1f1f1);
+    border: 1px solid #d0d0d0;
+}
+
+#shopping-cart .head {
+    border-radius: 4px 4px 0 0;
+    -moz-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+}
+
+#shopping-cart .foot {
+    border-radius: 0 0 4px 4px;
+    -moz-border-radius: 0 0 4px 4px;
+    -webkit-border-radius: 0 0 4px 4px;
+}
+
+#shopping-cart .food-item .food-count {
+    cursor: default;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+#shopping-cart .food-item:hover .hidden-btn {
+    visibility: visible;
+}
+
+#shopping-cart .food-item .hidden-btn {
+    visibility: hidden;
+}
+
+#shopping-cart .subtotal-price {
+    color: #eb6100;
+}
+
+#shopping-cart .total-price {
+    font-size: 24px;
+    color: #eb6100;
+}
+
+#shopping-cart .total-price i {
+    font-size: 14px;
+    font-style: normal;
+}
+
+#order-detail .payment a.selected {
+    border-color: #eb6100;
+    box-shadow: 0 0 0 1px #eb6100 inset;
+    border: 1px solid #eb6100;
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 2px;
+    background: #fff;
+    line-height: 18px;
+    color: #333;
+    text-decoration: none;
+}
+
+#validate-phone-modal .code {
+    width: 80px;
+}
