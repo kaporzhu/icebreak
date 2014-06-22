@@ -17,8 +17,13 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
+                {% if user.is_staff %}
+                <li><a href="{% url 'orders:list' %}" class="navbar-link">所有订单</a></li>
+                {% endif %}
                 {% if user.is_authenticated %}
-                <li><a href="{% url 'orders:mine' %}" class="navbar-link">我的订单</a></li>
+                    {% if not user.is_staff %}
+                    <li><a href="{% url 'orders:mine' %}" class="navbar-link">我的订单</a></li>
+                    {% endif %}
                 <li>
                     <p class="navbar-text">
                         <span>{{ user.username|dim }}</span>&nbsp;<small><a href="{% url 'accounts:logout' %}" class="navbar-link">退出</a></small>

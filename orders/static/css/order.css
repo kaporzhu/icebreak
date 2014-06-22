@@ -138,3 +138,25 @@ a.highlight:hover {
     width: 50%;
     display: inline-block
 }
+
+#all-orders ul.list-unstyled li {
+    border-top: 1px dashed lightgray;
+    padding: 3px 0;
+}
+
+#all-orders ul.list-unstyled li:first-child {
+    border-top: none;
+}
+
+#all-orders .select-row-btn {
+    width: 20px;
+    height: 20px;
+}
+
+#all-orders .select-row-btn:hover {
+    cursor: pointer;
+}
+
+#all-orders tr.selected td {
+    background-color: #FFFFCC;
+}

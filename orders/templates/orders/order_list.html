@@ -1,0 +1,102 @@
+{% extends "page.html" %}
+{% load static %}
+
+{% block extracss_compressed %}
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+{% endblock %}
+
+{% block extrajs_compress %}
+<script src="{% static 'js/order-staff.js' %}"></script>
+{% endblock %}
+
+{% block title %}我的订单{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 well-shadow">
+            <div class="row">
+                <h4>所有订单</h4>
+                <hr />
+                <form class="form-inline">
+                    <div class="form-group">
+                        <select name="building" class="form-control input-sm">
+                            <option value="all">所有写字楼</option>
+                            {% for bd in buildings %}
+                                {% if building == bd.id|lower %}
+                                <option selected="selected" value="{{ bd.id }}">{{ bd.name }}</option>
+                                {% else %}
+                                <option value="{{ bd.id }}">{{ bd.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select name="status" class="form-control input-sm">
+                            <option value="all">所有状态</option>
+                            {% for choice in STATUS_CHOICES %}
+                                {% if status == choice.0 %}
+                                <option selected="selected" value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                {% else %}
+                                <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-sm">查询</button>
+                    </div>
+                </form>
+                <br />
+                <div class="btn-group">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">选取<span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:void(0)" data-type="all" class="select-rows-btn">全选</a></li>
+                            <li><a href="javascript:void(0)" data-type="none" class="select-rows-btn">全不选</a></li>
+                            <li><a href="javascript:void(0)" data-type="invert" class="select-rows-btn">反选</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">标记为<span class="caret"></span></button>
+                        <ul class="dropdown-menu" data-update-status-url="{% url 'orders:update_status' %}">
+                            {% for choice in STATUS_CHOICES %}
+                                {% if choice.0 in staff_statuses %}
+                                <li><a href="javascript:void(0)" data-status="{{ choice.0 }}" class="update-status-btn">{{ choice.1 }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <table class="table table-bordered table-hover" id="all-orders">
+                    <tr>
+                        <th></th>
+                        <th>套餐</th>
+                        <th>配送地址</th>
+                        <th>下单时间</th>
+                        <th>状态</th>
+                    </tr>
+                    {% for order in object_list %}
+                    <tr>
+                        <td class="text-center"><input type="checkbox" class="select-row-btn" data-id="{{ order.id }}"></td>
+                        <td>
+                            <ul class="list-unstyled">
+                                {% for order_food in order.orderfood_set.all %}
+                                <li>
+                                    <span class="food-name">{{ order_food.food }}</span>
+                                    <span class="pull-right">&nbsp;&nbsp;{{ order_food.count }}份</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>{{ order.address }}</td>
+                        <td>{{ order.created_at|date:"H:i" }}</td>
+                        <td class="status {{ order.status_color }}">{{ order.get_status_display }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

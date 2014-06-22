@@ -49,6 +49,19 @@ class Order(models.Model):
         else:
             return u'{} {}'.format(self.building, self.room)
 
+    @property
+    def status_color(self):
+        if self.status == PAID:
+            return 'danger'
+        elif self.status == PACKING_DONE:
+            return 'active'
+        elif self.status == ON_THE_WAY:
+            return 'warning'
+        elif self.status == DISTRIBUTING:
+            return 'info'
+        elif self.status == DONE:
+            return 'success'
+
 
 class OrderFood(models.Model):
     """

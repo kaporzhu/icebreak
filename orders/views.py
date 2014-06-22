@@ -2,15 +2,19 @@
 import json
 
 from django.core.urlresolvers import reverse
-from django.views.generic.base import TemplateView
+from django.db.models import Q
+from django.http.response import HttpResponseForbidden
+from django.views.generic.base import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
 from braces.views import(
-    JsonRequestResponseMixin, LoginRequiredMixin
+    JsonRequestResponseMixin, LoginRequiredMixin, StaffuserRequiredMixin,
+    AjaxResponseMixin, JSONResponseMixin
 )
 
+from .constants import DISTRIBUTING, ON_THE_WAY, PACKING_DONE, PAID
 from .forms import OrderForm
 from accounts.models import Address
 from buildings.models import Building
@@ -102,3 +106,68 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     slug_field = 'code'
     slug_url_kwarg = 'code'
     model = Order
+
+
+class OrderListView(StaffuserRequiredMixin, ListView):
+    """
+    All orders for the staff user
+    """
+    model = Order
+
+    def get_queryset(self):
+        """
+        Filter the orders
+        """
+        qs = super(OrderListView, self).get_queryset()
+
+        # building
+        building = self.request.GET.get('building', 'all')
+        if building == 'all':
+            building_Q = Q()
+        else:
+            building_Q = Q(building=Building.objects.get(pk=building))
+
+        # status
+        status = self.request.GET.get('status', 'all')
+        if status == 'all':
+            status_Q = Q()
+        else:
+            status_Q = Q(status=status)
+
+        return qs.filter(status_Q, building_Q)
+
+    def get_context_data(self, **kwargs):
+        """
+        Add extra data
+        """
+        data = super(OrderListView, self).get_context_data(**kwargs)
+        data.update({
+            'buildings': Building.objects.all(),
+            'STATUS_CHOICES': Order.STATUS_CHOICES,
+            'staff_statuses': [PACKING_DONE, ON_THE_WAY, DISTRIBUTING]
+        })
+        data.update(self.request.GET.dict())
+        return data
+
+
+class UpdateStatusView(StaffuserRequiredMixin, AjaxResponseMixin,
+                       JSONResponseMixin, View):
+    """
+    Update order status
+    """
+    def get_ajax(self, request, *args, **kwargs):
+        """
+        Update status for orders and return the new status color
+        """
+        status = request.GET['status']
+        if status not in [PACKING_DONE, ON_THE_WAY, DISTRIBUTING]:
+            return HttpResponseForbidden()
+        for order in Order.objects.in_bulk(request.GET['ids'].split(',')).values():  # noqa
+            if order.status in [PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING]:
+                order.status = status
+                order.save()
+        return self.render_json_response({
+            'success': True,
+            'status_label': order.get_status_display(),
+            'status_color': order.status_color
+        })
