@@ -17,9 +17,15 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                {% if user.is_staff %}
+                {% if user.is_superuser %}
+                <li><a href="{% url 'shops:list' %}" class="navbar-link">店铺管理</a></li>
+                <li><a href="{% url 'buildings:list' %}" class="navbar-link">写字楼管理</a></li>
                 <li><a href="{% url 'orders:list' %}" class="navbar-link">订单管理</a></li>
                 <li><a href="{% url 'coupons:list' %}" class="navbar-link">优惠码管理</a></li>
+                {% endif %}
+                {% if user.is_staff and not user.is_superuser %}
+                <li><a href="{% url 'orders:shop_list' %}" class="navbar-link">店铺订单管理</a></li>
+                <li><a href="{% url 'coupons:shop_list' %}" class="navbar-link">优惠码管理</a></li>
                 {% endif %}
                 {% if user.is_authenticated %}
                     {% if not user.is_staff %}

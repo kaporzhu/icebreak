@@ -8,17 +8,18 @@ from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.base import View, RedirectView
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, CreateView, UpdateView
 from django.utils.crypto import get_random_string
 
 from braces.views import(
-    AjaxResponseMixin, JsonRequestResponseMixin
+    AjaxResponseMixin, JsonRequestResponseMixin, SuperuserRequiredMixin
 )
 
 from .constants import VALIDATION_CODE_PREFIX, VALIDATION_CODE_COUNT_PREFIX
-from .forms import PhoneLoginForm
-from .models import Address
+from .forms import PhoneLoginForm, StaffForm
+from .models import Address, Staff
 from icebreak.utils import send_sms
+from shops.models import Shop
 
 
 class ValidateUserView(AjaxResponseMixin, JsonRequestResponseMixin, View):
@@ -131,3 +132,66 @@ class LogoutView(RedirectView):
         """
         auth.logout(request)
         return super(LogoutView, self).get(request, *args, **kwargs)
+
+
+class AddStaffView(SuperuserRequiredMixin, CreateView):
+    """
+    Add new staff for the shop
+    """
+    model = Staff
+    form_class = StaffForm
+
+    def form_valid(self, form):
+        """
+        Create new staff
+        """
+        shop = Shop.objects.get(pk=self.request.GET['shop_id'])
+        user = User(username=form.data['phone'], first_name=form.data['name'])
+        user.is_staff = True
+        user.is_active = form.data['is_active']
+        user.set_password(form.data['password'])
+        user.save()
+        staff = form.save(commit=False)
+        staff.user = user
+        staff.shop = shop
+        staff.save()
+        return super(AddStaffView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('shops:detail',
+                            kwargs={'pk': self.request.GET['shop_id']})
+
+
+class UpdateStaffView(SuperuserRequiredMixin, UpdateView):
+    """
+    Update staff info
+    """
+    model = Staff
+    form_class = StaffForm
+
+    def get_initial(self):
+        """
+        Add extra initial data to the form
+        """
+        initial = super(UpdateStaffView, self).get_initial()
+        initial.update({
+            'is_active': self.object.user.is_active,
+            'phone': self.object.user.username,
+            'name': self.object.user.get_full_name()
+        })
+        return initial
+
+    def form_valid(self, form):
+        """
+        Update staff info
+        """
+        form.save()
+        self.object.user.phone = form.data['phone']
+        self.object.user.name = form.data['name']
+        self.object.user.is_active = form.data['is_active']
+        self.object.user.save()
+        return super(UpdateStaffView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('shops:detail',
+                            kwargs={'pk': self.object.shop.id})

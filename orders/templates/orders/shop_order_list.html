@@ -18,24 +18,24 @@
 <script src="{% static 'libs/jquery-ui/js/jquery.ui.datepicker-zh-TW.js' %}"></script>
 {% endblock %}
 
-{% block title %}所有订单{% endblock %}
+{% block title %}店铺的所有订单{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="row">
         <div class="col-md-12 well-shadow">
             <div class="row">
-                <h4>所有订单</h4>
+                <h4>店铺的所有订单</h4>
                 <hr />
                 <form class="form-inline">
                     <div class="form-group">
-                        <select name="shop" class="form-control input-sm">
-                            <option value="all">所有店铺</option>
-                            {% for sp in shops %}
-                                {% if shop == sp.id|lower %}
-                                <option selected="selected" value="{{ sp.id }}">{{ sp.name }}</option>
+                        <select name="building" class="form-control input-sm">
+                            <option value="all">所有写字楼</option>
+                            {% for bd in buildings %}
+                                {% if building == bd.id|lower %}
+                                <option selected="selected" value="{{ bd.id }}">{{ bd.name }}</option>
                                 {% else %}
-                                <option value="{{ sp.id }}">{{ sp.name }}</option>
+                                <option value="{{ bd.id }}">{{ bd.name }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -53,6 +53,18 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <select name="delivery_time" class="form-control input-sm">
+                            <option value="all">所有时段</option>
+                            {% for time in delivery_times %}
+                                {% if time.time == delivery_time %}
+                                <option selected="selected" value="{{ time.time }}">{{ time.time }}</option>
+                                {% else %}
+                                <option value="{{ time.time }}">{{ time.time }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <input class="form-control input-sm datepicker" value="{{ start }}" name="start" /> -
                         <input class="form-control input-sm datepicker" value="{{ end }}" name="end" />
                     </div>
@@ -60,9 +72,30 @@
                         <button type="submit" class="btn btn-primary btn-sm">查询</button>
                     </div>
                 </form>
+                <br />
+                <div class="btn-group">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">选取<span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:void(0)" data-type="all" class="select-rows-btn">全选</a></li>
+                            <li><a href="javascript:void(0)" data-type="none" class="select-rows-btn">全不选</a></li>
+                            <li><a href="javascript:void(0)" data-type="invert" class="select-rows-btn">反选</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">标记为<span class="caret"></span></button>
+                        <ul class="dropdown-menu" data-update-status-url="{% url 'orders:update_status' %}">
+                            {% for choice in STATUS_CHOICES %}
+                                {% if choice.0 in staff_statuses %}
+                                <li><a href="javascript:void(0)" data-status="{{ choice.0 }}" class="update-status-btn">{{ choice.1 }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
                 <table class="table table-bordered table-hover" id="all-orders">
                     <tr>
-                        <th>店铺</th>
+                        <th></th>
                         <th>套餐</th>
                         <th>配送地址</th>
                         <th>用餐时间</th>
@@ -71,7 +104,7 @@
                     </tr>
                     {% for order in object_list %}
                     <tr>
-                        <td>{{ order.shop }}</td>
+                        <td class="text-center"><input type="checkbox" class="select-row-btn" data-id="{{ order.id }}"></td>
                         <td>
                             <ul class="list-unstyled">
                                 {% for order_food in order.orderfood_set.all %}

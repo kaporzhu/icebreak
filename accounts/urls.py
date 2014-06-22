@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 
 from .views import(
     ValidateUserView, SendValidationCodeView, ValidateCodeView, PhoneLoginView,
-    LogoutView
+    LogoutView, AddStaffView, UpdateStaffView
 )
 
 
@@ -17,4 +17,6 @@ urlpatterns = patterns(
         SendValidationCodeView.as_view(), name='send_validation_code'),
     url(r'^validate_code/$',
         ValidateCodeView.as_view(), name='validate_code'),
+    url(r'^add_staff/$', AddStaffView.as_view(), name='add_staff'),
+    url(r'^update_staff/(?P<pk>\d+)/$', UpdateStaffView.as_view(), name='update_staff'),
 )

@@ -8,6 +8,8 @@ from django.core.cache import cache
 
 from .constants import VALIDATION_CODE_PREFIX
 
+from .models import Staff
+
 
 class PhoneLoginForm(forms.Form):
     """
@@ -40,3 +42,17 @@ class PhoneLoginForm(forms.Form):
             raise forms.ValidationError(u'验证码错误')
 
         return data
+
+
+class StaffForm(forms.ModelForm):
+    """
+    Model form for Staff
+    """
+    is_active = forms.BooleanField()
+    phone = forms.CharField()
+    password = forms.CharField(required=False)
+    name = forms.CharField()
+
+    class Meta:
+        model = Staff
+        exclude = ('user','shop',)

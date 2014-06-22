@@ -1,0 +1,38 @@
+{% extends "page.html" %}
+{% block title %}{{ object.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <table class="table table-bordered col-md-12">
+            <tr>
+                <td>店面</td>
+                <td>{{ object.name }}</td>
+            </tr>
+            <tr>
+                <td>地址</td>
+                <td>{{ object.address }}</td>
+            </tr>
+            <tr>
+                <td>联系电话</td>
+                <td>{{ object.contact }}</td>
+            </tr>
+            <tr>
+                <td>开业时间</td>
+                <td>{{ object.open_at|date:"Y-m-d" }}</td>
+            </tr>
+            <tr>
+                <td>店员</td>
+                <td>
+                    <ul class="list-unstyled">
+                        {% for staff in object.staff_set.all %}
+                        <li><a href="{% url 'accounts:update_staff' pk=staff.id %}">{{ staff.user.get_full_name }} </a>{% if staff.is_shop_manager %}(店长){% endif %}{% if staff.is_deliveryman %}(配送员){% endif %}</li>
+                        {% endfor %}
+                        <li><a href="{% url 'accounts:add_staff' %}?shop_id={{ object.id }}">添加</a></li>
+                    </ul>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock %}

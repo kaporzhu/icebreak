@@ -10,9 +10,11 @@ from django.utils.crypto import get_random_string
 from .constants import(
     UNPAID, PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE
 )
+from accounts.models import Staff
 from buildings.models import Building, Zone, Room
 from coupons.models import Coupon
 from foods.models import Food
+from shops.models import Shop
 
 
 class Order(models.Model):
@@ -29,6 +31,8 @@ class Order(models.Model):
     )
     code = models.CharField(max_length=32, unique=True, blank=True, null=True)
     user = models.ForeignKey(User)
+    shop = models.ForeignKey(Shop, blank=True, null=True)
+    delivery_man = models.ForeignKey(Staff, blank=True, null=True)
     total_price = models.FloatField()
     coupon = models.ForeignKey(Coupon, blank=True, null=True)
     delivery_time = models.CharField(max_length=32, blank=True, null=True)

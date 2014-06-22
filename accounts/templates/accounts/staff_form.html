@@ -1,0 +1,26 @@
+{% extends "page.html" %}
+{% load handsome_template_tags %}
+
+{% block title %}添加员工{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <form method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
+                {% csrf_token %}
+                {{ form.errors }}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label class="col-md-2">{{ field.label }}:</label>
+                        <div class="col-md-4">
+                            {{ field|add_attrs:"class:form-control" }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <input type="submit" value="添加" class="btn btn-primary" />
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

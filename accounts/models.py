@@ -3,6 +3,18 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from buildings.models import Building, Zone, Room
+from shops.models import Shop
+
+
+class Staff(models.Model):
+    """
+    Staff model
+    """
+    user = models.OneToOneField(User)
+    is_deliveryman = models.BooleanField()
+    is_shop_manager = models.BooleanField()
+    shop = models.ForeignKey(Shop)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class Address(models.Model):

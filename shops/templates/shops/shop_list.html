@@ -20,7 +20,6 @@
                     <th>店面</th>
                     <th>地址</th>
                     <th>联系电话</th>
-                    <th>开店日期</th>
                     <th></th>
                 </thead>
                 <tbody>
@@ -29,8 +28,7 @@
                         <td>{{ object.name }}</td>
                         <td>{{ object.address }}</td>
                         <td>{{ object.phone }}</td>
-                        <td>{{ object.open_at }}</td>
-                        <td><a href="{% url 'shops:update' pk=object.id %}">修改</a></td>
+                        <td><a href="{% url 'shops:detail' pk=object.id %}">查看</a> <a href="{% url 'shops:update' pk=object.id %}">修改</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

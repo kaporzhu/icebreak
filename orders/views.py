@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http.response import HttpResponseForbidden
+from django.http.response import HttpResponseForbidden, Http404
 from django.views.generic.base import TemplateView, View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
@@ -22,6 +22,8 @@ from accounts.models import Address
 from buildings.models import Building
 from coupons.models import Coupon
 from foods.models import Food
+from braces.views._access import SuperuserRequiredMixin
+from shops.models import Shop
 
 
 class CheckoutView(TemplateView):
@@ -65,6 +67,7 @@ class CreateView(LoginRequiredMixin, JsonRequestResponseMixin, FormView):
         order.user = self.request.user
         order.phone = order.user.username
         order.total_price = 0
+        order.shop = order.building.shop
         order.save()
 
         # address
@@ -135,9 +138,9 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
 
 
-class OrderListView(StaffuserRequiredMixin, ListView):
+class OrderListView(SuperuserRequiredMixin, ListView):
     """
-    All orders for the staff user
+    All orders for the superuser
     """
     model = Order
 
@@ -146,6 +149,70 @@ class OrderListView(StaffuserRequiredMixin, ListView):
         Filter the orders
         """
         qs = super(OrderListView, self).get_queryset()
+
+        # shop
+        shop = self.request.GET.get('shop', 'all')
+        if shop == 'all':
+            shop_Q = Q()
+        else:
+            shop_Q = Q(shop=Shop.objects.get(pk=shop))
+
+        # today's order only
+        now = datetime.now()
+        start_str = self.request.GET.get('start', now.strftime('%Y-%m-%d'))
+        end_str = self.request.GET.get('end', now.strftime('%Y-%m-%d'))
+        start = datetime.strptime(start_str, '%Y-%m-%d')
+        end = datetime.strptime(end_str, '%Y-%m-%d')
+        time_Q = Q(created_at__range=(
+            datetime(start.year, start.month, start.day, 0, 0),
+            datetime(end.year, end.month, end.day, 23, 59)))
+
+        # status
+        status = self.request.GET.get('status', 'all')
+        if status == 'all':
+            status_Q = Q()
+        else:
+            status_Q = Q(status=status)
+
+        return qs.filter(shop_Q, status_Q, time_Q).order_by('-id')
+
+    def get_context_data(self, **kwargs):
+        """
+        Add extra data
+        """
+        data = super(OrderListView, self).get_context_data(**kwargs)
+        data.update({
+            'shops': Shop.objects.all(),
+            'STATUS_CHOICES': Order.STATUS_CHOICES
+        })
+        data.update(self.request.GET.dict())
+
+        now = datetime.now()
+        if not self.request.GET.get('start'):
+            data.update({'start': now.strftime('%Y-%m-%d')})
+        if not self.request.GET.get('end'):
+            data.update({'end': now.strftime('%Y-%m-%d')})
+
+        return data
+
+
+class ShopOrderListView(StaffuserRequiredMixin, ListView):
+    """
+    All orders for current shop
+    """
+    model = Order
+    template_name = 'orders/shop_order_list.html'
+
+    def get_queryset(self):
+        """
+        Filter the orders
+        """
+        qs = super(ShopOrderListView, self).get_queryset()
+
+        # shop
+        if not self.request.user.staff.is_shop_manager:
+            raise Http404
+        shop_Q = Q(shop=self.request.user.staff.shop)
 
         # today's order only
         now = datetime.now()
@@ -178,13 +245,13 @@ class OrderListView(StaffuserRequiredMixin, ListView):
         else:
             delivery_time_Q = Q(delivery_time=delivery_time)
 
-        return qs.filter(status_Q, building_Q, time_Q).filter(delivery_time_Q).order_by('-id')  # noqa
+        return qs.filter(shop_Q, status_Q, building_Q, time_Q).filter(delivery_time_Q).order_by('-id')  # noqa
 
     def get_context_data(self, **kwargs):
         """
         Add extra data
         """
-        data = super(OrderListView, self).get_context_data(**kwargs)
+        data = super(ShopOrderListView, self).get_context_data(**kwargs)
         data.update({
             'buildings': Building.objects.all(),
             'STATUS_CHOICES': Order.STATUS_CHOICES,

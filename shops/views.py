@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse_lazy
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
@@ -31,5 +32,12 @@ class UpdateShopView(SuperuserRequiredMixin, SetHeadlineMixin, UpdateView):
 class ShopListView(SuperuserRequiredMixin, ListView):
     """
     Display all shops for admin
+    """
+    model = Shop
+
+
+class ShopDetailView(SuperuserRequiredMixin, DetailView):
+    """
+    Shop detail page
     """
     model = Shop
