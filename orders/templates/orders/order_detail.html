@@ -1,0 +1,56 @@
+{% extends "page.html" %}
+{% load static handsome_template_tags %}
+
+{% block extracss_compressed %}
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+{% endblock %}
+
+{% block title %}订单{{ order.code }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 well-shadow">
+            <div class="row">
+                <p>
+                    <span>订单号：{{ order.code }}</span>
+                    <span class="pull-right">
+                        <a href="#" class="highlight">立即付款 ></a>
+                    </span>
+                </p>
+                <hr />
+                <table class="table table-bordered" id="order-detail">
+                    <tr>
+                        <td class="foods">
+                            <ul class="list-unstyled">
+                                {% for order_food in order.orderfood_set.all %}
+                                <li>
+                                    <span class="food-name">{{ order_food.food }}</span>
+                                    <span class="food-count">{{ order_food.count }}份</span>
+                                    <span class="food-price pull-right">￥{{ order_food.subtotal_price }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td class="text-center text-middle">{{ order.get_status_display }}</td>
+                        <td class="text-center text-middle">{{ order.created_at|date:"m-d H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="pull-right">
+                                <dl class="dl-horizontal">
+                                  <dt>总价：</dt>
+                                  <dd>￥{{ order.total_price }}</dd>
+                                </dl>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <p>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：{{ order.name }}</p>
+                <p>地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：{{ order.address }}</p>
+                <p>联系电话：{{ order.phone|dim }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

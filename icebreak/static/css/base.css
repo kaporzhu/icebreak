@@ -1,5 +1,13 @@
+html {
+    height: 100%;
+}
 body {
+    height: 100%;
     font: 13px/1.6em "Helvetica Neue",Arial,"Microsoft Yahei",sans-serif;
+}
+
+.content {
+    min-height: 90%;
 }
 
 .btn-yellow {
@@ -16,4 +24,18 @@ body {
 a:hover {
     cursor: pointer;
     text-decoration: none;
+}
+
+.well-shadow {
+    padding: 10px 35px 25px 35px;
+    background-color: #fff;
+    box-sizing: border-box;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    border: 1px solid #e3e3e3;
+    zoom: 1;
+    -ms-filter: progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color=#888888);
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color=#888888);
 }

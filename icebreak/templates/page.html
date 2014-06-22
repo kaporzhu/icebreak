@@ -19,7 +19,9 @@
     </head>
     <body>
         {% include "header.html" %}
+        <div class="content">
         {% block content %}{% endblock %}
+        </div>
         {% include "footer.html" %}
 
         <script src="{% static 'libs/jquery/jquery-1.11.1.min.js' %}"></script>

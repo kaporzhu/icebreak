@@ -15,6 +15,7 @@ from accounts.models import Address
 from buildings.models import Building
 from foods.models import Food
 from orders.models import OrderFood, Order
+from django.views.generic.detail import DetailView
 
 
 class CheckoutView(TemplateView):
@@ -90,4 +91,13 @@ class MineView(LoginRequiredMixin, ListView):
         Filter by user
         """
         qs = super(MineView, self).get_queryset()
-        return qs.filter(user=self.request.user)
+        return qs.filter(user=self.request.user).order_by('-id')[:10]
+
+
+class OrderDetailView(LoginRequiredMixin, DetailView):
+    """
+    Order detail page
+    """
+    slug_field = 'code'
+    slug_url_kwarg = 'code'
+    model = Order

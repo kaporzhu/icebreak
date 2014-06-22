@@ -86,7 +86,7 @@ class ValidateCodeView(AjaxResponseMixin, JsonRequestResponseMixin, View):
         """
         code = request.REQUEST['code']
         phone = request.REQUEST['phone']
-        if code in cache.get(VALIDATION_CODE_PREFIX + phone, []):
+        if code in cache.get(VALIDATION_CODE_PREFIX + phone, []):  # noqa
             # if phone is new, create User for it and login
             try:
                 user = User.objects.get(username=phone)

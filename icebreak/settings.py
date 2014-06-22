@@ -125,6 +125,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+MASTER_KEY = ''
 SMS_NOTIFICATION_ENABLED = False
 SMS_SERVER_URL = 'http://106.ihuyi.cn/webservice/sms.php?method=Submit'
 SMS_SERVER_USERNAME = ''
