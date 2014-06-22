@@ -11,16 +11,21 @@
         </div>
 
         <div class="collapse navbar-collapse" id="top-bar">
+            <ul class="nav navbar-nav logo">
+                <li>
+                    <a href="{% url 'portals:home' %}">主页</a>
+                </li>
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
                 <li>
                     <p class="navbar-text">
                         <span>{{ user.username|dim }}</span>
-                        <a href="#" class="navbar-link">退出</a></p>
+                        <a href="{% url 'accounts:logout' %}" class="navbar-link">退出</a></p>
                 </li>
                 {% else %}
                 <li class="dropdown">
-                    <a href="#">登录</a>
+                    <a href="{% url 'accounts:login' %}">登录</a>
                 </li>
                 {% endif %}
             </ul>

@@ -1,0 +1,8 @@
+.well-shadow {
+    background-color: white;
+    -moz-box-shadow: 3px 3px 3px #888888;
+    -webkit-box-shadow: 3px 3px 3px #888888;
+    box-shadow: 3px 3px 3px #888888;
+    zoom: 1;
+    filter: progid:DXImageTransform.Microsoft.DropShadow(OffX=3, OffY=3, Color=#888888);
+}
