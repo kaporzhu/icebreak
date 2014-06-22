@@ -3,6 +3,7 @@ import json
 
 from django.core.urlresolvers import reverse
 from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
@@ -15,7 +16,6 @@ from accounts.models import Address
 from buildings.models import Building
 from foods.models import Food
 from orders.models import OrderFood, Order
-from django.views.generic.detail import DetailView
 
 
 class CheckoutView(TemplateView):
@@ -85,6 +85,7 @@ class MineView(LoginRequiredMixin, ListView):
     All my orders
     """
     model = Order
+    template_name = 'orders/mine.html'
 
     def get_queryset(self):
         """
