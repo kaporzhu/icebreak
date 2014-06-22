@@ -33,17 +33,18 @@
                             </ul>
                         </td>
                         <td class="text-center text-middle">{{ order.get_status_display }}</td>
-                        <td class="text-center text-middle">{{ order.created_at|date:"m-d H:i" }}</td>
+                        <td class="text-center text-middle">用餐时间：<br />{{ order.delivery_time }}</td>
+                        <td class="text-center text-middle">下单时间：<br />{{ order.created_at|date:"m-d H:i" }}</td>
                     </tr>
                     <tr>
-                        <td colspan="3">
+                        <td colspan="4">
                             <div class="pull-right">
                                 <dl class="dl-horizontal">
                                     <dt>商品总价：</dt>
                                     <dd>￥{{ order.total_price }}</dd>
                                     {% if order.coupon %}
                                     <dt>优惠：</dt>
-                                    <dd>- ￥{{ order.coupon.discount }}</dd>
+                                    <dd>￥{{ order.coupon.discount }}</dd>
                                     {% endif %}
                                     <hr />
                                     <dt>应付总额：</dt>

@@ -191,6 +191,7 @@ $(function(){
         var $address = $('#order-detail .address .overview');
         var $contact = $('#order-detail .contact .overview');
         var $coupon = $('#order-detail .coupon .overview');
+        var $delivery_time = $('#order-detail .delivery_time select');
 
         var data = {
             building: $address.data('building'),
@@ -200,6 +201,7 @@ $(function(){
             phone: $contact.data('phone'),
             name: $contact.data('name'),
             coupon: $coupon.data('code'),
+            delivery_time: $delivery_time.val(),
             csrfmiddlewaretoken: get_cookie('csrftoken')
         };
         return data;

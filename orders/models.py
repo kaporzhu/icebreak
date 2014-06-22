@@ -31,9 +31,11 @@ class Order(models.Model):
     user = models.ForeignKey(User)
     total_price = models.FloatField()
     coupon = models.ForeignKey(Coupon, blank=True, null=True)
+    delivery_time = models.CharField(max_length=32, blank=True, null=True)
     status = models.CharField(max_length=32, choices=STATUS_CHOICES,
                               default=UNPAID, db_index=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    paid_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     # address info
     phone = models.CharField(max_length=16)

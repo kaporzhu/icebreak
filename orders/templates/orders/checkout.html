@@ -64,6 +64,7 @@
                     <div class="address col-sm-12">
                         <form class="form-inline" role="form" data-load-building-url="{% url 'buildings:load' %}">
                             <div class="form-group">
+                                <span class="glyphicon glyphicon-map-marker"></span>
                                 <b>配送地址：</b>
                             </div>
                             <div class="form-group overview {% if not user.address %}hidden{% endif %}" data-building="{{ user.address.building.id }}" data-zone="{{ user.address.zone.id }}" data-floor="{{ user.address.room.floor }}" data-room="{{ user.address.room.id }}">
@@ -121,6 +122,7 @@
                     <div class="contact col-sm-12">
                         <form class="form-inline" role="form">
                             <div class="form-group">
+                                <span class="glyphicon glyphicon-phone"></span>
                                 <b>联系信息：</b>
                             </div>
                             <div class="form-group overview {% if not user.address %}hidden{% endif %}" data-phone="{{ user.address.phone }}" data-name="{{ user.address.name }}">
@@ -139,14 +141,17 @@
                 </div>
                 <div class="row">
                     <hr />
-                    <div class="deliver_time col-sm-12">
+                    <div class="delivery_time col-sm-12">
                         <form class="form-inline" role="form">
                             <div class="form-group">
-                                <b>送达时间：</b>
+                                <span class="glyphicon glyphicon-time"></span>
+                                <b>用餐时间：</b>
                             </div>
                             <div class="form-group">
                                 <select class="input-sm form-control">
-                                    <option disabled="disabled" selected="selected" value="-1">--请选择--</option>
+                                    {% for time in delivery_times %}
+                                    <option data-cutoff-time="{{ time.cutoff_time }}" value="{{ time.time }}">{{ time.time }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                         </form>
@@ -157,6 +162,7 @@
                     <div class="payment col-sm-12">
                         <form class="form-inline" role="form">
                             <div class="form-group">
+                                <span class="glyphicon glyphicon-credit-card"></span>
                                 <b>支付方式：</b>
                             </div>
                             <div class="form-group">

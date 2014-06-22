@@ -101,7 +101,11 @@
 }
 
 #my-orders .order-description {
-    width: 70%;
+    width: 60%;
+}
+
+#my-orders .text-middle {
+    vertical-align: middle;
 }
 
 a.highlight {
@@ -122,7 +126,7 @@ a.highlight:hover {
 }
 
 #order-detail .foods {
-    width: 70%;
+    width: 55%;
 }
 
 #order-detail .text-middle {
@@ -141,6 +145,10 @@ a.highlight:hover {
 #order-detail .foods .food-name {
     width: 50%;
     display: inline-block
+}
+
+#order-detail .glyphicon {
+    color: #2888d1;
 }
 
 #all-orders ul.list-unstyled li {

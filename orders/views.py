@@ -15,13 +15,13 @@ from braces.views import(
     AjaxResponseMixin, JSONResponseMixin
 )
 
-from .constants import DISTRIBUTING, ON_THE_WAY, PACKING_DONE, PAID
+from .constants import ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES
 from .forms import OrderForm
+from .models import OrderFood, Order
 from accounts.models import Address
 from buildings.models import Building
 from coupons.models import Coupon
 from foods.models import Food
-from orders.models import OrderFood, Order
 
 
 class CheckoutView(TemplateView):
@@ -35,7 +35,18 @@ class CheckoutView(TemplateView):
         Add extra data to context
         """
         data = super(CheckoutView, self).get_context_data(**kwargs)
-        data.update({'buildings': Building.objects.all()})
+
+        # get available delivery times
+        delivery_times = []
+        now = datetime.now().time()
+        for time in DELIVERY_TIMES:
+            if time['cutoff_time'] > now:
+                delivery_times.append(time)
+
+        data.update({
+            'buildings': Building.objects.all(),
+            'delivery_times': delivery_times
+        })
 
         return data
 
@@ -136,6 +147,16 @@ class OrderListView(StaffuserRequiredMixin, ListView):
         """
         qs = super(OrderListView, self).get_queryset()
 
+        # today's order only
+        now = datetime.now()
+        start_str = self.request.GET.get('start', now.strftime('%Y-%m-%d'))
+        end_str = self.request.GET.get('end', now.strftime('%Y-%m-%d'))
+        start = datetime.strptime(start_str, '%Y-%m-%d')
+        end = datetime.strptime(end_str, '%Y-%m-%d')
+        time_Q = Q(created_at__range=(
+            datetime(start.year, start.month, start.day, 0, 0),
+            datetime(end.year, end.month, end.day, 23, 59)))
+
         # building
         building = self.request.GET.get('building', 'all')
         if building == 'all':
@@ -150,7 +171,14 @@ class OrderListView(StaffuserRequiredMixin, ListView):
         else:
             status_Q = Q(status=status)
 
-        return qs.filter(status_Q, building_Q)
+        # delivery time
+        delivery_time = self.request.GET.get('delivery_time', 'all')
+        if delivery_time == 'all':
+            delivery_time_Q = Q()
+        else:
+            delivery_time_Q = Q(delivery_time=delivery_time)
+
+        return qs.filter(status_Q, building_Q, time_Q).filter(delivery_time_Q).order_by('-id')  # noqa
 
     def get_context_data(self, **kwargs):
         """
@@ -160,9 +188,17 @@ class OrderListView(StaffuserRequiredMixin, ListView):
         data.update({
             'buildings': Building.objects.all(),
             'STATUS_CHOICES': Order.STATUS_CHOICES,
-            'staff_statuses': [PACKING_DONE, ON_THE_WAY, DISTRIBUTING]
+            'staff_statuses': [PACKING_DONE, ON_THE_WAY],
+            'delivery_times': DELIVERY_TIMES
         })
         data.update(self.request.GET.dict())
+
+        now = datetime.now()
+        if not self.request.GET.get('start'):
+            data.update({'start': now.strftime('%Y-%m-%d')})
+        if not self.request.GET.get('end'):
+            data.update({'end': now.strftime('%Y-%m-%d')})
+
         return data
 
 
@@ -176,10 +212,10 @@ class UpdateStatusView(StaffuserRequiredMixin, AjaxResponseMixin,
         Update status for orders and return the new status color
         """
         status = request.GET['status']
-        if status not in [PACKING_DONE, ON_THE_WAY, DISTRIBUTING]:
+        if status not in [PACKING_DONE, ON_THE_WAY]:
             return HttpResponseForbidden()
         for order in Order.objects.in_bulk(request.GET['ids'].split(',')).values():  # noqa
-            if order.status in [PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING]:
+            if order.status in [PAID, PACKING_DONE, ON_THE_WAY]:
                 order.status = status
                 order.save()
         return self.render_json_response({

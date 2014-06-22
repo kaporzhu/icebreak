@@ -5,8 +5,17 @@
 <link rel="stylesheet" href="{% static 'css/order.css' %}">
 {% endblock %}
 
+{% block extracss %}
+<link rel="stylesheet" href="{% static 'libs/jquery-ui/css/smoothness/jquery-ui-1.10.4.custom.min.css' %}">
+{% endblock %}
+
 {% block extrajs_compress %}
 <script src="{% static 'js/order-staff.js' %}"></script>
+{% endblock %}
+
+{% block extrajs %}
+<script src="{% static 'libs/jquery-ui/js/jquery-ui-1.10.4.custom.min.js' %}"></script>
+<script src="{% static 'libs/jquery-ui/js/jquery.ui.datepicker-zh-TW.js' %}"></script>
 {% endblock %}
 
 {% block title %}我的订单{% endblock %}
@@ -44,6 +53,22 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <select name="delivery_time" class="form-control input-sm">
+                            <option value="all">所有时段</option>
+                            {% for time in delivery_times %}
+                                {% if time.time == delivery_time %}
+                                <option selected="selected" value="{{ time.time }}">{{ time.time }}</option>
+                                {% else %}
+                                <option value="{{ time.time }}">{{ time.time }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control input-sm datepicker" value="{{ start }}" name="start" /> -
+                        <input class="form-control input-sm datepicker" value="{{ end }}" name="end" />
+                    </div>
+                    <div class="form-group">
                         <button type="submit" class="btn btn-primary btn-sm">查询</button>
                     </div>
                 </form>
@@ -73,6 +98,7 @@
                         <th></th>
                         <th>套餐</th>
                         <th>配送地址</th>
+                        <th>用餐时间</th>
                         <th>下单时间</th>
                         <th>状态</th>
                     </tr>
@@ -90,7 +116,8 @@
                             </ul>
                         </td>
                         <td>{{ order.address }}</td>
-                        <td>{{ order.created_at|date:"H:i" }}</td>
+                        <td>{{ order.delivery_time }}</td>
+                        <td>{{ order.created_at|date:"m-d H:i" }}</td>
                         <td class="status {{ order.status_color }}">{{ order.get_status_display }}</td>
                     </tr>
                     {% endfor %}

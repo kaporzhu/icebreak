@@ -51,4 +51,6 @@ $(document).ready(function(){
         });
     });
 
+    // datepicker
+    $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'}, $.datepicker.regional['zh-TW']);
 });
