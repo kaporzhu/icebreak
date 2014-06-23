@@ -18,7 +18,8 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_staff %}
-                <li><a href="{% url 'orders:list' %}" class="navbar-link">所有订单</a></li>
+                <li><a href="{% url 'orders:list' %}" class="navbar-link">订单管理</a></li>
+                <li><a href="{% url 'coupons:list' %}" class="navbar-link">优惠码管理</a></li>
                 {% endif %}
                 {% if user.is_authenticated %}
                     {% if not user.is_staff %}

@@ -99,7 +99,7 @@ $(function(){
         var floor_pk = $('#order-detail .floors option:selected').val();
         render_next_select($(this), {building: building_pk, zone: zone_pk, floor: floor_pk});
     });
-    $('.overview .edit-btn').click(function(){
+    $('#order-detail .overview .edit-btn').click(function(){
         $(this).parents('form').find('.wrapper').removeClass('hidden');
         $(this).parents('form').find('.overview').addClass('hidden');
 
@@ -190,6 +190,7 @@ $(function(){
 
         var $address = $('#order-detail .address .overview');
         var $contact = $('#order-detail .contact .overview');
+        var $coupon = $('#order-detail .coupon .overview');
 
         var data = {
             building: $address.data('building'),
@@ -198,6 +199,7 @@ $(function(){
             foods: JSON.stringify(foods),
             phone: $contact.data('phone'),
             name: $contact.data('name'),
+            coupon: $coupon.data('code'),
             csrfmiddlewaretoken: get_cookie('csrftoken')
         };
         return data;
@@ -291,6 +293,46 @@ $(function(){
             },
             error: function() {
                 $button.removeAttr('disabled').text('提交');
+            }
+        });
+    });
+
+    // coupon code
+    $('#order-detail .coupon .overview .edit-btn').click(function(){
+        $('#order-detail .coupon .wrapper').removeClass('hidden');
+        $('#order-detail .coupon .overview').addClass('hidden');
+    });
+    $('#order-detail .coupon .wrapper .input-sm').keyup(function(){
+        var codes = [];
+        $('#order-detail .coupon .wrapper .input-sm').each(function(){
+            codes.push($(this).val());
+        });
+
+        // check if current input has three numbers. Auto switch to next one if so.
+        var text = $(this).val();
+        if (text.length > 3) {
+            $(this).val(text.substring(0, 3));
+            $(this).next('.input-sm').val(text.substring(3)).focus();
+            move_cursor_to_end($(this).next('.input-sm').get(0));
+        }
+    });
+    $('#check-coupon-btn').click(function(){
+        var codes = [];
+        $('#order-detail .coupon .wrapper .input-sm').each(function(){
+            codes.push($(this).val());
+        });
+        $.ajax({
+            url: $(this).data('url'),
+            data: {code: codes.join('')},
+            success: function(data) {
+                if (data.active) {
+                    $('#order-detail .coupon .wrapper').addClass('hidden');
+                    $('#order-detail .coupon .overview').removeClass('hidden').data('code', codes.join(''));
+                    $('#order-detail .coupon .overview span').text(codes.join('-') + ', 优惠' + data.discount + '元');
+                    $('#order-detail .coupon .overview a').remove();
+                } else {
+                    alert(data.reason);
+                }
             }
         });
     });

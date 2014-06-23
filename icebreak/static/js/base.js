@@ -25,3 +25,17 @@ function get_cookie(name) {
     }
     return cookieValue;
 }
+
+function move_cursor_to_end(el) {
+    if (!el) {
+        return;
+    }
+    if (typeof el.selectionStart == 'number') {
+        el.selectionStart = el.selectionEnd = el.value.length;
+    } else if (typeof el.createTextRange != 'undefined') {
+        el.focus();
+        var range = el.createTextRange();
+        range.collapse(false);
+        range.select();
+    }
+}

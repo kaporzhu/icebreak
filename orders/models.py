@@ -62,6 +62,13 @@ class Order(models.Model):
         elif self.status == DONE:
             return 'success'
 
+    @property
+    def final_total_price(self):
+        if self.coupon:
+            return max(self.total_price - self.coupon.discount, 0)
+        else:
+            return self.total_price
+
 
 class OrderFood(models.Model):
     """

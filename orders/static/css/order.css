@@ -63,6 +63,10 @@
     font-style: normal;
 }
 
+#order-detail .coupon .wrapper .input-sm {
+    width: 45px;
+}
+
 #order-detail .payment a.selected {
     border-color: #eb6100;
     box-shadow: 0 0 0 1px #eb6100 inset;

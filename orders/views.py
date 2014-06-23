@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -18,6 +19,7 @@ from .constants import DISTRIBUTING, ON_THE_WAY, PACKING_DONE, PAID
 from .forms import OrderForm
 from accounts.models import Address
 from buildings.models import Building
+from coupons.models import Coupon
 from foods.models import Food
 from orders.models import OrderFood, Order
 
@@ -78,6 +80,20 @@ class CreateView(LoginRequiredMixin, JsonRequestResponseMixin, FormView):
 
         order.total_price = total_price
         order.save()
+
+        # coupon
+        if self.request.POST.get('coupon'):
+            try:
+                coupon = Coupon.objects.get(code=self.request.POST['coupon'])
+                if not coupon.is_used:
+                    coupon.is_used = True
+                    coupon.used_by = self.request.user
+                    coupon.used_at = datetime.now()
+                    coupon.save()
+                    order.coupon = coupon
+                    order.save()
+            except Coupon.DoesNotExist:
+                pass
 
         if self.request.is_ajax():
             return self.render_json_response(
