@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 
 from braces.views import(
-    LoginRequiredMixin, AjaxResponseMixin, JsonRequestResponseMixin,
+    AjaxResponseMixin, JsonRequestResponseMixin,
     StaffuserRequiredMixin, SuperuserRequiredMixin
 )
 
@@ -19,8 +19,7 @@ from .models import Coupon
 from shops.models import Shop
 
 
-class ValidateView(LoginRequiredMixin, AjaxResponseMixin,
-                   JsonRequestResponseMixin, View):
+class ValidateView(AjaxResponseMixin, JsonRequestResponseMixin, View):
     """
     Validate coupon code
     """

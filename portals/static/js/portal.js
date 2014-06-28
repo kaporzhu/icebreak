@@ -23,6 +23,7 @@ $(function(){
     });
 
     $('.add-food-btn').click(function(){
+        $('#food-detail-wrapper').animate({right: '-380px'});
         ShoppingCart.addFood($(this).data('id'), $(this).data('name'), $(this).data('price'));
         updateShoppingCart();
         updateFoodCount();
