@@ -41,7 +41,7 @@ def send_sms(phone, content):
     if not settings.SMS_NOTIFICATION_ENABLED:
         print '*'*50
         print 'SMS notification is disabled, print to console'
-        print u'SMS to {}: {}'.format(phone, content)
+        print 'SMS to', phone, content.encode('utf-8')
         print '*'*50
     else:
         params = {
