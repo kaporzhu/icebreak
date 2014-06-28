@@ -1,5 +1,5 @@
 {% load handsome_template_tags %}
-<div class="navbar navbar-default" role="navigation">
+<div class="navbar navbar-default navbar-default" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#top-bar">
@@ -21,6 +21,7 @@
                 <li><a href="{% url 'shops:list' %}" class="navbar-link">店铺管理</a></li>
                 <li><a href="{% url 'buildings:list' %}" class="navbar-link">写字楼管理</a></li>
                 <li><a href="{% url 'orders:list' %}" class="navbar-link">订单管理</a></li>
+                <li><a href="{% url 'foods:list' %}" class="navbar-link">食物管理</a></li>
                 <li><a href="{% url 'coupons:list' %}" class="navbar-link">优惠码管理</a></li>
                 {% endif %}
                 {% if user.is_staff and not user.is_superuser %}

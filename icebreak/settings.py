@@ -53,7 +53,6 @@ INSTALLED_APPS = (
     'compressor',
     'easy_thumbnails',
     'south',
-    'tastypie',
 ) + LOCAL_APPS
 
 SOUTH_MIGRATION_MODULES = {

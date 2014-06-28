@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse_lazy
+from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from braces.views import(
-    SuperuserRequiredMixin, SetHeadlineMixin
+    SuperuserRequiredMixin, SetHeadlineMixin, AjaxResponseMixin,
+    JSONResponseMixin
 )
 
 from .mixins import FoodMixin
 from .models import Food, CookingStep
+from easy_thumbnails.files import get_thumbnailer
 
 
 class CreateFoodView(SuperuserRequiredMixin, SetHeadlineMixin, CreateView):
@@ -72,3 +75,22 @@ class UpdateCookingStepView(SuperuserRequiredMixin, SetHeadlineMixin, FoodMixin,
 
     def get_success_url(self):
         return reverse_lazy('foods:detail', kwargs={'pk': self.food.id})
+
+
+class LoadStepsView(AjaxResponseMixin, JSONResponseMixin, View):
+    """
+    Load steps for the food
+    """
+    def get_ajax(self, request, *args, **kwargs):
+        """
+        Load now
+        """
+        food = Food.objects.get(pk=request.GET['id'])
+        steps_json = []
+        options = {'size': (100, 100), 'crop': True}
+        for step in food.cookingstep_set.all().order_by('index'):
+            steps_json.append({
+                'description': step.description,
+                'image': get_thumbnailer(step.image).get_thumbnail(options).url
+            })
+        return self.render_json_response(steps_json)

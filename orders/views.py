@@ -12,17 +12,19 @@ from django.views.generic.list import ListView
 
 from braces.views import(
     JsonRequestResponseMixin, LoginRequiredMixin, StaffuserRequiredMixin,
-    AjaxResponseMixin, JSONResponseMixin
+    AjaxResponseMixin, JSONResponseMixin, SuperuserRequiredMixin
 )
 
-from .constants import ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES
+from .constants import(
+    ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES, DISTRIBUTING, DONE
+)
 from .forms import OrderForm
 from .models import OrderFood, Order
 from accounts.models import Address
 from buildings.models import Building
 from coupons.models import Coupon
 from foods.models import Food
-from braces.views._access import SuperuserRequiredMixin
+from icebreak.mixins import AppRequestMixin
 from shops.models import Shop
 
 
@@ -290,3 +292,27 @@ class UpdateStatusView(StaffuserRequiredMixin, AjaxResponseMixin,
             'status_label': order.get_status_display(),
             'status_color': order.status_color
         })
+
+
+class AppGetOrdersView(AppRequestMixin, JSONResponseMixin, View):
+    """
+    Get orders by building
+    """
+    def get(self, request, *args, **kwargs):
+        building = Building.objects.get(pk=request.REQUEST['building_id'])
+        now = datetime.now()
+        start = datetime(now.year, now.month, now.day, 0, 0)
+        end = datetime(now.year, now.month, now.day, 23, 59)
+        statuses = [PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE]
+        orders = building.order_set.filter(status__in=statuses).filter(created_at__range=(start, end))  # noqa
+        orders_json = []
+        for order in orders:
+            orders_json.append({
+                'delivery_time': order.delivery_time,
+                'status': order.status,
+                'status_label': order.get_status_display(),
+                'phone': order.phone,
+                'name': order.name,
+                'address': order.address
+            })
+        return self.render_json_response(orders_json)

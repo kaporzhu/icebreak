@@ -25,8 +25,25 @@ $(function(){
     $('.add-food-btn').click(function(){
         ShoppingCart.addFood($(this).data('id'), $(this).data('name'), $(this).data('price'));
         updateShoppingCart();
+        updateFoodCount();
         toggleFoodsList(true);
     });
+
+    function updateFoodCount() {
+        $('#foods-list .foods .food').each(function(){
+            $(this).find('.count').css('visibility', 'hidden').text('');
+        });
+        for (var i=0; i<ShoppingCart.data.length; i++) {
+            var food = ShoppingCart.data[i];
+            var $count = $('#food-' + food.id).find('.foot .count');
+            if (food.count > 0) {
+                $count.css('visibility', 'visible').text(food.count);
+            } else {
+                $count.css('visibility', 'hidden').text('');
+            }
+        }
+    }
+    updateFoodCount();
 
     function updateShoppingCart() {
         $('#shopping-cart .foods-list').html(
@@ -54,6 +71,7 @@ $(function(){
     $('#empty-shoppingcart-btn').click(function(){
         ShoppingCart.empty();
         updateShoppingCart();
+        updateFoodCount();
         toggleFoodsList(false);
     });
 
@@ -62,5 +80,55 @@ $(function(){
         var food_id = $(this).data('id');
         ShoppingCart[action](food_id);
         updateShoppingCart();
+        updateFoodCount();
+        toggleFoodsList(true);
+    });
+
+    // show food detail
+    $('#foods-list .food .body').click(function(){
+        var $food = $(this).parents('.food');
+        if ($('#food-detail-wrapper').css('right') == '0px') {
+            if ($('#food-detail-wrapper h3').data('id') == $food.find('button').data('id')) {
+                $('#food-detail-wrapper').animate({right: '-380px'});
+                return;
+            }
+        }
+        $('#food-detail-wrapper .food-detail').html(
+            new Ractive({
+                template:'#food-detail-template',
+                data: {
+                    name: $food.find('button').data('name'),
+                    image: $food.find('img').attr('src'),
+                    description: $food.find('button').data('description'),
+                    ingredients: $food.find('button').data('ingredients'),
+                    id: $food.find('button').data('id'),
+                }
+            }).toHTML()
+        );
+        $('#food-detail-wrapper').animate({right: '0px'});
+    });
+    $('#food-detail-wrapper .hide-btn').click(function(){
+        $('#food-detail-wrapper').animate({right: '-380px'});
+    });
+
+    // load food steps
+    $(document).on('shown.bs.tab', '#tabs a[href="#steps"]', function(){
+        var $this = $(this);
+        var $panel = $($this.attr('href'));
+        if (!$this.data('loaded')) {
+            $.ajax({
+                url: $('#food-detail-wrapper .food-detail').data('load-steps-url'),
+                data: {id: $this.data('id')},
+                success: function(steps) {
+                    $this.data('loaded', true);
+                    $panel.html(
+                        new Ractive({
+                            template:'#food-steps-template',
+                            data: {steps: steps}
+                        }).toHTML()
+                    );
+                }
+            });
+        }
     });
 });

@@ -11,6 +11,7 @@ from braces.views import(
 
 from .mixins import BuildingMixin, RoomSuccessURLMixin
 from .models import Building, Zone, Room
+from icebreak.mixins import AppRequestMixin
 
 
 class CreateBuildingView(SuperuserRequiredMixin, SetHeadlineMixin, CreateView):
@@ -210,3 +211,18 @@ class LoadRoomsView(AjaxResponseMixin, JSONResponseMixin, View):
             building = Building.objects.get(pk=request.REQUEST['building_pk'])
             rooms = building.room_set.filter(floor=request.REQUEST['floor'])
         return self.render_json_object_response(rooms, fields=('number'))
+
+
+class AppGetBuildingsView(AppRequestMixin, JSONResponseMixin, View):
+    """
+    Get all buildings for the shop
+    """
+    def get(self, request, *args, **kwargs):
+        buildings = self.staff.shop.building_set.all()
+        buildings_json = []
+        for building in buildings:
+            buildings_json.append({
+                'id': building.id,
+                'name': building.name
+            })
+        return self.render_json_response(buildings_json)

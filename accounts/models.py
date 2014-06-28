@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
 
 from buildings.models import Building, Zone, Room
 from shops.models import Shop
+from django.utils.crypto import get_random_string
 
 
 class Staff(models.Model):
@@ -14,6 +16,7 @@ class Staff(models.Model):
     is_deliveryman = models.BooleanField()
     is_shop_manager = models.BooleanField()
     shop = models.ForeignKey(Shop)
+    api_key = models.CharField(max_length=16, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -35,3 +38,15 @@ class Address(models.Model):
             address += self.zone.name
         address += self.room.number
         return address
+
+
+def create_api_key(sender, instance, **kwargs):
+    """
+    A signal for hooking up automatic ``ApiKey`` creation.
+    """
+    if kwargs.get('created') is True:
+        instance.api_key = get_random_string(16)
+        instance.save(using=False)
+
+
+post_save.connect(create_api_key, sender=Staff)

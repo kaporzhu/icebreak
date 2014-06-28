@@ -4,6 +4,7 @@ var ShoppingCart = window.ShoppingCart = {
     total_price: 0,
 
     STORAGE_KEY: 'shopping-cart',
+    STORAGE_KEY_DATE: 'shopping-cart-date',
 
     calculate: function() {
         var total_count = 0;
@@ -19,8 +20,12 @@ var ShoppingCart = window.ShoppingCart = {
     load: function() {
         // load from localStorage
         try{
-            ShoppingCart.data = JSON.parse(localStorage[ShoppingCart.STORAGE_KEY]);
-            ShoppingCart.calculate();
+            if (localStorage[ShoppingCart.STORAGE_KEY_DATE] != new Date().toDateString()) {
+                ShoppingCart.empty();
+            } else {
+                ShoppingCart.data = JSON.parse(localStorage[ShoppingCart.STORAGE_KEY]);
+                ShoppingCart.calculate();
+            }
         } catch(err){
             ShoppingCart.data = [];
         }
@@ -29,6 +34,7 @@ var ShoppingCart = window.ShoppingCart = {
     save: function() {
         // save data to localStorage
         localStorage[ShoppingCart.STORAGE_KEY] = JSON.stringify(ShoppingCart.data);
+        localStorage[ShoppingCart.STORAGE_KEY_DATE] = new Date().toDateString();
     },
 
     addFood: function(food_id, food_name, food_price) {

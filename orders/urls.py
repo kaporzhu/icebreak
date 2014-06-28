@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 
 from .views import(
     CheckoutView, CreateView, MineView, OrderDetailView, ShopOrderListView,
-    UpdateStatusView, OrderListView
+    UpdateStatusView, OrderListView, AppGetOrdersView
 )
 
 
@@ -16,4 +16,5 @@ urlpatterns = patterns(
     url(r'^checkout/$', CheckoutView.as_view(), name='checkout'),
     url(r'^(?P<code>\d+)/$', OrderDetailView.as_view(), name='detail'),
     url(r'^update_status/$', UpdateStatusView.as_view(), name='update_status'),
+    url(r'^app_get_orders/$', AppGetOrdersView.as_view()),
 )

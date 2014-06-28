@@ -3,7 +3,11 @@ html {
 }
 body {
     height: 100%;
-    font: 13px/1.6em "Helvetica Neue",Arial,"Microsoft Yahei",sans-serif;
+    font: 13px/1.6em "Microsoft Yahei","Helvetica Neue",Arial,sans-serif;
+    letter-spacing: -0.01em;
+    word-spacing: 0.2em;
+    /*background-color: #f9f9f9;*/
+    background: url("../image/bg.jpg") repeat;
 }
 
 .content {
@@ -38,4 +42,31 @@ a:hover {
     zoom: 1;
     -ms-filter: progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color=#888888);
     filter: progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=135, Color=#888888);
+}
+
+.full-mask {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 30;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background: rgb(0,0,0);
+    background: rgba(0,0,0,0.3);
+    opacity: .3;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(opacity=30)";
+}
+
+.navbar {
+    min-height: 0;
+    border-radius: 0;
+}
+
+.navbar .navbar-nav>li>a, .navbar-text {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin: 0;
 }

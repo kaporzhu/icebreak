@@ -5,7 +5,7 @@ from .views import(
     CreateBuildingView, UpdateBuildingView, BuildingListView, CreateZoneView,
     UpdateZoneView, CreateRoomView, UpdateRoomView, DeleteRoomView,
     RoomListView, RoomsChartView, LoadZonesView, LoadRoomsView,
-    LoadBuildingView
+    LoadBuildingView, AppGetBuildingsView
 )
 
 
@@ -15,6 +15,7 @@ urlpatterns = patterns(
     url(r'^list/$', BuildingListView.as_view(), name='list'),
     url(r'^load/$', LoadBuildingView.as_view(), name='load'),
     url(r'^update/(?P<pk>\d+)/$', UpdateBuildingView.as_view(), name='update'),
+    url(r'^app_get_buildings/$', AppGetBuildingsView.as_view()),
 
     url(r'^(?P<building_pk>\d+)/zones/create/$',
         CreateZoneView.as_view(), name='create_zone'),

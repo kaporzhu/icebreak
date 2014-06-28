@@ -15,8 +15,9 @@
 <div class="container body">
     <div class="row">
         <div class="col-md-4">
-            <h4>手机号快速登录</h4>
             <form id="login-form" method="post" class="form-horizontal well well-shadow" role="form">
+                <h4>手机号快速登录</h4>
+                <hr />
                 {% csrf_token %}
                 <div class="form-group {% if form.phone.errors %}has-error{% endif %}">
                     <span class="col-md-3 control-label">{{ form.phone.label }}: </span>

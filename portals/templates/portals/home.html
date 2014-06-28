@@ -13,23 +13,89 @@
 {% block title %}主页{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container" id="foods-list">
     <div class="row">
-        <div class="col-md-12">
-            <table class="table">
-                <tbody>
-                    {% for food in foods %}
-                    <tr>
-                        <td>{{ food.name }}</td>
-                        <td>{{ food.price }}元</td>
-                        <td><img src="{{ food.image|thumbnail_url:'small' }}" /></td>
-                        <td><button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" class="btn btn-yellow btn-xs add-food-btn">￥{{ food.price }}</button></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="col-md-9 well-shadow foods">
+            <p class="toolbar">
+                <span class="title">经典套餐</span>
+            </p>
+            <div class="row foods-line">
+                {% for food in foods %}
+                    {% if forloop.counter|divisibleby:"4" %}
+                    </div>
+                    <div class="row foods-line">
+                    {% endif %}
+                    <div class="col-md-4 food" id="food-{{ food.id }}" data-price="{{ food.price }}">
+                        <div class="body">
+                            <img width="250" height="250" src="{{ food.image|thumbnail_url:'medium' }}" />
+                        </div>
+                        <div class="foot">
+                            <span class="name">{{ food.name }}</span>
+                            <span class="count">4</span>
+                            <button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" data-description="{{ food.description }}" data-ingredients="{{ food.ingredients }}" class="btn btn-xs add-food-btn pull-right">￥{{ food.price }}</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="board">
+                <h4>公告</h4>
+                <div class="body">
+                    <p class="text-primary">免费配送<br />实时跟踪配送信息</p>
+                    <p>
+                       <span>两份</span>&nbsp;&nbsp;&nbsp;<span>9.9折</span><br />
+                       <span>三份</span>&nbsp;&nbsp;&nbsp;<span>9.8折</span><br />
+                       <span>四份</span>&nbsp;&nbsp;&nbsp;<span>9.7折</span><br />
+                       <span>… …</span>&nbsp;&nbsp;&nbsp;<span>… …</span><br />
+                       <span class="text-danger">9.5折封顶</span>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
+</div>
+
+<div id="full-mask" class="full-mask"></div>
+
+<div id="food-detail-wrapper">
+    <span class="hide-btn"><span class="glyphicon glyphicon-remove"></span></span>
+    <div class="food-detail" data-load-steps-url="{% url 'foods:load_steps' %}">
+    </div>
+    {% verbatim %}
+    <script id='food-detail-template' type='text/ractive'>
+        <h3 class="text-center" data-id="{{ id }}">{{ name }}</h3>
+        <div class="description">
+            <img src="{{ image }}">
+            <p>{{ description }}</p>
+        </div>
+        <br />
+        <div class="detail">
+            <ul id="tabs" class="nav nav-tabs" role="tablist">
+              <li class="active"><a href="#ingredients" role="tab" data-toggle="tab">用料</a></li>
+              <li class=""><a href="#steps" role="tab" data-id="{{ id }}" data-toggle="tab">做法</a></li>
+            </ul>
+            <div id="tab_content" class="tab-content">
+              <div class="tab-pane fade active in" id="ingredients">
+                <textarea class="form-control" readonly="readonly">{{ ingredients }}</textarea>
+              </div>
+              <div class="tab-pane fade" id="steps">
+                <img src="/static/image/ajax-loader.gif" />
+              </div>
+            </div>
+        </div>
+    </script>
+    <script id='food-steps-template' type='text/ractive'>
+        <ol>
+            {{#steps}}
+            <li class="step">
+                <p class="text">{{ description }}</p>
+                <img src="{{ image }}" />
+            </li>
+            {{/steps}}
+        </ol>
+    </script>
+    {% endverbatim %}
 </div>
 
 <div id="shopping-cart">

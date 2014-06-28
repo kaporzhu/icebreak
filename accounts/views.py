@@ -12,7 +12,8 @@ from django.views.generic.edit import FormView, CreateView, UpdateView
 from django.utils.crypto import get_random_string
 
 from braces.views import(
-    AjaxResponseMixin, JsonRequestResponseMixin, SuperuserRequiredMixin
+    AjaxResponseMixin, JsonRequestResponseMixin, SuperuserRequiredMixin,
+    JSONResponseMixin
 )
 
 from .constants import VALIDATION_CODE_PREFIX, VALIDATION_CODE_COUNT_PREFIX
@@ -117,6 +118,27 @@ class PhoneLoginView(FormView):
         user.backend = 'django.contrib.auth.backends.ModelBackend'
         auth.login(self.request, user)
         return super(PhoneLoginView, self).form_valid(form)
+
+
+class AppLoginView(JSONResponseMixin, View):
+    """
+    Login from mobile app. Auth with username and password.
+    Return api key when success.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Auth staff user.
+        """
+        user = auth.authenticate(username=request.REQUEST['username'],
+                                 password=request.REQUEST['password'])
+        if user:
+            return self.render_json_response({
+                'success': True,
+                'api_key': user.staff.api_key,
+                'staff_id': user.staff.id
+            })
+        else:
+            return self.render_json_response({'success': False})
 
 
 class LogoutView(RedirectView):

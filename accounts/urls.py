@@ -3,13 +3,14 @@ from django.conf.urls import patterns, url
 
 from .views import(
     ValidateUserView, SendValidationCodeView, ValidateCodeView, PhoneLoginView,
-    LogoutView, AddStaffView, UpdateStaffView
+    LogoutView, AddStaffView, UpdateStaffView, AppLoginView
 )
 
 
 urlpatterns = patterns(
     '',
     url(r'^login/$', PhoneLoginView.as_view(), name='login'),
+    url(r'^app_login/$', AppLoginView.as_view()),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
     url(r'^validate_user/$',
         ValidateUserView.as_view(), name='validate_user'),
