@@ -86,7 +86,7 @@ $(function(){
     });
 
     // show food detail
-    $('#foods-list .food .body').click(function(){
+    $('#foods-list .food .body, #foods-list .food .foot .name').click(function(){
         var $food = $(this).parents('.food');
         if ($('#food-detail-wrapper').css('right') == '0px') {
             if ($('#food-detail-wrapper h3').data('id') == $food.find('button').data('id')) {
@@ -132,4 +132,42 @@ $(function(){
             });
         }
     });
+
+    // load food comments
+    function load_comments(type){
+        var $comments_tab = $('#tabs a[href="#comments"]');
+        var $panel = $($comments_tab.attr('href'));
+        var page = $comments_tab.data('page');
+        $('#load_more_comments').hide();
+        if ((type == 'initial' && !$comments_tab.data('loaded')) || (type == 'more')) {
+            $.ajax({
+                url: $('#food-detail-wrapper .food-detail').data('load-comments-url'),
+                data: {id: $comments_tab.data('id'), page: page},
+                success: function(comments) {
+                    $comments_tab.data('loaded', true);
+                    $comments_tab.data('page', page+1);
+                    var $comments_html = $(new Ractive({
+                        template:'#food-comments-template',
+                        data: {comments: comments}
+                    }).toHTML());
+                    if (type == 'initial') {
+                        $panel.find('.body').html($comments_html);
+                    } else {
+                        $panel.find('.body').append($comments_html);
+                    }
+                    if (comments.length > 0) {
+                        $('#load_more_comments').show();
+                    }
+                    $('.rating-stars').each(function(){
+                        var rating = $(this).data('rating');
+                        for (var i=0; i<rating; i++) {
+                            $($(this).children('i').get(i)).addClass('on');
+                        }
+                    });
+                }
+            });
+        }
+    }
+    $(document).on('shown.bs.tab', '#tabs a[href="#comments"]', function(){load_comments('initial');});
+    $(document).on('click', '#load_more_comments', function(){load_comments('more');});
 });

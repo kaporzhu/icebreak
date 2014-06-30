@@ -12,3 +12,11 @@ class OrderForm(forms.ModelForm):
         model = Order
         exclude = ('user', 'status', 'total_price', 'phone', 'coupon', 'shop',
                    'delivery_man',)
+
+
+class CommentForm(forms.Form):
+    """
+    Form for food comment
+    """
+    content = forms.CharField(required=False)
+    rating = forms.IntegerField()

@@ -54,6 +54,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    cursor: pointer;
+}
+
+#foods-list .food .foot .name:hover {
+    color: #428bca;
 }
 
 #foods-list .food .foot .count {
@@ -122,6 +127,10 @@
     -webkit-border-radius: 3px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     padding: 10px 0;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 355px;
 }
 
 #food-detail-wrapper .hide-btn {
@@ -140,8 +149,8 @@
 }
 
 #food-detail-wrapper .food-detail .description img {
-    width: 100%;
-    height: 210px;
+    width: 338px;
+    height: 338px;
 }
 
 
@@ -165,7 +174,7 @@
 #food-detail-wrapper #ingredients textarea {
     background-color: white;
     overflow: hidden;
-    height: 300px;
+    height: 360px;
     border: none;
     box-shadow: none;
 }
@@ -196,12 +205,39 @@
     font-weight: normal;
 }
 
-#food-detail-wrapper #ingredients textarea:hover {
-    cursor: default;
+#food-detail-wrapper #comments {
+    margin: 5px 30px 5px 10px;
 }
 
-#food-detail-wrapper .detail {
-    height: 100%;
+#food-detail-wrapper #comments .comment {
+    border-bottom: 1px solid #e2e2e2;
+}
+
+#food-detail-wrapper #comments .comment .info {
+    color: #999;
+}
+
+#food-detail-wrapper #comments .comment .info .star {
+    display: inline-block;
+    margin-right: 1px;
+    overflow: hidden;
+    color: #a7a7a7;
+    font-family: 'eleme';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+}
+
+#food-detail-wrapper #comments .comment .info .star.on {
+    color: #ff9307;
+}
+
+#food-detail-wrapper #ingredients textarea:hover {
+    cursor: default;
 }
 
 #food-detail-wrapper #tab_content {

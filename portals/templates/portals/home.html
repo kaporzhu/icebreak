@@ -47,7 +47,6 @@
                        <span>两份</span>&nbsp;&nbsp;&nbsp;<span>9.9折</span><br />
                        <span>三份</span>&nbsp;&nbsp;&nbsp;<span>9.8折</span><br />
                        <span>四份</span>&nbsp;&nbsp;&nbsp;<span>9.7折</span><br />
-                       <span>… …</span>&nbsp;&nbsp;&nbsp;<span>… …</span><br />
                        <span class="text-danger">9.5折封顶</span>
                     </p>
                 </div>
@@ -60,7 +59,7 @@
 
 <div id="food-detail-wrapper">
     <span class="hide-btn"><span class="glyphicon glyphicon-remove"></span></span>
-    <div class="food-detail" data-load-steps-url="{% url 'foods:load_steps' %}">
+    <div class="food-detail" data-load-steps-url="{% url 'foods:load_steps' %}" data-load-comments-url="{% url 'foods:load_comments' %}">
     </div>
     {% verbatim %}
     <script id='food-detail-template' type='text/ractive'>
@@ -72,15 +71,30 @@
         <br />
         <div class="detail">
             <ul id="tabs" class="nav nav-tabs" role="tablist">
-              <li class="active"><a href="#ingredients" role="tab" data-toggle="tab">用料</a></li>
-              <li class=""><a href="#steps" role="tab" data-id="{{ id }}" data-toggle="tab">做法</a></li>
+              <li class="active"><a href="#ingredients" role="tab" data-toggle="tab">原材料</a></li>
+              <li class=""><a href="#steps" role="tab" data-id="{{ id }}" data-toggle="tab">厨师做法</a></li>
+              <li class=""><a href="#comments" data-page="1" role="tab" data-id="{{ id }}" data-toggle="tab">用户评价</a></li>
             </ul>
             <div id="tab_content" class="tab-content">
               <div class="tab-pane fade active in" id="ingredients">
                 <textarea class="form-control" readonly="readonly">{{ ingredients }}</textarea>
               </div>
               <div class="tab-pane fade" id="steps">
-                <img src="/static/image/ajax-loader.gif" />
+                <div class="text-center">
+                    <br /><br />
+                    <img src="/static/image/ajax-loader.gif" />
+                </div>
+              </div>
+              <div class="tab-pane fade" id="comments">
+                <div class="body">
+                    <div class="text-center">
+                        <br /><br />
+                        <img src="/static/image/ajax-loader.gif" />
+                    </div>
+                </div>
+                <div class="foot">
+                    <a id="load_more_comments">加载更多</a>
+                </div>
               </div>
             </div>
         </div>
@@ -94,6 +108,25 @@
             </li>
             {{/steps}}
         </ol>
+    </script>
+    <script id='food-comments-template' type='text/ractive'>
+        <ul class="list-unstyled">
+            {{#comments}}
+            <li class="comment">
+                <p class="info">
+                    <small>{{ name }}({{ building }}) {{ created_at }}</small>
+                    <small class="pull-right rating-stars" data-rating="{{ rating }}">
+                        <i class="star">★</i>
+                        <i class="star">★</i>
+                        <i class="star">★</i>
+                        <i class="star">★</i>
+                        <i class="star">★</i>
+                    </small>
+                </p>
+                <p>{{ content }}</p>
+            </li>
+            {{/comments}}
+        </ul>
     </script>
     {% endverbatim %}
 </div>

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 
+from accounts.models import Address
 from shops.models import Shop
 
 
@@ -17,8 +18,6 @@ class Food(models.Model):
     ingredients = models.TextField(blank=True)
     image = models.ImageField(upload_to='foods')
     tips = models.TextField(blank=True)
-    # sales = models.IntegerField(default=0)
-    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -38,3 +37,14 @@ class CookingStep(models.Model):
     index = models.SmallIntegerField()
     description = models.TextField()
     image = models.ImageField(upload_to='cooking_steps', blank=True, null=True)
+
+
+class FoodComment(models.Model):
+    """
+    Comment for the food
+    """
+    food = models.ForeignKey(Food)
+    address = models.ForeignKey(Address, blank=True, null=True)
+    rating = models.SmallIntegerField(blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)

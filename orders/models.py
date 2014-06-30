@@ -8,7 +8,7 @@ from django.db.models.signals import post_save
 from django.utils.crypto import get_random_string
 
 from .constants import(
-    UNPAID, PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE
+    UNPAID, PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE, PRINTED
 )
 from accounts.models import Staff
 from buildings.models import Building, Zone, Room
@@ -24,6 +24,7 @@ class Order(models.Model):
     STATUS_CHOICES = (
         (UNPAID, u'等待付款'),
         (PAID, u'已付款'),
+        (PRINTED, u'订单打印完毕'),
         (PACKING_DONE, u'打包完成'),
         (ON_THE_WAY, u'配送途中'),
         (DISTRIBUTING, u'正在写字楼中配送'),
@@ -56,6 +57,13 @@ class Order(models.Model):
             return u'{} {}'.format(self.building, self.room)
 
     @property
+    def short_address(self):
+        if self.zone:
+            return u'{} {}'.format(self.zone, self.room)
+        else:
+            return self.room
+
+    @property
     def status_color(self):
         if self.status == PAID:
             return 'danger'
@@ -80,6 +88,7 @@ class OrderFood(models.Model):
     """
     Food for order
     """
+    code = models.CharField(max_length=32, unique=True, blank=True, null=True)
     food = models.ForeignKey(Food)
     order = models.ForeignKey(Order)
     user = models.ForeignKey(User)
@@ -105,3 +114,15 @@ def generate_order_code(sender, instance, created, *args, **kwargs):
 
 
 post_save.connect(generate_order_code, Order)
+
+
+def generate_order_food_code(sender, instance, created, *args, **kwargs):
+    """
+    Generate order food code
+    """
+    if created:
+        instance.code = get_random_string()
+        instance.save(using=False)
+
+
+post_save.connect(generate_order_food_code, OrderFood)

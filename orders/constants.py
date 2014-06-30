@@ -5,6 +5,7 @@ from datetime import time
 # order status
 UNPAID = 'unpaid'
 PAID = 'paid'
+PRINTED = 'printed'
 PACKING_DONE = 'packing done'
 ON_THE_WAY = 'on the way'
 DISTRIBUTING = 'distributing'

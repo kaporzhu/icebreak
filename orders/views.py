@@ -18,12 +18,12 @@ from braces.views import(
 from .constants import(
     ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES, DISTRIBUTING, DONE
 )
-from .forms import OrderForm
+from .forms import OrderForm, CommentForm
 from .models import OrderFood, Order
 from accounts.models import Address
 from buildings.models import Building
 from coupons.models import Coupon
-from foods.models import Food
+from foods.models import Food, FoodComment
 from icebreak.mixins import AppRequestMixin
 from shops.models import Shop
 
@@ -271,6 +271,24 @@ class ShopOrderListView(StaffuserRequiredMixin, ListView):
         return data
 
 
+class PrintOrdersView(StaffuserRequiredMixin, TemplateView):
+    """
+    Print selected orders and update the status to PRINTED
+    """
+    template_name = 'orders/print_order.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Get orders from ids
+        """
+        data = super(PrintOrdersView, self).get_context_data(**kwargs)
+        ids = self.request.GET['ids'].split(',')
+        orders = Order.objects.in_bulk(ids).values()
+        orders = [order for order in orders if order.status == PAID]
+        data.update({'orders': orders})
+        return data
+
+
 class UpdateStatusView(StaffuserRequiredMixin, AjaxResponseMixin,
                        JSONResponseMixin, View):
     """
@@ -308,11 +326,56 @@ class AppGetOrdersView(AppRequestMixin, JSONResponseMixin, View):
         orders_json = []
         for order in orders:
             orders_json.append({
+                'id': order.id,
                 'delivery_time': order.delivery_time,
                 'status': order.status,
                 'status_label': order.get_status_display(),
                 'phone': order.phone,
                 'name': order.name,
-                'address': order.address
+                'address': order.short_address
             })
         return self.render_json_response(orders_json)
+
+
+class AppFinishOrderView(AppRequestMixin, JSONResponseMixin, View):
+    """
+    Update order status to DONE
+    """
+    def get(self, request, *args, **kwargs):
+        order = Order.objects.get(pk=request.GET['order_id'])
+        order.status = DONE
+        order.save()
+        return self.render_json_response({'success': True})
+
+
+class CommentView(FormView):
+    """
+    Comment food.
+    QRCode will be on the meal box. The user can scan will weixin and
+    do a quick feedback.
+    """
+    template_name = 'orders/comment.html'
+    form_class = CommentForm
+
+    def get_context_data(self, **kwargs):
+        """
+        Add extra data to the context
+        """
+        data = super(CommentView, self).get_context_data(**kwargs)
+        order_food = OrderFood.objects.get(code=self.kwargs['code'])
+        data.update({'order_food': order_food})
+        return data
+
+    def form_valid(self, form):
+        """
+        Save the comment
+        """
+        data = form.cleaned_data
+        order_food = OrderFood.objects.get(code=self.kwargs['code'])
+        FoodComment(food=order_food.food,
+                    address=order_food.user.address,
+                    rating=data['rating'],
+                    content=data.get('content')).save()
+        context = self.get_context_data(form=form)
+        context.update({'show_thanks': True})
+        return self.render_to_response(context)

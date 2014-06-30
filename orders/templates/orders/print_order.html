@@ -1,0 +1,37 @@
+<html>
+    <body onload2="window.print()">
+        <style>
+            * {
+                font-size: 10px;
+            }
+            .food-price {
+                text-align: center;
+            }
+            .food-count {
+                text-align: center;
+            }
+        </style>
+        {% for order in orders %}
+        <p><b>套餐</b></p>
+        <table>
+            <tr>
+                <th>名字</th>
+                <th>单价</th>
+                <th>数量</th>
+            </tr>
+            {% for order_food in order.orderfood_set.all %}
+            <tr>
+                <td class="food-name">{{ order_food.food.name|truncatechars:10 }}</td>
+                <td class="food-price">{{ order_food.price|floatformat }}</td>
+                <td class="food-count">{{ order_food.count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <hr/>
+        <p>{{ order.address }}</p>
+        <p>{{ order.phone }}, {{ order.name }}</p>
+        <hr />
+        <br />
+        {% endfor %}
+    </body>
+</html>

@@ -74,30 +74,16 @@
                 </form>
                 <br />
                 <div class="btn-group">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">选取<span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="javascript:void(0)" data-type="all" class="select-rows-btn">全选</a></li>
-                            <li><a href="javascript:void(0)" data-type="none" class="select-rows-btn">全不选</a></li>
-                            <li><a href="javascript:void(0)" data-type="invert" class="select-rows-btn">反选</a></li>
-                        </ul>
-                    </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">标记为<span class="caret"></span></button>
-                        <ul class="dropdown-menu" data-update-status-url="{% url 'orders:update_status' %}">
-                            {% for choice in STATUS_CHOICES %}
-                                {% if choice.0 in staff_statuses %}
-                                <li><a href="javascript:void(0)" data-status="{{ choice.0 }}" class="update-status-btn">{{ choice.1 }}</a></li>
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </div>
+                    <button type="button" class="btn btn-default select-rows-btn" data-type="all">全选</button>
+                    <button type="button" class="btn btn-default select-rows-btn" data-type="none">全不选</button>
                 </div>
+                <button type="button" data-update-status-url="{% url 'orders:update_status' %}" data-status="packing done" class="btn btn-default update-status-btn" data-type="all">打包完成</button>
+                <button id="print-orders-btn" data-url="{% url 'orders:print_orders' %}" class="btn btn-default">打印选择的订单</button>
                 <table class="table table-bordered table-hover" id="all-orders">
                     <tr>
                         <th></th>
                         <th>套餐</th>
-                        <th>配送地址</th>
+                        <th>配送信息</th>
                         <th>用餐时间</th>
                         <th>下单时间</th>
                         <th>状态</th>
@@ -115,7 +101,7 @@
                                 {% endfor %}
                             </ul>
                         </td>
-                        <td>{{ order.address }}</td>
+                        <td>{{ order.address }}<br />{{ order.phone }}, {{ order.name }}</td>
                         <td>{{ order.delivery_time }}</td>
                         <td>{{ order.created_at|date:"m-d H:i" }}</td>
                         <td class="status {{ order.status_color }}">{{ order.get_status_display }}</td>

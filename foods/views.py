@@ -94,3 +94,28 @@ class LoadStepsView(AjaxResponseMixin, JSONResponseMixin, View):
                 'image': get_thumbnailer(step.image).get_thumbnail(options).url
             })
         return self.render_json_response(steps_json)
+
+
+class LoadCommentsView(AjaxResponseMixin, JSONResponseMixin, View):
+    """
+    Load comments for the food
+    """
+
+    page_size = 1
+
+    def get_ajax(self, request, *args, **kwargs):
+        """
+        Load now
+        """
+        food = Food.objects.get(pk=request.GET['id'])
+        page = int(request.GET.get('page', '1'))
+        comments_json = []
+        for comment in food.foodcomment_set.all().order_by('-id')[(page-1)*self.page_size: page*self.page_size]:
+            comments_json.append({
+                'content': comment.content,
+                'building': comment.address.building.name,
+                'name': comment.address.name,
+                'rating': comment.rating,
+                'created_at': comment.created_at.strftime('%m-%d %H:%M')
+            })
+        return self.render_json_response(comments_json)

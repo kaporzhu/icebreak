@@ -34,7 +34,7 @@ $(document).ready(function(){
         }
 
         $.ajax({
-            url: $(this).parents('ul').data('update-status-url'),
+            url: $(this).data('update-status-url'),
             dataType: 'json',
             data: {
                 ids: selected_ids.join(','),
@@ -53,4 +53,13 @@ $(document).ready(function(){
 
     // datepicker
     $('.datepicker').datepicker({dateFormat: 'yy-mm-dd'}, $.datepicker.regional['zh-TW']);
+
+    // print orders
+    $('#print-orders-btn').click(function(){
+        var ids = [];
+        $('#all-orders .select-row-btn:checked').each(function(){
+            ids.push($(this).data('id'));
+        });
+        window.open( $(this).data('url') + '?ids=' + ids.join(','));
+    });
 });
