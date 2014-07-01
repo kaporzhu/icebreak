@@ -151,19 +151,11 @@ class RoomsChartView(SuperuserRequiredMixin, BuildingMixin, TemplateView):
         """
         data = super(RoomsChartView, self).get_context_data(**kwargs)
 
+        whole = self.building.whole_rooms_by_floor(self.building.whole())
         if hasattr(self, 'zone'):
-            floors = self.zone.floors
-            rooms = self.zone.room_set.all()
+            data.update({'floor_rooms': whole['zones'][self.zone.id]['rooms_by_floor']})  # noqa
         elif hasattr(self, 'building'):
-            floors = self.building.floors
-            rooms = self.building.room_set.all()
-
-        # group rooms by floor
-        floor_rooms = {i+1: [] for i in range(floors)}
-        for room in rooms:
-            floor_rooms[room.floor].append(room)
-        floor_rooms = [[floor, floor_rooms[floor]] for floor in sorted(floor_rooms.keys(), reverse=True)]
-        data.update({'floor_rooms': floor_rooms})
+            data.update({'floor_rooms': whole['rooms_by_floor']})
 
         return data
 

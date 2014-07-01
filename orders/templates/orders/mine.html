@@ -23,6 +23,16 @@
                             <a href="{% url 'orders:detail' code=order.code %}">{{ order.code }}</a>
                             <span class="sep">|</span>
                             <span>用餐时间：{{ order.delivery_time }}</span>
+                            {% if order.status == DISTRIBUTING %}
+                                {% with latest=order.building.whole_with_orders.latest %}
+                                    {% if latest %}
+                                    <span class="pull-right" title="配送员当前位置">
+                                        <span class="glyphicon glyphicon-user"></span>
+                                        <span>{{ latest.address }}({{ latest.time }})</span>
+                                    </span>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
                         </td>
                     </tr>
                     <tr>

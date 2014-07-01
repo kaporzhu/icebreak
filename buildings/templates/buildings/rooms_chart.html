@@ -23,8 +23,8 @@
                 {% for item in floor_rooms %}
                     <tr>
                         <td>
-                            <span>{{ item.0 }}楼</span>
-                            {% for room in item.1 %}
+                            <span>{{ item.floor }}楼</span>
+                            {% for room in item.rooms %}
                             <span class="label label-default">{{ room.number }}</span>
                             {% endfor %}
                         </td>

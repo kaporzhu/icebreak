@@ -1,0 +1,55 @@
+{% with whole=order.building.whole_with_orders %}
+    {% if whole.is_multiple %}
+        {% for zone_id, zone in whole.zones.items %}
+        {% if zone.has_order %}
+        <div class="col-sm-4">
+            <table class="table table-bordered">
+                <tr><td class="text-center">{{ whole.name }}{{ zone.name }}</td></tr>
+                {% for item in zone.rooms_by_floor %}
+                <tr><td>
+                    <span>{{ item.floor }}楼</span>
+                    {% for room in item.rooms %}
+                        {% if room.status == DISTRIBUTING %}
+                            <span class="label label-default">{{ room.number }}</span>
+                        {% elif room.status == DONE %}
+                            <span class="label label-success" title="{{ room.delivery_time }}送达">{{ room.number }}</span>
+                        {% endif %}
+                    {% endfor %}
+                    {% if whole.latest.zone == zone.id and whole.latest.floor == item.floor %}
+                    <span class="pull-right">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                        <span class="glyphicon glyphicon-user"></span>
+                    </span>
+                    {% endif %}
+                </td></tr>
+                {% endfor %}
+            </table>
+        </div>
+        {% endif %}
+        {% endfor %}
+    {% else %}
+    <div class="col-sm-4">
+        <table class="table table-bordered">
+            <tr><td class="text-center">{{ whole.name }}</td></tr>
+            {% for item in whole.rooms_by_floor %}
+            <td>
+                <span>{{ item.floor }}楼</span>
+                {% for room in item.rooms %}
+                    {% if room.status == DISTRIBUTING %}
+                        <span class="label label-default">{{ room.number }}</span>
+                    {% elif room.status == DONE %}
+                        <span class="label label-success" title="{{ room.delivery_time }}送达">{{ room.number }}</span>
+                    {% endif %}
+                {% endfor %}
+                {% if whole.latest.floor == item.floor %}
+                <span class="pull-right">
+                    <span class="glyphicon glyphicon-arrow-left"></span>
+                    <span class="glyphicon glyphicon-user"></span>
+                </span>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+{% endwith %}

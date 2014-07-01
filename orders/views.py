@@ -16,7 +16,8 @@ from braces.views import(
 )
 
 from .constants import(
-    ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES, DISTRIBUTING, DONE
+    ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES, DISTRIBUTING, DONE,
+    PRINTED
 )
 from .forms import OrderForm, CommentForm
 from .models import OrderFood, Order
@@ -130,6 +131,14 @@ class MineView(LoginRequiredMixin, ListView):
         qs = super(MineView, self).get_queryset()
         return qs.filter(user=self.request.user).order_by('-id')[:10]
 
+    def get_context_data(self, **kwargs):
+        """
+        Add extra data to context
+        """
+        data = super(MineView, self).get_context_data(**kwargs)
+        data.update({'DISTRIBUTING': DISTRIBUTING})
+        return data
+
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
     """
@@ -138,6 +147,14 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
     slug_field = 'code'
     slug_url_kwarg = 'code'
     model = Order
+
+    def get_context_data(self, **kwargs):
+        """
+        Add extra data to context
+        """
+        data = super(OrderDetailView, self).get_context_data(**kwargs)
+        data.update({'DISTRIBUTING': DISTRIBUTING, 'DONE': DONE})
+        return data
 
 
 class OrderListView(SuperuserRequiredMixin, ListView):
@@ -255,7 +272,7 @@ class ShopOrderListView(StaffuserRequiredMixin, ListView):
         """
         data = super(ShopOrderListView, self).get_context_data(**kwargs)
         data.update({
-            'buildings': Building.objects.all(),
+            'buildings': self.request.user.staff.shop.building_set.all(),
             'STATUS_CHOICES': Order.STATUS_CHOICES,
             'staff_statuses': [PACKING_DONE, ON_THE_WAY],
             'delivery_times': DELIVERY_TIMES
@@ -283,8 +300,12 @@ class PrintOrdersView(StaffuserRequiredMixin, TemplateView):
         """
         data = super(PrintOrdersView, self).get_context_data(**kwargs)
         ids = self.request.GET['ids'].split(',')
-        orders = Order.objects.in_bulk(ids).values()
-        orders = [order for order in orders if order.status == PAID]
+        orders = []
+        for order in Order.objects.in_bulk(ids).values():
+            if order.status == PAID:
+                orders.append(order)
+                order.status = PRINTED
+                order.save()
         data.update({'orders': orders})
         return data
 
@@ -302,7 +323,7 @@ class UpdateStatusView(StaffuserRequiredMixin, AjaxResponseMixin,
         if status not in [PACKING_DONE, ON_THE_WAY]:
             return HttpResponseForbidden()
         for order in Order.objects.in_bulk(request.GET['ids'].split(',')).values():  # noqa
-            if order.status in [PAID, PACKING_DONE, ON_THE_WAY]:
+            if order.status in [PAID, PRINTED, PACKING_DONE]:
                 order.status = status
                 order.save()
         return self.render_json_response({
@@ -321,7 +342,7 @@ class AppGetOrdersView(AppRequestMixin, JSONResponseMixin, View):
         now = datetime.now()
         start = datetime(now.year, now.month, now.day, 0, 0)
         end = datetime(now.year, now.month, now.day, 23, 59)
-        statuses = [PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE]
+        statuses = [PACKING_DONE, ON_THE_WAY, DISTRIBUTING]
         orders = building.order_set.filter(status__in=statuses).filter(created_at__range=(start, end))  # noqa
         orders_json = []
         for order in orders:
@@ -329,7 +350,6 @@ class AppGetOrdersView(AppRequestMixin, JSONResponseMixin, View):
                 'id': order.id,
                 'delivery_time': order.delivery_time,
                 'status': order.status,
-                'status_label': order.get_status_display(),
                 'phone': order.phone,
                 'name': order.name,
                 'address': order.short_address
@@ -345,6 +365,7 @@ class AppFinishOrderView(AppRequestMixin, JSONResponseMixin, View):
         order = Order.objects.get(pk=request.GET['order_id'])
         order.status = DONE
         order.save()
+        order.building.update_order_status_in_whole(order)
         return self.render_json_response({'success': True})
 
 
@@ -379,3 +400,18 @@ class CommentView(FormView):
         context = self.get_context_data(form=form)
         context.update({'show_thanks': True})
         return self.render_to_response(context)
+
+
+class AppBatchStatusUpdateView(AppRequestMixin, JSONResponseMixin, View):
+    """
+    View for update order status in batch
+    """
+    def get(self, request, *args, **kwargs):
+        status = request.GET['status']
+        building = Building.objects.get(pk=request.GET['building_id'])
+        if status == ON_THE_WAY:
+            Order.objects.filter(building=building, status=PACKING_DONE).update(status=ON_THE_WAY)
+        elif status == DISTRIBUTING:
+            Order.objects.filter(building=building, status=ON_THE_WAY).update(status=DISTRIBUTING)
+            building.whole_with_orders(refersh=True)
+        return self.render_json_response({'success': True})

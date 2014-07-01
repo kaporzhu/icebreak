@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 
+from orders.constants import DISTRIBUTING
 from shops.models import Shop
 
 
@@ -35,22 +38,20 @@ class Building(models.Model):
     def __unicode__(self):
         return self.name
 
-    def _get_rooms(self, floors, rooms):
+    def _sort_rooms_by_floor(self, floors, rooms):
         """
         Rooms in JSON and rooms by floor in JSON
         """
-        rooms_by_floor_list = []
         rooms_by_floor_dict = {i+1: [] for i in range(floors)}
-
         for room in rooms:
-            rooms_by_floor_dict[room.floor].append({
-                'id': room.id, 'number': room.number
-            })
+            rooms_by_floor_dict[room['floor']].append(room)
+
+        rooms_by_floor_list = []
         for floor in sorted(rooms_by_floor_dict.keys(), reverse=True):
             rooms_by_floor_list.append(
                 {'floor': floor, 'rooms': rooms_by_floor_dict[floor]})
 
-        return (rooms_by_floor_dict, rooms_by_floor_list)
+        return rooms_by_floor_list
 
     def whole(self, refresh=False):
         """
@@ -66,29 +67,93 @@ class Building(models.Model):
             }
 
             if self.is_multiple:
-                whole['zones_dict'] = {}
-                whole['zones_list'] = []
+                whole['zones'] = {}
                 for zone in self.zone_set.all():
                     zone_whole = {
                         'id': zone.id,
                         'name': zone.name,
-                        'floors': zone.floors
+                        'floors': zone.floors,
+                        'rooms': {}
                     }
-                    whole['zones_dict'][zone.id] = zone_whole
-                    whole['zones_list'].append(zone_whole)
-                    rooms = zone.room_set.all()
-                    rooms_by_floor_dict, rooms_by_floor_list = self._get_rooms(zone.floors, rooms)
-                    zone_whole['rooms_by_floor_dict'] = rooms_by_floor_dict
-                    zone_whole['rooms_by_floor_list'] = rooms_by_floor_list
+                    whole['zones'][zone.id] = zone_whole
+                    for room in zone.room_set.all():
+                        zone_whole['rooms'][room.id] = {
+                            'id': room.id,
+                            'number': room.number,
+                            'floor': room.floor
+                        }
             else:
-                rooms = self.room_set.all()
-                rooms_by_floor_dict, rooms_by_floor_list = self._get_rooms(self.floors, rooms)
-                whole['rooms_by_floor_dict'] = rooms_by_floor_dict
-                whole['rooms_by_floor_list'] = rooms_by_floor_list
+                whole['rooms'] = {}
+                for room in self.room_set.all():
+                    whole['rooms'][room.id] = {
+                        'id': room.id,
+                        'number': room.number,
+                        'floor': room.floor
+                    }
 
             cache.set(cache_key, whole, 1728000)  # cache for one month
 
         return cache.get(cache_key)
+
+    def whole_rooms_by_floor(self, building_whole):
+        """
+        Sort rooms by floor
+        """
+        if building_whole['is_multiple']:
+            for zone_id, zone in building_whole['zones'].items():
+                zone['rooms_by_floor'] = self._sort_rooms_by_floor(zone['floors'], zone['rooms'].values())  # noqa
+        else:
+            building_whole['rooms_by_floor'] = self._sort_rooms_by_floor(building_whole['floors'], building_whole['rooms'].values())  # noqa
+
+        return building_whole
+
+    def whole_with_orders(self, refersh=False):
+        """
+        cached building info with orders.
+        """
+        cache_key = 'building_whole_with_orders_{}'.format(self.id)
+        if refersh or not cache.get(cache_key):
+            from orders.models import Order
+
+
+            whole = self.whole()
+            for order in Order.objects.filter(building=self, status=DISTRIBUTING):
+                if self.is_multiple:
+                    whole['zones'][order.zone.id]['has_order'] = True
+                    whole['zones'][order.zone.id]['rooms'][order.room.id].update({'status': DISTRIBUTING})
+                else:
+                    whole['has_order'] = True
+                    whole['rooms'][order.room.id].update({'status': DISTRIBUTING})
+            cache.set(cache_key, self.whole_rooms_by_floor(whole), 10800)  # cache for 3 hours
+
+        return cache.get(cache_key)
+
+    def update_order_status_in_whole(self, order):
+        """
+        Update order status for the room
+        """
+        cache_key = 'building_whole_with_orders_{}'.format(self.id)
+        whole_with_orders = self.whole_with_orders()
+        now = datetime.now().strftime('%H:%M')
+        whole_with_orders['latest'] = {
+            'time': now,
+            'address': order.short_address,
+            'floor': order.room.floor,
+            'zone': order.zone.id if order.zone else None
+        }
+        if whole_with_orders['is_multiple']:
+            for room in whole_with_orders['zones'][order.zone.id]['rooms_by_floor'][-order.room.floor]['rooms']:  # noqa
+                if room['id'] == order.room.id:
+                    room['status'] = order.status
+                    room['delivery_time'] = now
+                    break
+        else:
+            for room in whole_with_orders['rooms_by_floor'][-order.room.floor]['rooms']:
+                if room['id'] == order.room.id:
+                    room['status'] = order.status
+                    room['delivery_time'] = now
+                    break
+        cache.set(cache_key, whole_with_orders, 10800)
 
 
 class Zone(models.Model):
