@@ -62,21 +62,33 @@ $(function(){
         var template = '';
         if ($selector.is('.buildings')) {
             if (building.is_multiple) {
-                data = {zones: building.zones_list};
+                var zones = [];
+                for (var id in building.zones) {
+                    zones.push(building.zones[id]);
+                }
+                data = {zones: zones};
                 template = '#zones-select-template';
             } else {
                 data = {floors: generate_floors(building.floors)};
                 template = '#floors-select-template';
             }
         } else if($selector.is('.zones')) {
-            data = {floors: generate_floors(building.zones_dict[selected_ids.zone].floors)};
+            data = {floors: generate_floors(building.zones[selected_ids.zone].floors)};
             template = '#floors-select-template';
         } else if ($selector.is('.floors')) {
+            var rooms = [];
+            var rooms_dict = {};
             if (building.is_multiple) {
-                data = {rooms: building.zones_dict[selected_ids.zone].rooms_by_floor_dict[selected_ids.floor]};
+                rooms_dict = building.zones[selected_ids.zone].rooms;
             } else {
-                data = {rooms: building.rooms_by_floor_dict[selected_ids.floor]};
+                rooms_dict = building.rooms;
             }
+            for (var id in rooms_dict) {
+                if (rooms_dict[id].floor == selected_ids.floor) {
+                    rooms.push(rooms_dict[id]);
+                }
+            }
+            data = {rooms: rooms};
             template = '#rooms-select-template';
         }
 

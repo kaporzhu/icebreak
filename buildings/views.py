@@ -173,38 +173,6 @@ class LoadBuildingView(AjaxResponseMixin, JSONResponseMixin, View):
         return self.render_json_response(building.whole())
 
 
-class LoadZonesView(AjaxResponseMixin, JSONResponseMixin, View):
-    """
-    Load zones for the building
-    """
-
-    def get_ajax(self, request, *args, **kwargs):
-        """
-        Return zones in JSON
-        """
-        building = Building.objects.get(pk=request.REQUEST['building_pk'])
-        return self.render_json_object_response(building.zone_set.all(),
-                                                fields=('name', 'floors'))
-
-
-class LoadRoomsView(AjaxResponseMixin, JSONResponseMixin, View):
-    """
-    Load rooms in the building or building zone
-    """
-
-    def get_ajax(self, request, *args, **kwargs):
-        """
-        Return rooms in JSON
-        """
-        if request.REQUEST.get('zone_pk'):
-            zone = Zone.objects.get(pk=request.REQUEST['zone_pk'])
-            rooms = zone.room_set.filter(floor=request.REQUEST['floor'])
-        else:
-            building = Building.objects.get(pk=request.REQUEST['building_pk'])
-            rooms = building.room_set.filter(floor=request.REQUEST['floor'])
-        return self.render_json_object_response(rooms, fields=('number'))
-
-
 class AppGetBuildingsView(AppRequestMixin, JSONResponseMixin, View):
     """
     Get all buildings for the shop

@@ -116,8 +116,11 @@ class Building(models.Model):
             from orders.models import Order
 
 
+            now = datetime.now()
+            start = datetime(now.year, now.month, now.day, 0, 0)
+            end = datetime(now.year, now.month, now.day, 23, 59)
             whole = self.whole()
-            for order in Order.objects.filter(building=self, status=DISTRIBUTING):
+            for order in Order.objects.filter(building=self, status=DISTRIBUTING).filter(created_at__range=(start, end)):  # noqa
                 if self.is_multiple:
                     whole['zones'][order.zone.id]['has_order'] = True
                     whole['zones'][order.zone.id]['rooms'][order.room.id].update({'status': DISTRIBUTING})

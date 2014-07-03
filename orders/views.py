@@ -352,6 +352,9 @@ class AppGetOrdersView(AppRequestMixin, JSONResponseMixin, View):
                 'status': order.status,
                 'phone': order.phone,
                 'name': order.name,
+                'zone': order.zone.id if order.zone else -1,
+                'floor': order.room.floor,
+                'number': order.room.number,
                 'address': order.short_address
             })
         return self.render_json_response(orders_json)
