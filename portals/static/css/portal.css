@@ -357,3 +357,35 @@
     text-align: right;
     color: orange;
 }
+
+
+#shop-info {
+    background-color: white;
+    margin-bottom: 15px;
+    padding: 10px 0;
+}
+
+#shop-info .service li {
+    border-left: 1px solid #ededed;
+}
+
+#shop-info .service li.no-border {
+    border-left: 0;
+}
+
+#shop-info .service {
+    padding-top: 5px;
+}
+
+#shop-info .service li b {
+    display: block;
+    text-align: center;
+    font-size: 30px;
+    line-height: 42px;
+    color: #666;
+    font-family: arial, sans-serif;
+}
+
+.navbar {
+    margin-bottom: 0;
+}

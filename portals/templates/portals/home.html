@@ -13,6 +13,47 @@
 {% block title %}主页{% endblock %}
 
 {% block content %}
+
+<div id="shop-info" class="hidden-sm hidden-xs">
+    <div class="container">
+        <div class="col-md-2">
+            <h3 class="name">紫金花路店</h3>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-sm-3">
+                    <img width="60" src="{% static 'image/default_avatar.png' %}" /><br />
+                    <span>厨师：XXX</span>
+                </div>
+                <div class="col-sm-3">
+                    <img width="60" src="{% static 'image/default_avatar.png' %}" /><br />
+                    <span>店长：XXX</span>
+                </div>
+                <div class="col-sm-3">
+                    <img width="60" src="{% static 'image/default_avatar.png' %}" /><br />
+                    <span>配送员：XXX</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <ul class="list-inline service">
+                <li class="no-border">
+                    <b>安全</b>
+                    <small>正规油，新鲜食材</small>
+                </li>
+                <li>
+                    <b>准时</b>
+                    <small>指定时段送达</small>
+                </li>
+                <li>
+                    <b>实时</b>
+                    <small>全程监控进度</small>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
 <div class="container" id="foods-list">
     <div class="row">
         <div class="col-md-9 well-shadow foods">
@@ -38,7 +79,7 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 hidden-sm hidden-xs">
             <div class="board">
                 <h4>公告</h4>
                 <div class="body">

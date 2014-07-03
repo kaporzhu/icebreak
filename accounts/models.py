@@ -13,8 +13,9 @@ class Staff(models.Model):
     Staff model
     """
     user = models.OneToOneField(User)
-    is_deliveryman = models.BooleanField()
-    is_shop_manager = models.BooleanField()
+    phone = models.CharField(u'手机号', max_length=16, blank=True, null=True)
+    is_deliveryman = models.BooleanField(u'配送员')
+    is_shop_manager = models.BooleanField(u'店长')
     shop = models.ForeignKey(Shop)
     api_key = models.CharField(max_length=16, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)

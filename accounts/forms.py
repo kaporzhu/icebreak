@@ -48,11 +48,11 @@ class StaffForm(forms.ModelForm):
     """
     Model form for Staff
     """
-    is_active = forms.BooleanField()
-    phone = forms.CharField()
-    password = forms.CharField(required=False)
-    name = forms.CharField()
+    is_active = forms.BooleanField(label=u'启用账号', required=False)
+    username = forms.CharField(label=u'用户名')
+    password = forms.CharField(label=u'密码', required=False)
+    name = forms.CharField(label=u'名字')
 
     class Meta:
         model = Staff
-        exclude = ('user','shop',)
+        exclude = ('user','shop', 'api_key')

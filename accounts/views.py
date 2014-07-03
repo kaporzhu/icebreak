@@ -168,7 +168,7 @@ class AddStaffView(SuperuserRequiredMixin, CreateView):
         Create new staff
         """
         shop = Shop.objects.get(pk=self.request.GET['shop_id'])
-        user = User(username=form.data['phone'], first_name=form.data['name'])
+        user = User(username=form.data['username'], first_name=form.data['name'])
         user.is_staff = True
         user.is_active = form.data['is_active']
         user.set_password(form.data['password'])
@@ -198,7 +198,7 @@ class UpdateStaffView(SuperuserRequiredMixin, UpdateView):
         initial = super(UpdateStaffView, self).get_initial()
         initial.update({
             'is_active': self.object.user.is_active,
-            'phone': self.object.user.username,
+            'username': self.object.user.username,
             'name': self.object.user.get_full_name()
         })
         return initial
@@ -208,7 +208,7 @@ class UpdateStaffView(SuperuserRequiredMixin, UpdateView):
         Update staff info
         """
         form.save()
-        self.object.user.phone = form.data['phone']
+        self.object.user.username = form.data['username']
         self.object.user.name = form.data['name']
         self.object.user.is_active = form.data['is_active']
         self.object.user.save()

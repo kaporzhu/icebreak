@@ -32,7 +32,13 @@
                                 {% endfor %}
                             </ul>
                         </td>
-                        <td class="text-center text-middle">{{ order.get_status_display }}</td>
+                        <td class="text-center text-middle">
+                            <span>{{ order.get_status_display }}</span>
+                            {% if order.delivery_man %}
+                            <br />
+                            <abbr title="配送员,{{ order.delivery_man.phone }}">{{ order.delivery_man.user.get_full_name }}</abbr>
+                            {% endif %}
+                        </td>
                         <td class="text-center text-middle">用餐时间：<br />{{ order.delivery_time }}</td>
                         <td class="text-center text-middle">下单时间：<br />{{ order.created_at|date:"m-d H:i" }}</td>
                     </tr>
