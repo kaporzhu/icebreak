@@ -55,28 +55,22 @@
             <p class="toolbar">
                 <span class="title">经典套餐</span>
             </p>
-            <div class="row foods-line">
-                {% for food in foods %}
-                    {% if forloop.counter|divisibleby:"4" %}
-                    </div>
-                    <div class="row foods-line">
-                    {% endif %}
-                    <div class="col-md-4 food {% if food.count_today <= 0 %}sell-out{% endif %}" id="food-{{ food.id }}" data-price="{{ food.price }}">
-                        <div class="body">
-                            <img width="250" height="250" src="{{ food.image|thumbnail_url:'medium' }}" />
-                            <div class="sell-out-cover bg-transparent"></div>
-                        </div>
-                        <div class="foot">
-                            <span class="name">{{ food.name }}</span>
-                            <span class="count"></span>
-                            <button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" data-description="{{ food.description }}" data-ingredients="{{ food.ingredients }}" class="btn btn-xs add-food-btn pull-right">￥{{ food.price }}</button>
-                            <span class="sell-out-tip pull-right">已售完</span>
-                            <br />
-                            <small class="count-today">剩余：<span>{{ food.count_today }}</span> 份</small>
-                        </div>
-                    </div>
-                {% endfor %}
+            {% for food in foods %}
+            <div class="col-md-4 food {% if food.count_today <= 0 %}sell-out{% endif %}" id="food-{{ food.id }}" data-price="{{ food.price }}">
+                <div class="body">
+                    <img height="170" class="img-responsive" src="{{ food.image|thumbnail_url:'medium' }}" />
+                    <div class="sell-out-cover bg-transparent"></div>
+                </div>
+                <div class="foot">
+                    <span class="name">{{ food.name }}</span>
+                    <span class="count"></span>
+                    <button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" data-description="{{ food.description }}" data-ingredients="{{ food.ingredients }}" class="btn btn-xs add-food-btn pull-right">￥{{ food.price }}</button>
+                    <span class="sell-out-tip pull-right">已售完</span>
+                    <br />
+                    <small class="count-today">剩余：<span>{{ food.count_today }}</span> 份</small>
+                </div>
             </div>
+            {% endfor %}
         </div>
         <div class="col-md-3 hidden-sm hidden-xs">
             <div class="board">
