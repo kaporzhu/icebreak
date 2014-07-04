@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse_lazy
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
@@ -11,6 +11,25 @@ from braces.views import(
 )
 
 from .models import Shop
+
+
+class ShopHomeView(TemplateView):
+    """
+    Shop home page
+    """
+    template_name = 'shops/home.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Add shop and shop foods to the context
+        """
+        data = super(ShopHomeView, self).get_context_data(**kwargs)
+        shop = Shop.objects.get(slug=self.kwargs['slug'])
+        data.update({
+            'shop': shop,
+            'foods': shop.food_set.filter(is_active=True)
+        })
+        return data
 
 
 class CreateShopView(SuperuserRequiredMixin, SetHeadlineMixin, CreateView):

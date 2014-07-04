@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
-from django.views.generic.base import TemplateView
+from django.core.urlresolvers import reverse
+from django.views.generic.base import RedirectView
 
-from foods.models import Food
+from shops.models import Shop
 
 
-class HomeView(TemplateView):
+class HomeView(RedirectView):
     """
     Web site home page
     """
-    template_name = 'portals/home.html'
+    permanent = False
 
-    def get_context_data(self, **kwargs):
+    def get_redirect_url(self, *args, **kwargs):
         """
-        Add extra data to context
+        Return shop home page
         """
-        data = super(HomeView, self).get_context_data(**kwargs)
-        data.update({'foods': Food.objects.filter(is_active=True)})
-        return data
+        return reverse('shops:home',
+                       kwargs={'slug': Shop.objects.first().slug})
