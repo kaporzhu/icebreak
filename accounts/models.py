@@ -20,6 +20,15 @@ class Staff(models.Model):
     api_key = models.CharField(max_length=16, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def role_name(self):
+        if self.is_shop_manager:
+            return u'店长'
+        elif self.is_deliveryman:
+            return u'配送员'
+        else:
+            return ''
+
 
 class Address(models.Model):
     """

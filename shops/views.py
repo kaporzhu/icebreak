@@ -38,7 +38,8 @@ class ShopHomeView(TemplateView):
         self.shop = Shop.objects.get(slug=self.kwargs['slug'])
         data.update({
             'shop': self.shop,
-            'foods': self.shop.food_set.filter(is_active=True)
+            'foods': self.shop.food_set.filter(is_active=True),
+            'staffs': self.shop.staff_set.all()
         })
         return data
 
