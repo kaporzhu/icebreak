@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse_lazy
+from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from braces.views import(
-    SuperuserRequiredMixin, SetHeadlineMixin
+    SuperuserRequiredMixin, SetHeadlineMixin, AjaxResponseMixin,
+    JSONResponseMixin
 )
 
 from .models import Shop
@@ -41,3 +43,12 @@ class ShopDetailView(SuperuserRequiredMixin, DetailView):
     Shop detail page
     """
     model = Shop
+
+
+class LoadFoodsCountView(AjaxResponseMixin, JSONResponseMixin, View):
+    """
+    Load foods count for the shop
+    """
+    def get_ajax(self, request, *args, **kwargs):
+        shop =Shop.objects.get(id=request.GET['id'])
+        return self.render_json_response(shop.foods_count())

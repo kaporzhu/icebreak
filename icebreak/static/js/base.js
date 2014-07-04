@@ -4,6 +4,8 @@ jQuery.support.placeholder = (function(){
     return 'placeholder' in i;
 })();
 
+$.ajaxSetup({ cache: false });
+
 $(function(){
     if (!$.support.placeholder) {
         $('input, textarea').placeholder();

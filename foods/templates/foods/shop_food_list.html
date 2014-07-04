@@ -1,0 +1,43 @@
+{% extends "page.html" %}
+{% load thumbnail static %}
+
+{% block extrajs_compress %}
+<script src="{% static 'js/food-staff.js' %}"></script>
+{% endblock %}
+
+{% block title %}本店所有菜品{% endblock %}
+
+{% block content %}
+<div class="container well-shadow">
+    {% include "title.html" with title="本店所有菜品" %}
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <th>菜名</th>
+                    <th>价格</th>
+                    <th>销量</th>
+                    <th>状态</th>
+                    <th>今日剩余</th>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                        <td>{{ object.name }}</td>
+                        <td>{{ object.price }}</td>
+                        <td>{{ object.sales }}</td>
+                        <td><a href="javascript:void(0);" class="update-food-status-btn" data-url="{% url 'foods:update_status' %}" data-id="{{ object.id }}">{% if object.is_active %}在售{% else %}下架{% endif %}</a></td>
+                        <td class="col-sm-3">
+                            <form class="form-inline" data-url="{% url 'foods:update_count_today' %}" data-id="{{ object.id }}">
+                                <input type="number" class="form-control input-sm col-sm-1" value="{{ object.count_today }}">&nbsp;
+                                <button type="button" class="btn btn-default btn-sm update-count-today-btn">修改</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,7 @@ import string
 from datetime import datetime
 
 from django.db.models import Q
-from django.http.response import Http404, HttpResponseForbidden
+from django.http.response import HttpResponseForbidden
 from django.utils.crypto import get_random_string
 from django.views.generic.base import View
 from django.views.generic.edit import FormView
@@ -16,6 +16,7 @@ from braces.views import(
 
 from .forms import CreateCouponForm
 from .models import Coupon
+from accounts.mixins import ShopManagerRequiredMixin
 from shops.models import Shop
 
 
@@ -72,7 +73,8 @@ class CouponCreateView(StaffuserRequiredMixin, FormView):
             self.get_context_data(codes='\n'.join(codes), form=form))
 
 
-class ShopCouponListView(StaffuserRequiredMixin, ListView):
+class ShopCouponListView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
+                         ListView):
     """
     Display all the coupons for current shop
     """
@@ -85,10 +87,7 @@ class ShopCouponListView(StaffuserRequiredMixin, ListView):
         """
         qs = super(ShopCouponListView, self).get_queryset()
 
-        # shop
-        if not self.request.user.staff.is_shop_manager:
-            raise Http404
-        shop_Q = Q(shop=self.request.user.staff.shop)
+        shop_Q = Q(shop=self.staff.shop)
 
         # code
         code = self.request.REQUEST.get('code')

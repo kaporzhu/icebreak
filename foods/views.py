@@ -7,12 +7,13 @@ from django.views.generic.list import ListView
 
 from braces.views import(
     SuperuserRequiredMixin, SetHeadlineMixin, AjaxResponseMixin,
-    JSONResponseMixin
+    JSONResponseMixin, StaffuserRequiredMixin
 )
+from easy_thumbnails.files import get_thumbnailer
 
 from .mixins import FoodMixin
 from .models import Food, CookingStep
-from easy_thumbnails.files import get_thumbnailer
+from accounts.mixins import ShopManagerRequiredMixin
 
 
 class CreateFoodView(SuperuserRequiredMixin, SetHeadlineMixin, CreateView):
@@ -119,3 +120,44 @@ class LoadCommentsView(AjaxResponseMixin, JSONResponseMixin, View):
                 'created_at': comment.created_at.strftime('%m-%d %H:%M')
             })
         return self.render_json_response(comments_json)
+
+
+class ShopFoodListView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
+                       ListView):
+    """
+    Display all the foods in the shop
+    """
+    model = Food
+    template_name = 'foods/shop_food_list.html'
+
+    def get_queryset(self):
+        """
+        Filter the foods
+        """
+        qs = super(ShopFoodListView, self).get_queryset()
+        return qs.filter(shop=self.staff.shop)
+
+
+class UpdateCountTodayView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
+                           AjaxResponseMixin, JSONResponseMixin, View):
+    """
+    Update food count today
+    """
+    def get_ajax(self, request, *args, **kwargs):
+        food = self.staff.shop.food_set.get(pk=request.GET['id'])
+        food.count_today = request.GET['count']
+        food.save()
+        self.staff.shop.update_food_count(food)
+        return self.render_json_response({'success': True})
+
+
+class UpdateStatusView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
+                       AjaxResponseMixin, JSONResponseMixin, View):
+    """
+    Activate or disable the food
+    """
+    def get_ajax(self, request, *args, **kwargs):
+        food = self.staff.shop.food_set.get(pk=request.GET['id'])
+        food.is_active = not food.is_active
+        food.save()
+        return self.render_json_response({'success': True, 'is_active': food.is_active})

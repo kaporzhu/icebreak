@@ -31,6 +31,40 @@
     padding: 15px 10px 5px 10px;
 }
 
+#foods-list .food .sell-out-tip {
+    display: none;
+    color: red;
+}
+
+#foods-list .food.sell-out button {
+    display: none;
+}
+
+#foods-list .food.sell-out .count-today {
+    visibility: hidden;
+}
+
+#foods-list .food.sell-out .name {
+    text-decoration: line-through;
+}
+
+#foods-list .food.sell-out .sell-out-cover {
+    background-color: #eee;
+    position: absolute;
+    width: 86%;
+    height: 75%;
+    background-color: white;
+    z-index: 10;
+    top: 15px;
+    left: 20px;
+    opacity: .85;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=85)";
+}
+
+#foods-list .food.sell-out .sell-out-tip {
+    display: inline;
+}
+
 #foods-list .food:hover {
     background-color: #effaff;
 }
@@ -92,6 +126,16 @@
 #foods-list .board .body {
     border: 1px solid lightgray;
     background-color: white;
+}
+
+#foods-list .foot .count-today span {
+    padding: 0 5px;
+    font-weight: bold;
+}
+
+#foods-list .foot .count-today .highlight {
+    background-color: yellow;
+    color: blue;
 }
 
 #foods-list .board h4 {

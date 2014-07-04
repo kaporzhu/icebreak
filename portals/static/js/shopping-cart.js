@@ -54,14 +54,17 @@ var ShoppingCart = window.ShoppingCart = {
     },
 
     removeFood: function(food_id) {
+        var removed = false;
         for(var i=0; i<ShoppingCart.data.length; i++) {
             if (ShoppingCart.data[i]['id'] == food_id) {
                 ShoppingCart.data.splice(i, 1);
+                removed = true;
                 break;
             }
         }
         ShoppingCart.calculate();
         ShoppingCart.save();
+        return removed;
     },
 
     minusFood: function(food_id){

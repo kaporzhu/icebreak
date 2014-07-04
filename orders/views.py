@@ -4,8 +4,8 @@ from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http.response import HttpResponseForbidden, Http404
-from django.views.generic.base import TemplateView, View
+from django.http.response import HttpResponseForbidden
+from django.views.generic.base import TemplateView, View, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
@@ -21,6 +21,7 @@ from .constants import(
 )
 from .forms import OrderForm, CommentForm
 from .models import OrderFood, Order
+from accounts.mixins import ShopManagerRequiredMixin
 from accounts.models import Address
 from buildings.models import Building
 from coupons.models import Coupon
@@ -54,6 +55,28 @@ class CheckoutView(TemplateView):
         })
 
         return data
+
+
+class PayOrderView(LoginRequiredMixin, RedirectView):
+    """
+    Pay the order
+    """
+    permanent = False
+
+    def get_redirect_url(self, *args, **kwargs):
+        """
+        Fake payment. Update order status here.
+        """
+        order = Order.objects.get(code=kwargs['code'])
+        order.status = PAID
+        order.paid_at = datetime.now()
+        order.save()
+
+        for order_food in order.orderfood_set.all():
+            order_food.food.sales += order_food.count
+            order_food.food.save()
+
+        return reverse('orders:detail', kwargs={'code': kwargs['code']})
 
 
 class CreateView(LoginRequiredMixin, JsonRequestResponseMixin, FormView):
@@ -91,6 +114,9 @@ class CreateView(LoginRequiredMixin, JsonRequestResponseMixin, FormView):
             if fd['count'] <= 0:
                 continue
             food = Food.objects.get(pk=fd['id'])
+            food.count_today -= fd['count']
+            food.save()
+            order.shop.update_food_count(food)  # update food count today
             total_price += food.price * fd['count']
             OrderFood(user=self.request.user, food=food, price=food.price,
                       order=order, count=fd['count']).save()
@@ -215,7 +241,8 @@ class OrderListView(SuperuserRequiredMixin, ListView):
         return data
 
 
-class ShopOrderListView(StaffuserRequiredMixin, ListView):
+class ShopOrderListView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
+                        ListView):
     """
     All orders for current shop
     """
@@ -228,10 +255,7 @@ class ShopOrderListView(StaffuserRequiredMixin, ListView):
         """
         qs = super(ShopOrderListView, self).get_queryset()
 
-        # shop
-        if not self.request.user.staff.is_shop_manager:
-            raise Http404
-        shop_Q = Q(shop=self.request.user.staff.shop)
+        shop_Q = Q(shop=self.staff.shop)
 
         # today's order only
         now = datetime.now()
