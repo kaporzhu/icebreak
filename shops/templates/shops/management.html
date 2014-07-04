@@ -1,0 +1,38 @@
+{% extends "page.html" %}
+{% load static %}
+
+{% block extrajs_compress %}
+<script src="{% static 'js/shop-staff.js' %}"></script>
+{% endblock %}
+
+{% block title %}店铺管理{% endblock %}
+
+{% block content %}
+<div class="container well-shadow">
+    <div class="row">
+        <div class="col-md-12">
+            <form method="post" enctype="multipart/form-data" class="form-horizontal" role="form">
+                {% csrf_token %}
+                {{ form.errors }}
+                <div class="form-group">
+                    <label class="col-md-2">是否营业:</label>
+                    <div class="col-md-4">
+                        <input id="is_closed_checkbox" type="checkbox" name="is_open" {% if not shop.is_closed %}checked="checked"{% endif %} />
+                    </div>
+                </div>
+                <div class="form-group close_tip {% if not shop.is_closed %}hidden{% endif %}">
+                    <label class="col-md-2">不营业公告:</label>
+                    <div class="col-md-4">
+                        <textarea class="form-control" rows="5" name="close_tip">{{ shop.close_tip|default_if_none:'' }}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-4 col-md-offset-2">
+                        <input type="submit" value="提交" class="btn btn-primary" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

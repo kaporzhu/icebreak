@@ -14,6 +14,8 @@ class Shop(models.Model):
     phone = models.CharField(max_length=16, blank=True)
     longitude = models.FloatField(blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
+    is_closed = models.BooleanField(default=False)
+    close_tip = models.TextField(blank=True, null=True)
 
     open_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)

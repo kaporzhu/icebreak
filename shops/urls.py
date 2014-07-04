@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 
 from .views import(
     CreateShopView, UpdateShopView, ShopListView, ShopDetailView,
-    LoadFoodsCountView, ShopHomeView
+    LoadFoodsCountView, ShopHomeView, ShopManagementView
 )
 
 
@@ -15,5 +15,8 @@ urlpatterns = patterns(
     url(r'^update/(?P<pk>\d+)/$', UpdateShopView.as_view(), name='update'),
     url(r'^load_foods_count/$',
         LoadFoodsCountView.as_view(), name='load_foods_count'),
+    url(r'^management/$', ShopManagementView.as_view(), name='management'),
+
+    # should be the last one
     url(r'^(?P<slug>\w+)/$', ShopHomeView.as_view(), name='home'),
 )
