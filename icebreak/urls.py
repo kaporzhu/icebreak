@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import debug_toolbar
+
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
@@ -24,4 +26,7 @@ if settings.DEBUG:
     urlpatterns += patterns('',
         (r'^{}/(?P<path>.*)$'.format(settings.MEDIA_URL.split('/')[1]),
          'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    )
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
     )
