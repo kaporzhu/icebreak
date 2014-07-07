@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 from django.db import models
 
 from accounts.models import Address
@@ -52,3 +54,33 @@ class FoodComment(models.Model):
     rating = models.SmallIntegerField(blank=True, null=True)
     content = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class TimeFrame(models.Model):
+    """
+    Time frame for the Food.
+    Food can only be available in the specific time frame.
+    """
+    name = models.CharField(u'名字', max_length=128)
+    shop = models.ForeignKey(Shop)
+    foods = models.ManyToManyField(verbose_name=u'菜品', to=Food)
+    start_time = models.TimeField(u'开始时间')
+    end_time = models.TimeField(u'结束时间')
+    is_active = models.BooleanField(u'启用', default=True)
+
+    def __unicode__(self):
+        return self.name
+
+    @property
+    def active_foods(self):
+        return self.foods.filter(is_active=True)
+
+    @property
+    def time(self):
+        return u'{}-{}'.format(self.start_time.strftime('%H:%M'),
+                                self.end_time.strftime('%H:%M'))
+
+    @property
+    def is_available(self):
+        now = datetime.now()
+        return now.time() >= self.start_time and now.time() < self.end_time

@@ -26,6 +26,7 @@
                 {% endif %}
                 {% if user.is_staff and not user.is_superuser %}
                 <li><a href="{% url 'shops:management' %}" class="navbar-link">店铺管理</a></li>
+                <li><a href="{% url 'foods:time_frame' %}" class="navbar-link">时段管理</a></li>
                 <li><a href="{% url 'orders:shop_list' %}" class="navbar-link">订单管理</a></li>
                 <li><a href="{% url 'foods:shop_list' %}" class="navbar-link">菜品管理</a></li>
                 <li><a href="{% url 'coupons:shop_list' %}" class="navbar-link">优惠码管理</a></li>

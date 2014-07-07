@@ -11,8 +11,9 @@ from braces.views import(
 )
 from easy_thumbnails.files import get_thumbnailer
 
+from .forms import TimeFrameForm
 from .mixins import FoodMixin
-from .models import Food, CookingStep
+from .models import Food, CookingStep, TimeFrame
 from accounts.mixins import ShopManagerRequiredMixin
 
 
@@ -161,3 +162,65 @@ class UpdateStatusView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
         food.is_active = not food.is_active
         food.save()
         return self.render_json_response({'success': True, 'is_active': food.is_active})
+
+
+class TimeFrameView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
+                    ListView):
+    """
+    Display all the time frames for the Food
+    """
+    model = TimeFrame
+
+    def get_queryset(self):
+        """
+        Only display the time frame for current shop
+        """
+        qs = super(TimeFrameView, self).get_queryset()
+        return qs.filter(shop=self.staff.shop)
+
+
+class CreateTimeFrameView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
+                          SetHeadlineMixin, CreateView):
+    """
+    Create new time frame for the shop
+    """
+    model = TimeFrame
+    form_class = TimeFrameForm
+    headline = u'添加新时段'
+    success_url = reverse_lazy('foods:time_frame')
+
+    def get_form(self, form_class):
+        """
+        Limit foods field
+        """
+        form = super(CreateTimeFrameView, self).get_form(form_class)
+        form.fields['foods'].queryset = self.staff.shop.food_set.filter(is_active=True)
+        return form
+
+    def form_valid(self, form):
+        """
+        Set shop field and save time frame
+        """
+        time_frame = form.save(commit=False)
+        time_frame.shop = self.staff.shop
+        time_frame.save()
+        return super(CreateTimeFrameView, self).form_valid(form)
+
+
+class UpdateTimeFrameView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
+                          SetHeadlineMixin, UpdateView):
+    """
+    Update time frame info
+    """
+    model = TimeFrame
+    form_class = TimeFrameForm
+    headline = u'更新时段信息'
+    success_url = reverse_lazy('foods:time_frame')
+
+    def get_form(self, form_class):
+        """
+        Limit foods field
+        """
+        form = super(UpdateTimeFrameView, self).get_form(form_class)
+        form.fields['foods'].queryset = self.staff.shop.food_set.filter(is_active=True)
+        return form

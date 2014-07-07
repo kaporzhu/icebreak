@@ -1,0 +1,36 @@
+{% extends "page.html" %}
+
+{% block title %}本店所有时段{% endblock %}
+
+{% block content %}
+<div class="container well-shadow">
+    {% include "title.html" with title="本店所有时段" %}
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <a href="{% url 'foods:create_time_frame' %}" class="btn btn-primary">添加新时段</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <th>名称</th>
+                    <th>时段</th>
+                    <th>状态</th>
+                    <th></th>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                        <td>{{ object.name }}</td>
+                        <td>{{ object.time }}</td>
+                        <td>{% if object.is_active %}启用{% else %}关闭{% endif %}</td>
+                        <td><a href="{% url 'foods:update_time_frame' pk=object.id %}">修改</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

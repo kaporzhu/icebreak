@@ -16,6 +16,13 @@
     padding: 15px 0;
 }
 
+#foods-list .toolbar .time {
+    font-size: 16px;
+    display: inline-block;
+    padding: 15px 0;
+    color: #ff6000;
+}
+
 #foods-list .toolbar .buttons {
     margin-top: 16px;
 }
