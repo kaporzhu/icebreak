@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+from django.core.cache import cache
 from django.db import models
+
+from easy_thumbnails.files import get_thumbnailer
 
 from accounts.models import Address
 from shops.models import Shop
@@ -72,8 +75,24 @@ class TimeFrame(models.Model):
         return self.name
 
     @property
-    def active_foods(self):
-        return self.foods.filter(is_active=True)
+    def available_foods(self):
+        """
+        Get all available foods for the time frame.
+        """
+        cache_key = 'time_frame_foods_{}'.format(self.id)
+        if not cache.get(cache_key):
+            foods = []
+            for food in self.foods.filter(is_active=True):
+                foods.append({
+                    'id': food.id,
+                    'name': food.name,
+                    'price': food.price,
+                    'description': food.description,
+                    'ingredients': food.ingredients,
+                    'image': get_thumbnailer(food.image).get_thumbnail({'size': (256, 256)}).url  # noqa
+                })
+            cache.set(cache_key, foods, 300)  # cache for 5 mins
+        return cache.get(cache_key)
 
     @property
     def time(self):

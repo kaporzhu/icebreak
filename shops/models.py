@@ -23,6 +23,41 @@ class Shop(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def staffs(self):
+        """
+        Get all staffs for the shop.
+        """
+        cache_key = 'shop_staffs_{}'.format(self.id)
+        if not cache.get(cache_key):
+            staffs = []
+            for staff in self.staff_set.filter(user__is_active=True):
+                staffs.append({
+                    'role_name': staff.role_name,
+                    'full_name': staff.user.get_full_name()
+                })
+            cache.set(cache_key, staffs, 300)  # cache for 5 mins
+        return cache.get(cache_key)
+
+    @property
+    def time_frames(self):
+        """
+        Get all time frames for the shop.
+        """
+        cache_key = 'shop_time_frames_{}'.format(self.id)
+        if not cache.get(cache_key):
+            time_frames = []
+            for frame in self.timeframe_set.filter(is_active=True):
+                time_frames.append({
+                    'id': frame.id,
+                    'name': frame.name,
+                    'time': frame.time,
+                    'is_available': frame.is_available,
+                    'available_foods': frame.available_foods
+                })
+            cache.set(cache_key, time_frames, 30)  # cache for 30 seconds
+        return cache.get(cache_key)
+
     def foods_count(self):
         """
         Count all the foods left today

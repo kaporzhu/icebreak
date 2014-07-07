@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import DetailView
@@ -38,8 +40,7 @@ class ShopHomeView(TemplateView):
         self.shop = Shop.objects.get(slug=self.kwargs['slug'])
         data.update({
             'shop': self.shop,
-            'time_frames': self.shop.timeframe_set.filter(is_active=True),
-            'staffs': self.shop.staff_set.all()
+            'time_now': datetime.now().strftime('%H:%M')
         })
         return data
 

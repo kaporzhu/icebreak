@@ -22,10 +22,10 @@
         </div>
         <div class="col-md-6">
             <div class="row">
-                {% for staff in staffs %}
+                {% for staff in shop.staffs %}
                 <div class="col-sm-3 text-center">
                     <img width="60" src="{% static 'image/default_avatar.png' %}" /><br />
-                    <span>{{ staff.role_name }}：{{ staff.user.get_full_name }}</span>
+                    <span>{{ staff.role_name }}：{{ staff.full_name }}</span>
                 </div>
                 {% endfor %}
             </div>
@@ -52,18 +52,18 @@
 <div class="container" id="foods-list">
     <div class="row">
         <div class="col-md-9">
-            {% for time_frame in time_frames %}
+            {% for time_frame in shop.time_frames %}
             <div class="row">
                 <div class="col-md-12 well-shadow foods {% if time_frame.is_available %}available{% endif %}" data-time-frame="{{ time_frame.id }}">
                     <p class="toolbar">
-                        <span class="title">{{ time_frame }}</span>
+                        <span class="title">{{ time_frame.name }}</span>
                         <span class="pull-right time">{{ time_frame.time }}</span>
                     </p>
                     {% if time_frame.is_available %}
-                        {% for food in time_frame.active_foods %}
-                        <div class="col-md-4 food {% if food.count_today <= 0 %}sell-out{% endif %}" id="food-{{ food.id }}" data-price="{{ food.price }}">
+                        {% for food in time_frame.available_foods %}
+                        <div class="col-md-4 food" id="food-{{ food.id }}" data-price="{{ food.price }}">
                             <div class="body">
-                                <img height="170" class="img-responsive" src="{{ food.image|thumbnail_url:'medium' }}" />
+                                <img height="170" class="img-responsive" src="{{ food.image }}" />
                                 <div class="sell-out-cover bg-transparent"></div>
                             </div>
                             <div class="foot">
@@ -72,7 +72,7 @@
                                 <button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" data-description="{{ food.description }}" data-ingredients="{{ food.ingredients }}" class="btn btn-xs add-food-btn pull-right">￥{{ food.price }}</button>
                                 <span class="sell-out-tip pull-right">已售完</span>
                                 <br />
-                                <small class="count-today">剩余：<span>{{ food.count_today }}</span> 份</small>
+                                <small class="count-today">剩余：<span></span> 份</small>
                             </div>
                         </div>
                         {% endfor %}

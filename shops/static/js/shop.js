@@ -214,5 +214,4 @@ function update_foods_count() {
         }
     });
 }
-
-setTimeout('update_foods_count()', 5000);
+update_foods_count();
