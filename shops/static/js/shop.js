@@ -6,7 +6,7 @@ $(function(){
 
     $('.add-food-btn').click(function(){
         $('#food-detail-wrapper').animate({right: '-380px'});
-        ShoppingCart.addFood($(this).data('id'), $(this).data('name'), $(this).data('price'));
+        ShoppingCart.addFood($(this).data('id'), $(this).data('name'), $(this).data('price'), $(this).data('is-primary'));
         updateShoppingCart();
         updateFoodCount();
         toggleFoodsList(true);
@@ -14,6 +14,8 @@ $(function(){
 
     updateFoodCount();
     updateShoppingCart();
+
+    $('#foods-list .foods:first').parent('.row').before($('#foods-list .foods.available').parent('.row'));
 
     $('#empty-shoppingcart-btn').click(function(){
         ShoppingCart.empty();

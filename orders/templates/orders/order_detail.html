@@ -46,15 +46,22 @@
                         <td colspan="4">
                             <div class="pull-right">
                                 <dl class="dl-horizontal">
-                                    <dt>商品总价：</dt>
+                                    <dt>总计：</dt>
                                     <dd>￥{{ order.total_price }}</dd>
-                                    {% if order.coupon %}
-                                    <dt>优惠：</dt>
-                                    <dd>￥{{ order.coupon.discount }}</dd>
+                                    <dt></dt>
+                                    <dd>---------</dd>
+                                    {% if order.discount %}
+                                    <dt>促销优惠：</dt>
+                                    <dd>-￥{{ order.discount }}</dd>
                                     {% endif %}
-                                    <hr />
-                                    <dt>应付总额：</dt>
-                                    <dd>￥{{ order.final_total_price }}</dd>
+                                    {% if order.coupon %}
+                                    <dt>优惠券：</dt>
+                                    <dd>-￥{{ order.coupon.discount }}</dd>
+                                    {% endif %}
+                                    <dt></dt>
+                                    <dd>---------</dd>
+                                    <dt><b>应付金额：<b></dt>
+                                    <dd><b>￥{{ order.final_total_price }}</b></dd>
                                 </dl>
                             </div>
                         </td>

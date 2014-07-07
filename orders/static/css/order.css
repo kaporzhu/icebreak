@@ -14,16 +14,16 @@
 
 #shopping-cart .head, #shopping-cart .foot {
     color: #555;
-    font-size: 14px;
-    font-weight: bold;
     padding: 8px 0;
-    background-color: #f5f5f5;
-    background-image: -webkit-linear-gradient(top, #fafafa, #f1f1f1);
-    background-image: linear-gradient(to bottom, #fafafa, #f1f1f1);
     border: 1px solid #d0d0d0;
 }
 
 #shopping-cart .head {
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #f5f5f5;
+    background-image: -webkit-linear-gradient(top, #fafafa, #f1f1f1);
+    background-image: linear-gradient(to bottom, #fafafa, #f1f1f1);
     border-radius: 4px 4px 0 0;
     -moz-border-radius: 4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
@@ -54,7 +54,6 @@
 }
 
 #shopping-cart .total-price {
-    font-size: 24px;
     color: #eb6100;
 }
 
@@ -171,4 +170,8 @@ a.highlight:hover {
 
 #all-orders tr.selected td {
     background-color: #FFFFCC;
+}
+
+dt {
+    font-weight: 200;
 }

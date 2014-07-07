@@ -27,6 +27,7 @@ class Food(models.Model):
     ingredients = models.TextField(blank=True)
     image = models.ImageField(upload_to='foods')
     tips = models.TextField(blank=True)
+    is_primary = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -85,6 +86,7 @@ class TimeFrame(models.Model):
             for food in self.foods.filter(is_active=True):
                 foods.append({
                     'id': food.id,
+                    'is_primary': food.is_primary,
                     'name': food.name,
                     'price': food.price,
                     'description': food.description,

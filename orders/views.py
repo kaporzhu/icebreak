@@ -17,7 +17,7 @@ from braces.views import(
 
 from .constants import(
     ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES, DISTRIBUTING, DONE,
-    PRINTED
+    PRINTED, DISCOUNTS, UNPAID
 )
 from .forms import OrderForm, CommentForm
 from .models import OrderFood, Order
@@ -110,6 +110,7 @@ class CreateView(LoginRequiredMixin, JsonRequestResponseMixin, FormView):
 
         # foods
         total_price = 0
+        primary_count = 0
         for fd in json.loads(self.request.POST['foods']):
             if fd['count'] <= 0:
                 continue
@@ -118,9 +119,13 @@ class CreateView(LoginRequiredMixin, JsonRequestResponseMixin, FormView):
             food.save()
             order.shop.update_food_count(food)  # update food count today
             total_price += food.price * fd['count']
+            primary_count += fd['count']
             OrderFood(user=self.request.user, food=food, price=food.price,
                       order=order, count=fd['count']).save()
 
+        if primary_count > 6:
+            primary_count = 6
+        order.discount = DISCOUNTS[primary_count] * total_price
         order.total_price = total_price
         order.save()
 
@@ -326,8 +331,8 @@ class PrintOrdersView(StaffuserRequiredMixin, TemplateView):
         ids = self.request.GET['ids'].split(',')
         orders = []
         for order in Order.objects.in_bulk(ids).values():
+            orders.append(order)
             if order.status == PAID:
-                orders.append(order)
                 order.status = PRINTED
                 order.save()
         data.update({'orders': orders})

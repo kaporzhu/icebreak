@@ -69,7 +69,7 @@
                             <div class="foot">
                                 <span class="name">{{ food.name }}</span>
                                 <span class="count"></span>
-                                <button data-id="{{ food.id }}" data-name="{{ food.name }}" data-price="{{ food.price }}" data-description="{{ food.description }}" data-ingredients="{{ food.ingredients }}" class="btn btn-xs add-food-btn pull-right">￥{{ food.price }}</button>
+                                <button data-id="{{ food.id }}" data-name="{{ food.name }}" data-is-primary="{{ food.is_primary }}" data-price="{{ food.price }}" data-description="{{ food.description }}" data-ingredients="{{ food.ingredients }}" class="btn btn-xs add-food-btn pull-right">￥{{ food.price }}</button>
                                 <span class="sell-out-tip pull-right">已售完</span>
                                 <br />
                                 <small class="count-today">剩余：<span></span> 份</small>
@@ -79,7 +79,6 @@
                     {% endif %}
                 </div>
             </div>
-            <br />
             {% endfor %}
         </div>
         <div class="col-md-3 hidden-sm hidden-xs">

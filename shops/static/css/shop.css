@@ -1,5 +1,6 @@
 #foods-list .foods {
     padding: 0;
+    margin-bottom: 10px;
 }
 
 #foods-list .toolbar {

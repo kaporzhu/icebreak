@@ -30,3 +30,5 @@ DELIVERY_TIMES = [
         'cutoff_time': time(23, 00)
     }
 ]
+
+DISCOUNTS = [0, 0, 0.01, 0.02, 0.03, 0.04, 0.05]

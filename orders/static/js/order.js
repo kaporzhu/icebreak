@@ -12,12 +12,24 @@ $(function(){
                 data: {foods: ShoppingCart.data}
             }).toHTML()
         );
+        var overview_data = {
+            total_count: ShoppingCart.total_count.toFixed(2),
+            total_price: ShoppingCart.total_price.toFixed(2),
+            final_price: ShoppingCart.final_price.toFixed(2),
+            discount: ShoppingCart.discount.toFixed(2),
+            tip: ShoppingCart.tip
+        };
+        if (ShoppingCart.coupon) {
+            overview_data.coupon = ShoppingCart.coupon;
+            overview_data.final_price = (overview_data.final_price-overview_data.coupon).toFixed(2);
+        }
         $('#shopping-cart .foot').html(
             new Ractive({
                 template: '#shopping-cart-overview-template',
-                data: {total_count: ShoppingCart.total_count, total_price: ShoppingCart.total_price}
+                data: overview_data
             }).toHTML()
         );
+        $('.glyphicon-question-sign').tooltip();
     }
     updateShoppingCart();
     $(document).on('click', '#shopping-cart .foods .hidden-btn', function(){
@@ -261,6 +273,7 @@ $(function(){
             success: function(data) {
                 $button.text('创建成功');
                 $('#validate-phone-btn').text('创建成功');
+                ShoppingCart.empty();
                 location.href = data.next_url;
             },
             error: function() {
@@ -311,6 +324,16 @@ $(function(){
         });
     });
 
+    // update final price. call this function everything the selected foods
+    // are changed or the coupon is added.
+    function update_final_price() {
+        var final_price = ShoppingCart.final_price;
+        if (!$('#shopping-cart .foot dd.coupon').is('.hidden')) {
+            final_price -= parseFloat($('#shopping-cart .foot dd.coupon span').text());
+        }
+        $('#shopping-cart .foot .total-price span').text(final_price);
+    }
+
     // coupon code
     $('#order-detail .coupon .overview .edit-btn').click(function(){
         $('#order-detail .coupon .wrapper').removeClass('hidden');
@@ -344,6 +367,10 @@ $(function(){
                     $('#order-detail .coupon .overview').removeClass('hidden').data('code', codes.join(''));
                     $('#order-detail .coupon .overview span').text(codes.join('-') + ', 优惠' + data.discount + '元');
                     $('#order-detail .coupon .overview a').remove();
+                    $('#shopping-cart .foot .coupon').removeClass('hidden');
+                    $('#shopping-cart .foot dd.coupon span').text(data.discount);
+                    ShoppingCart.coupon = data.discount;
+                    update_final_price();
                 } else {
                     alert(data.reason);
                 }

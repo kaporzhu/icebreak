@@ -97,7 +97,7 @@ class ShopCouponListView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
             code_Q = Q()
 
         # status
-        status = self.request.REQUEST.get('status', all)
+        status = self.request.REQUEST.get('status', 'all')
         if status == 'all':
             status_Q = Q()
         else:

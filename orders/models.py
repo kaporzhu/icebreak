@@ -30,12 +30,14 @@ class Order(models.Model):
         (DISTRIBUTING, u'正在写字楼中配送'),
         (DONE, u'完成'),
     )
+
     code = models.CharField(max_length=32, unique=True, blank=True, null=True)
     user = models.ForeignKey(User)
     shop = models.ForeignKey(Shop, blank=True, null=True)
     delivery_man = models.ForeignKey(Staff, blank=True, null=True)
     total_price = models.FloatField()
     coupon = models.ForeignKey(Coupon, blank=True, null=True)
+    discount = models.FloatField(blank=True, null=True)
     delivery_time = models.CharField(max_length=32, blank=True, null=True)
     status = models.CharField(max_length=32, choices=STATUS_CHOICES,
                               default=UNPAID, db_index=True)
@@ -78,10 +80,12 @@ class Order(models.Model):
 
     @property
     def final_total_price(self):
+        final_price = self.total_price
         if self.coupon:
-            return max(self.total_price - self.coupon.discount, 0)
-        else:
-            return self.total_price
+            final_price -= self.coupon.discount
+        if self.discount:
+            final_price -= self.discount
+        return final_price
 
 
 class OrderFood(models.Model):

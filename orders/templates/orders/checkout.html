@@ -30,7 +30,7 @@
                 </div>
                 <div class="row foods">
                 </div>
-                <div class="foot row">
+                <div class="foot row text-right">
                 </div>
                 {% verbatim %}
                 <script id='food-item-template' type='text/ractive'>
@@ -52,8 +52,22 @@
                 {{/foods}}
                 </script>
                 <script id="shopping-cart-overview-template" type='text/ractive'>
-                    <div class="col-sm-7"></div>
-                    <div class="col-sm-5 text-right">共{{ total_count }}份&nbsp;&nbsp;应付金额：<span class="total-price"><i>￥&nbsp;</i>{{ total_price }}</span></div>
+                <div class="col-sm-offset-7 col-sm-5">
+                    <dl class="dl-horizontal">
+                        <dt>总计：</dt>
+                        <dd>￥{{ total_price }}</dd>
+                        <dt></dt>
+                        <dd>---------</dd>
+                        <dt class="discount {{# discount == 0 }}hidden{{/ 0 }}">促销优惠<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ tip }}"></span>：</dt>
+                        <dd class="discount {{# discount == 0 }}hidden{{/ 0 }}">-￥<span>{{ discount }}</span></dd>
+                        <dt class="coupon {{^ coupon }}hidden{{/ coupon }}">优惠券：</dt>
+                        <dd class="coupon {{^ coupon }}hidden{{/ coupon }}">-￥<span>{{ coupon }}</span></dd>
+                        <dt></dt>
+                        <dd>---------</dd>
+                        <dt><b>应付金额：<b></dt>
+                        <dd class="total-price"><b>￥<span>{{ final_price }}</span><b></dd>
+                    </dl>
+                </div>
                 </script>
                 {% endverbatim %}
             </div>
