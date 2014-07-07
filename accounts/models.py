@@ -18,6 +18,7 @@ class Staff(models.Model):
     is_shop_manager = models.BooleanField(u'店长')
     shop = models.ForeignKey(Shop)
     api_key = models.CharField(max_length=16, blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property

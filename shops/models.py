@@ -2,6 +2,8 @@
 from django.core.cache import cache
 from django.db import models
 
+from easy_thumbnails.files import get_thumbnailer
+
 
 class Shop(models.Model):
     """
@@ -32,9 +34,14 @@ class Shop(models.Model):
         if not cache.get(cache_key):
             staffs = []
             for staff in self.staff_set.filter(user__is_active=True):
+                if staff.avatar:
+                    avatar = get_thumbnailer(staff.avatar).get_thumbnail({'size': (64, 64)}).url  # noqa
+                else:
+                    avatar = None
                 staffs.append({
                     'role_name': staff.role_name,
-                    'full_name': staff.user.get_full_name()
+                    'full_name': staff.user.get_full_name(),
+                    'avatar': avatar
                 })
             cache.set(cache_key, staffs, 300)  # cache for 5 mins
         return cache.get(cache_key)
