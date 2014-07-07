@@ -4,7 +4,7 @@ var ShoppingCart = window.ShoppingCart = {
     total_price: 0,
 
     STORAGE_KEY: 'shopping-cart',
-    STORAGE_KEY_DATE: 'shopping-cart-date',
+    STORAGE_KEY_TIME: 'shopping-cart-time',
 
     calculate: function() {
         var total_count = 0;
@@ -19,8 +19,9 @@ var ShoppingCart = window.ShoppingCart = {
 
     load: function() {
         // load from localStorage
-        try{
-            if (localStorage[ShoppingCart.STORAGE_KEY_DATE] != new Date().toDateString()) {
+        try {
+            var time = localStorage[ShoppingCart.STORAGE_KEY_TIME];
+            if (!time || new Date().getTime()-time > 3600000) {
                 ShoppingCart.empty();
             } else {
                 ShoppingCart.data = JSON.parse(localStorage[ShoppingCart.STORAGE_KEY]);
@@ -34,7 +35,7 @@ var ShoppingCart = window.ShoppingCart = {
     save: function() {
         // save data to localStorage
         localStorage[ShoppingCart.STORAGE_KEY] = JSON.stringify(ShoppingCart.data);
-        localStorage[ShoppingCart.STORAGE_KEY_DATE] = new Date().toDateString();
+        localStorage[ShoppingCart.STORAGE_KEY_TIME] = new Date().getTime();
     },
 
     addFood: function(food_id, food_name, food_price) {

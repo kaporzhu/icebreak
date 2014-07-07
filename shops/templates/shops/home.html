@@ -54,7 +54,7 @@
         <div class="col-md-9">
             {% for time_frame in time_frames %}
             <div class="row">
-                <div class="col-md-12 well-shadow foods">
+                <div class="col-md-12 well-shadow foods {% if time_frame.is_available %}available{% endif %}" data-time-frame="{{ time_frame.id }}">
                     <p class="toolbar">
                         <span class="title">{{ time_frame }}</span>
                         <span class="pull-right time">{{ time_frame.time }}</span>

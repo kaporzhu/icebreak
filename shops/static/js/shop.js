@@ -1,4 +1,5 @@
 $(function(){
+
     $('#shopping-cart .foods-overview').click(function(){
         toggleFoodsList();
     });
@@ -153,6 +154,13 @@ function updateFoodCount() {
 }
 
 function updateShoppingCart() {
+    // if the available time frame is changed, empty the shopping cart.
+    var available_time_frame = $('.foods.available').data('time-frame');
+    if (localStorage.time_frame != available_time_frame) {
+        ShoppingCart.empty();
+    }
+    localStorage.time_frame = available_time_frame;
+
     $('#shopping-cart .foods-list').html(
         new Ractive({
             template:'#foods-list-item-template',
