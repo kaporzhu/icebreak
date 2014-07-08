@@ -10,7 +10,7 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-md-8 col-md-offset-2 well-shadow">
+        <div class="col-md-10 col-md-offset-1 well-shadow">
             <div class="row">
                 <p>
                     <span>订单号：{{ order.code }}</span>
@@ -43,6 +43,19 @@
                         <td class="text-center text-middle">下单时间：<br />{{ order.created_at|date:"m-d H:i" }}</td>
                     </tr>
                     <tr>
+                        <td colspan="4" class="text-center">
+                            <ul class="list-inline steps">
+                                {% for step in order.sorted_steps %}
+                                <li class="step">
+                                    <div class="text {% if step.is_done %}done{% endif %}">{{ step.label }}</div>
+                                    <div class="time"><small>{{ step.time }}&nbsp;</small></div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <br /><br />
+                        </td>
+                    </tr>
+                    <tr>
                         <td colspan="4">
                             <div class="pull-right">
                                 <dl class="dl-horizontal">
@@ -68,7 +81,7 @@
                     </tr>
                 </table>
                 {% if order.status == DISTRIBUTING %}
-                <p>配送进度</p>
+                <p>配送员位置(<a href="javascript:location.reload();">刷新页面</a>查看最新位置)</p>
                 <hr />
                 <div class="row">
                     {% include "orders/order_room_chart.html" %}

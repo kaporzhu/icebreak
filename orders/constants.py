@@ -11,6 +11,53 @@ ON_THE_WAY = 'on the way'
 DISTRIBUTING = 'distributing'
 DONE = 'done'
 
+STATUSES = [UNPAID, PAID, PRINTED, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE]  # noqa
+
+ORDER_STEPS = {
+    UNPAID: {
+        'label': u'下单',
+        'date': '',
+        'time': '',
+        'is_done': True
+    },
+    PAID: {
+        'label': u'付款',
+        'date': '',
+        'time': '',
+        'is_done': False
+    },
+    PRINTED: {
+        'label': u'打印订单',
+        'date': '',
+        'time': '',
+        'is_done': False
+    },
+    PACKING_DONE: {
+        'label': u'打包完成',
+        'date': '',
+        'time': '',
+        'is_done': False
+    },
+    ON_THE_WAY: {
+        'label': u'配送员出发',
+        'date': '',
+        'time': '',
+        'is_done': False
+    },
+    DISTRIBUTING: {
+        'label': u'到达写字楼',
+        'date': '',
+        'time': '',
+        'is_done': False
+    },
+    DONE: {
+        'label': u'完成',
+        'date': '',
+        'time': '',
+        'is_done': False
+    }
+}
+
 # order delivery time
 DELIVERY_TIMES = [
     {

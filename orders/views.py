@@ -461,11 +461,13 @@ class AppBatchStatusUpdateView(AppRequestMixin, JSONResponseMixin, View):
         status = request.GET['status']
         building = Building.objects.get(pk=request.GET['building_id'])
         if status == ON_THE_WAY:
-            orders = Order.objects.filter(building=building,
-                                          status=PACKING_DONE)
-            orders.update(status=ON_THE_WAY, delivery_man=self.staff)
+            for order in Order.objects.filter(building=building, status=PACKING_DONE):  # noqa
+                order.status = ON_THE_WAY
+                order.delivery_man = self.staff
+                order.save()
         elif status == DISTRIBUTING:
-            orders = Order.objects.filter(building=building, status=ON_THE_WAY)
-            orders.update(status=DISTRIBUTING)
+            for order in Order.objects.filter(building=building, status=ON_THE_WAY):  # noqa
+                order.status = DISTRIBUTING
+                order.save()
             building.whole_with_orders(refersh=True)
         return self.render_json_response({'success': True})

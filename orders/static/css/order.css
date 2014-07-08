@@ -79,6 +79,32 @@
     text-decoration: none;
 }
 
+#order-detail .steps {
+    padding: 15px;
+}
+
+#order-detail .steps .step {
+    width: 14.28%;
+    padding: 0;
+    float: left;
+    border-left: 1px solid white;
+}
+
+#order-detail .steps .step small {
+    color: #8c8c8c;
+    font-size: 12px;
+}
+
+#order-detail .steps .step .text {
+    background-color: #c3c3c3;
+    color: white;
+    padding: 3px 0;
+}
+
+#order-detail .steps .step .text.done {
+    background-color: #83bd39;
+}
+
 #validate-phone-modal .code {
     width: 80px;
 }

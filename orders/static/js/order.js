@@ -184,7 +184,7 @@ $(function(){
         }
         $(this).parents('form').find('.overview').removeClass('hidden');
         $(this).parents('form').find('.wrapper').addClass('hidden');
-        $('#order-detail .address .overview').data('building', $buildings.val()).data('zone', $zones.val()).data('room', $rooms.val());
+        $('#order-detail .address .overview').data('building', $buildings.val()).data('zone', $zones.val()).data('floor', $floors.val()).data('room', $rooms.val());
         var address = $buildings.children('option:selected').text() + $zones.children('option:selected').text() + $rooms.children('option:selected').text();
         $('#order-detail .address .overview span').text(address);
     });

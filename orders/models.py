@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import string
 from datetime import datetime
 
+from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
@@ -12,15 +15,14 @@ from django.utils.crypto import get_random_string
 import qrcode
 
 from .constants import(
-    UNPAID, PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE, PRINTED
+    UNPAID, PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE, PRINTED,
+    ORDER_STEPS, STATUSES
 )
 from accounts.models import Staff
 from buildings.models import Building, Zone, Room
 from coupons.models import Coupon
 from foods.models import Food
 from shops.models import Shop
-from django.contrib.sites.models import Site
-from django.conf import settings
 
 
 class Order(models.Model):
@@ -37,6 +39,9 @@ class Order(models.Model):
         (DONE, u'完成'),
     )
 
+    # we can check this with the new status. if it's changed, update the steps
+    __original_status = None
+
     code = models.CharField(max_length=32, unique=True, blank=True, null=True)
     user = models.ForeignKey(User)
     shop = models.ForeignKey(Shop, blank=True, null=True)
@@ -49,6 +54,8 @@ class Order(models.Model):
                               default=UNPAID, db_index=True)
     paid_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+    # every time the status is changed, add a new step
+    steps = models.TextField(default=json.dumps(ORDER_STEPS))
 
     # address info
     phone = models.CharField(max_length=16)
@@ -56,6 +63,36 @@ class Order(models.Model):
     building = models.ForeignKey(Building)
     zone = models.ForeignKey(Zone, blank=True, null=True)
     room = models.ForeignKey(Room)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Init __original_status to current one
+        """
+        super(Order, self).__init__(*args, **kwargs)
+        self.__original_status = self.status
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        """
+        Check if status is changed
+        """
+        if self.status != self.__original_status:
+            # update steps here
+            now = datetime.now()
+            steps = json.loads(self.steps)
+            steps[self.status]['is_done'] = True
+            steps[self.status]['time'] = now.strftime(u'%H:%M')
+            self.steps = json.dumps(steps)
+
+        super(Order, self).save(force_insert, force_update, *args, **kwargs)
+        self.__original_status = self.status
+
+    @property
+    def sorted_steps(self):
+        sorted_steps = []
+        steps = json.loads(self.steps)
+        for status in STATUSES:
+            sorted_steps.append(steps[status])
+        return sorted_steps
 
     @property
     def address(self):
@@ -134,6 +171,13 @@ def generate_order_code(sender, instance, created, *args, **kwargs):
             instance.user.id,
             datetime.now().strftime('%y%m%d'),
             get_random_string(8, string.digits))
+
+        # update step here
+        now = datetime.now()
+        steps = json.loads(instance.steps)
+        steps[instance.status]['time'] = now.strftime(u'%H:%M')
+        instance.steps = json.dumps(steps)
+
         instance.save(using=False)
 
 
