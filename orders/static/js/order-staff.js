@@ -60,6 +60,7 @@ $(document).ready(function(){
         $('#all-orders .select-row-btn:checked').each(function(){
             ids.push($(this).data('id'));
         });
-        window.open( $(this).data('url') + '?ids=' + ids.join(','));
+        window.open($(this).data('print-orders-url') + '?ids=' + ids.join(','), '', 'channelmode=1,width=400,height=600').moveTo(500, 100);
+        window.open($(this).data('print-order-foods-url') + '?ids=' + ids.join(','), '', 'channelmode=1,width=400,height=600').moveTo(50, 100);
     });
 });

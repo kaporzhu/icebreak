@@ -4,7 +4,8 @@ from django.conf.urls import patterns, url
 from .views import(
     CheckoutView, CreateView, MineView, OrderDetailView, ShopOrderListView,
     UpdateStatusView, OrderListView, AppGetOrdersView, PrintOrdersView,
-    AppFinishOrderView, CommentView, AppBatchStatusUpdateView, PayOrderView
+    AppFinishOrderView, CommentView, AppBatchStatusUpdateView, PayOrderView,
+    PrintOrderFoodsView
 )
 
 
@@ -21,6 +22,8 @@ urlpatterns = patterns(
     url(r'^app_finish_order/$', AppFinishOrderView.as_view()),
     url(r'^app_batch_status_update/$', AppBatchStatusUpdateView.as_view()),
     url(r'^print_orders/$', PrintOrdersView.as_view(), name='print_orders'),
+    url(r'^print_order_foods/$',
+        PrintOrderFoodsView.as_view(), name='print_order_foods'),
     url(r'^comment/(?P<code>\w+)/$', CommentView.as_view(), name='comment'),
     url(r'^(?P<code>\d+)/pay/$', PayOrderView.as_view(), name='pay'),
 )

@@ -78,7 +78,7 @@
                     <button type="button" class="btn btn-default select-rows-btn" data-type="none">全不选</button>
                 </div>
                 <button type="button" data-update-status-url="{% url 'orders:update_status' %}" data-status="packing done" class="btn btn-default update-status-btn" data-type="all">打包完成</button>
-                <button id="print-orders-btn" data-url="{% url 'orders:print_orders' %}" class="btn btn-default">打印选择的订单</button>
+                <button id="print-orders-btn" data-print-orders-url="{% url 'orders:print_orders' %}" data-print-order-foods-url="{% url 'orders:print_order_foods' %}" class="btn btn-default">打印选择的订单</button>
                 <table class="table table-bordered table-hover" id="all-orders">
                     <tr>
                         <th></th>

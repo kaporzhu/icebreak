@@ -1,0 +1,31 @@
+<html>
+    {% load handsome_template_tags %}
+    <body onload2="window.print()">
+        <style>
+            * {
+                font-size: 10px;
+            }
+            .food {
+                width: 230px;
+                text-align: center;
+            }
+            hr {
+                margin: 5px 0 15px 0;
+            }
+        </style>
+        {% for order in orders %}
+            {% for order_food in order.orderfood_set.all %}
+                {% num_range order_food.count as count_range %}
+                {% for i in count_range %}
+                <div class="food">
+                    <div><b>{{ order_food.food.name }}</b></div>
+                    <img width="230" src="{{ order_food.qrcode }}" />
+                    <div>微信扫一扫，给我们反馈</div>
+                    <div>订单编号{{ order.code }}</div>
+                    <hr />
+                </div>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </body>
+</html>

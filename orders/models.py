@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+import os
 import string
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils.crypto import get_random_string
+
+import qrcode
 
 from .constants import(
     UNPAID, PAID, PACKING_DONE, ON_THE_WAY, DISTRIBUTING, DONE, PRINTED
@@ -15,6 +19,8 @@ from buildings.models import Building, Zone, Room
 from coupons.models import Coupon
 from foods.models import Food
 from shops.models import Shop
+from django.contrib.sites.models import Site
+from django.conf import settings
 
 
 class Order(models.Model):
@@ -103,6 +109,20 @@ class OrderFood(models.Model):
     @property
     def subtotal_price(self):
         return self.price * self.count
+
+    @property
+    def qrcode(self):
+        """
+        Generate qrcode image and save it to media/qrcodes folder.
+        Return the url
+        """
+        site = Site.objects.get_current()
+        url = '{}{}'.format(
+            site.domain, reverse('orders:comment', kwargs={'code': self.code}))
+        img = qrcode.make(url, box_size=7, border=1)
+        img_name = '{}.png'.format(self.id)
+        img.save(os.path.join(settings.MEDIA_ROOT, 'qrcodes', img_name))
+        return '{}qrcodes/{}'.format(settings.MEDIA_URL, img_name)
 
 
 def generate_order_code(sender, instance, created, *args, **kwargs):

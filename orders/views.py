@@ -17,7 +17,7 @@ from braces.views import(
 
 from .constants import(
     ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES, DISTRIBUTING, DONE,
-    PRINTED, DISCOUNTS, UNPAID
+    PRINTED, DISCOUNTS
 )
 from .forms import OrderForm, CommentForm
 from .models import OrderFood, Order
@@ -335,6 +335,25 @@ class PrintOrdersView(StaffuserRequiredMixin, TemplateView):
             if order.status == PAID:
                 order.status = PRINTED
                 order.save()
+        data.update({'orders': orders})
+        return data
+
+
+class PrintOrderFoodsView(StaffuserRequiredMixin, TemplateView):
+    """
+    Print for each food in the order
+    """
+    template_name = 'orders/print_order_foods.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Get orders from ids
+        """
+        data = super(PrintOrderFoodsView, self).get_context_data(**kwargs)
+        ids = self.request.GET['ids'].split(',')
+        orders = []
+        for order in Order.objects.in_bulk(ids).values():
+            orders.append(order)
         data.update({'orders': orders})
         return data
 
