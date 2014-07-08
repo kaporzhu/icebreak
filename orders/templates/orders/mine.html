@@ -49,7 +49,9 @@
                         <td class="text-center text-middle">￥{{ order.final_total_price }}</td>
                         <td class="text-center">
                             <a href="{% url 'orders:detail' code=order.code %}">订单详情 ></a><br />
-                            <a href="#" class="highlight">在线支付 ></a>
+                            {% if order.status == UNPAID %}
+                            <a href="{% url 'orders:pay' code=order.code %}" class="highlight">立即付款 ></a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

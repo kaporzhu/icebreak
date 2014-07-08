@@ -1,0 +1,56 @@
+{% extends "page.html" %}
+{% load static handsome_template_tags %}
+
+{% block extracss_compressed %}
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+{% endblock %}
+
+{% block title %}订单详情{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <table class="table table-bordered" id="order-detail">
+                    <tr>
+                        <td class="foods">
+                            <ul class="list-unstyled">
+                                {% for order_food in order.orderfood_set.all %}
+                                <li>
+                                    <span class="food-name">{{ order_food.food }}</span>
+                                    <span class="food-count">{{ order_food.count }}份</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            <ul class="list-inline steps">
+                                {% for step in order.sorted_steps %}
+                                <li class="step">
+                                    <div class="text {% if step.is_done %}done{% endif %}">{{ step.label }}</div>
+                                    <div class="time"><small>{{ step.time }}&nbsp;</small></div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <br /><br />
+                        </td>
+                    </tr>
+                </table>
+                {% if order.status == DISTRIBUTING %}
+                <p>配送员位置(<a href="javascript:location.reload();">刷新页面</a>查看最新位置)</p>
+                <hr />
+                <div class="row">
+                    {% include "orders/order_room_chart.html" %}
+                </div>
+                {% endif %}
+                <p>姓&nbsp;&nbsp;&nbsp;&nbsp;名：{{ order.name|dim }}</p>
+                <p>地&nbsp;&nbsp;&nbsp;&nbsp;址：{{ order.address }}</p>
+                <p>联系电话：{{ order.phone|dim }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -34,7 +34,7 @@ def dim(s):
     if len(s) > 4:
         return s[:-4] + '**' + s[-2:]
     else:
-        return s
+        return '*' + s[1:]
 
 
 class RangeNode(Node):

@@ -139,7 +139,8 @@ SMS_SERVER_URL = 'http://106.ihuyi.cn/webservice/sms.php?method=Submit'
 SMS_SERVER_USERNAME = ''
 SMS_SERVER_PASSWORD = ''
 SMS_TEMPLATES = {
-    'validation_code': u'您的验证码是{}，三十分钟内有效'
+    'validation_code': u'您的验证码是{}，三十分钟内有效',
+    'order_reminder': u'您的订单已送出，点击链接查看最新进度 {}'
 }
 
 try:

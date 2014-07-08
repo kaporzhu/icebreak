@@ -42,6 +42,7 @@ class Order(models.Model):
     # we can check this with the new status. if it's changed, update the steps
     __original_status = None
 
+    short_code = models.CharField(max_length=32, unique=True, blank=True, null=True)  # noqa
     code = models.CharField(max_length=32, unique=True, blank=True, null=True)
     user = models.ForeignKey(User)
     shop = models.ForeignKey(Shop, blank=True, null=True)
@@ -171,6 +172,7 @@ def generate_order_code(sender, instance, created, *args, **kwargs):
             instance.user.id,
             datetime.now().strftime('%y%m%d'),
             get_random_string(8, string.digits))
+        instance.short_code = get_random_string()
 
         # update step here
         now = datetime.now()

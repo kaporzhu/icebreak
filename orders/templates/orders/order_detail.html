@@ -14,9 +14,11 @@
             <div class="row">
                 <p>
                     <span>订单号：{{ order.code }}</span>
+                    {% if order.status == UNPAID %}
                     <span class="pull-right">
-                        <a href="#" class="highlight">立即付款 ></a>
+                        <a href="{% url 'orders:pay' code=order.code %}" class="highlight">立即付款 ></a>
                     </span>
+                    {% endif %}
                 </p>
                 <hr />
                 <table class="table table-bordered" id="order-detail">

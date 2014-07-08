@@ -5,7 +5,7 @@ from .views import(
     CheckoutView, CreateView, MineView, OrderDetailView, ShopOrderListView,
     UpdateStatusView, OrderListView, AppGetOrdersView, PrintOrdersView,
     AppFinishOrderView, CommentView, AppBatchStatusUpdateView, PayOrderView,
-    PrintOrderFoodsView
+    PrintOrderFoodsView, PublicOrderDetailView
 )
 
 
@@ -17,6 +17,8 @@ urlpatterns = patterns(
     url(r'^create/$', CreateView.as_view(), name='create'),
     url(r'^checkout/$', CheckoutView.as_view(), name='checkout'),
     url(r'^(?P<code>\d+)/$', OrderDetailView.as_view(), name='detail'),
+    url(r'^public/(?P<short_code>\w+)/$',
+        PublicOrderDetailView.as_view(), name='public_detail'),
     url(r'^update_status/$', UpdateStatusView.as_view(), name='update_status'),
     url(r'^app_get_orders/$', AppGetOrdersView.as_view()),
     url(r'^app_finish_order/$', AppFinishOrderView.as_view()),

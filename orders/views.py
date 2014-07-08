@@ -2,9 +2,11 @@
 import json
 from datetime import datetime
 
+from django.conf import settings
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.http.response import HttpResponseForbidden
+from django.http.response import HttpResponseForbidden, Http404
 from django.views.generic.base import TemplateView, View, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
@@ -17,7 +19,7 @@ from braces.views import(
 
 from .constants import(
     ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES, DISTRIBUTING, DONE,
-    PRINTED, DISCOUNTS
+    PRINTED, DISCOUNTS, UNPAID
 )
 from .forms import OrderForm, CommentForm
 from .models import OrderFood, Order
@@ -27,6 +29,7 @@ from buildings.models import Building
 from coupons.models import Coupon
 from foods.models import Food, FoodComment
 from icebreak.mixins import AppRequestMixin
+from icebreak.utils import send_sms
 from shops.models import Shop
 
 
@@ -167,7 +170,7 @@ class MineView(LoginRequiredMixin, ListView):
         Add extra data to context
         """
         data = super(MineView, self).get_context_data(**kwargs)
-        data.update({'DISTRIBUTING': DISTRIBUTING})
+        data.update({'DISTRIBUTING': DISTRIBUTING, 'UNPAID': UNPAID})
         return data
 
 
@@ -184,6 +187,27 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
         Add extra data to context
         """
         data = super(OrderDetailView, self).get_context_data(**kwargs)
+        if self.object.user != self.request.user:
+            raise Http404
+        data.update({'DISTRIBUTING': DISTRIBUTING, 'DONE': DONE,
+                     'UNPAID': UNPAID})
+        return data
+
+
+class PublicOrderDetailView(DetailView):
+    """
+    Order detail page
+    """
+    slug_field = 'short_code'
+    slug_url_kwarg = 'short_code'
+    model = Order
+    template_name = 'orders/public_order_detail.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Add extra data to context
+        """
+        data = super(PublicOrderDetailView, self).get_context_data(**kwargs)
         data.update({'DISTRIBUTING': DISTRIBUTING, 'DONE': DONE})
         return data
 
@@ -461,10 +485,16 @@ class AppBatchStatusUpdateView(AppRequestMixin, JSONResponseMixin, View):
         status = request.GET['status']
         building = Building.objects.get(pk=request.GET['building_id'])
         if status == ON_THE_WAY:
+            site = Site.objects.get_current()
             for order in Order.objects.filter(building=building, status=PACKING_DONE):  # noqa
                 order.status = ON_THE_WAY
                 order.delivery_man = self.staff
                 order.save()
+                path = reverse('orders:public_detail',
+                               kwargs={'short_code': order.short_code})
+                url = '{}{}'.format(site.domain, path)
+                send_sms(order.phone,
+                         settings.SMS_TEMPLATES['order_reminder'].format(url))
         elif status == DISTRIBUTING:
             for order in Order.objects.filter(building=building, status=ON_THE_WAY):  # noqa
                 order.status = DISTRIBUTING

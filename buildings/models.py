@@ -127,7 +127,7 @@ class Building(models.Model):
                 else:
                     whole['has_order'] = True
                     whole['rooms'][order.room.id].update({'status': DISTRIBUTING})
-            cache.set(cache_key, self.whole_rooms_by_floor(whole), 10800)  # cache for 3 hours
+            cache.set(cache_key, self.whole_rooms_by_floor(whole), 3600)  # cache for 1 hours
 
         return cache.get(cache_key)
 
