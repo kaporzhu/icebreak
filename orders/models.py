@@ -21,7 +21,7 @@ from .constants import(
 from accounts.models import Staff
 from buildings.models import Building, Zone, Room
 from coupons.models import Coupon
-from foods.models import Food
+from foods.models import Food, TimeFrame
 from shops.models import Shop
 
 
@@ -51,6 +51,7 @@ class Order(models.Model):
     coupon = models.ForeignKey(Coupon, blank=True, null=True)
     discount = models.FloatField(blank=True, null=True)
     delivery_time = models.CharField(max_length=32, blank=True, null=True)
+    time_frame = models.ForeignKey(TimeFrame, blank=True, null=True)
     status = models.CharField(max_length=32, choices=STATUS_CHOICES,
                               default=UNPAID, db_index=True)
     paid_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)

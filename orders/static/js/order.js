@@ -226,6 +226,7 @@ $(function(){
             name: $contact.data('name'),
             coupon: $coupon.data('code'),
             delivery_time: $delivery_time.val(),
+            time_frame: localStorage.time_frame,
             csrfmiddlewaretoken: get_cookie('csrftoken')
         };
         return data;

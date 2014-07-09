@@ -60,7 +60,8 @@ class Shop(models.Model):
                     'name': frame.name,
                     'time': frame.time,
                     'is_available': frame.is_available,
-                    'available_foods': frame.available_foods
+                    'available_foods': frame.available_foods,
+                    'sections': frame.sections_list
                 })
             cache.set(cache_key, time_frames, 30)  # cache for 30 seconds
         return cache.get(cache_key)

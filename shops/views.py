@@ -38,10 +38,7 @@ class ShopHomeView(TemplateView):
         """
         data = super(ShopHomeView, self).get_context_data(**kwargs)
         self.shop = Shop.objects.get(slug=self.kwargs['slug'])
-        data.update({
-            'shop': self.shop,
-            'time_now': datetime.now().strftime('%H:%M')
-        })
+        data.update({'shop': self.shop})
         return data
 
 

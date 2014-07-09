@@ -16,6 +16,7 @@
                 <thead>
                     <th>名称</th>
                     <th>时段</th>
+                    <th>配送时段</th>
                     <th>状态</th>
                     <th></th>
                 </thead>
@@ -24,6 +25,13 @@
                     <tr>
                         <td>{{ object.name }}</td>
                         <td>{{ object.time }}</td>
+                        <td>
+                            <ul>
+                            {% for section in object.sections_list %}
+                            <li>{{ section.label }} - {{ section.time }}</li>
+                            {% endfor %}
+                            </ul>
+                        </td>
                         <td>{% if object.is_active %}启用{% else %}关闭{% endif %}</td>
                         <td><a href="{% url 'foods:update_time_frame' pk=object.id %}">修改</a></td>
                     </tr>

@@ -223,4 +223,5 @@ class UpdateTimeFrameView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
         """
         form = super(UpdateTimeFrameView, self).get_form(form_class)
         form.fields['foods'].queryset = self.staff.shop.food_set.filter(is_active=True)
+        form.initial['sections'] = '\n'.join([u'{}|{}'.format(s['label'], s['time']) for s in self.object.sections_list])
         return form

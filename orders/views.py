@@ -7,6 +7,7 @@ from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http.response import HttpResponseForbidden, Http404
+from django.shortcuts import redirect
 from django.views.generic.base import TemplateView, View, RedirectView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView
@@ -18,8 +19,8 @@ from braces.views import(
 )
 
 from .constants import(
-    ON_THE_WAY, PACKING_DONE, PAID, DELIVERY_TIMES, DISTRIBUTING, DONE,
-    PRINTED, DISCOUNTS, UNPAID
+    ON_THE_WAY, PACKING_DONE, PAID, DISTRIBUTING, DONE, PRINTED, DISCOUNTS,
+    UNPAID
 )
 from .forms import OrderForm, CommentForm
 from .models import OrderFood, Order
@@ -27,7 +28,7 @@ from accounts.mixins import ShopManagerRequiredMixin
 from accounts.models import Address
 from buildings.models import Building
 from coupons.models import Coupon
-from foods.models import Food, FoodComment
+from foods.models import Food, FoodComment, TimeFrame
 from icebreak.mixins import AppRequestMixin
 from icebreak.utils import send_sms
 from shops.models import Shop
@@ -39,6 +40,13 @@ class CheckoutView(TemplateView):
     """
     template_name = 'orders/checkout.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.shop = Shop.objects.get(slug=request.GET.get('shop'))
+        except:
+            return redirect('/')
+        return super(CheckoutView, self).dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         """
         Add extra data to context
@@ -48,9 +56,11 @@ class CheckoutView(TemplateView):
         # get available delivery times
         delivery_times = []
         now = datetime.now().time()
-        for time in DELIVERY_TIMES:
-            if time['cutoff_time'] > now:
-                delivery_times.append(time)
+        for frame in self.shop.time_frames:
+            if frame['is_available']:
+                for section in frame['sections']:
+                    if section['time'] > now:
+                        delivery_times.append(section['label'])
 
         data.update({
             'buildings': Building.objects.all(),
@@ -310,14 +320,14 @@ class ShopOrderListView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
         else:
             status_Q = Q(status=status)
 
-        # delivery time
-        delivery_time = self.request.GET.get('delivery_time', 'all')
-        if delivery_time == 'all':
-            delivery_time_Q = Q()
+        # time frame
+        time_frame_id = self.request.GET.get('time_frame', 'all')
+        if time_frame_id == 'all':
+            time_frame_Q = Q()
         else:
-            delivery_time_Q = Q(delivery_time=delivery_time)
+            time_frame_Q = Q(time_frame=TimeFrame.objects.get(id=time_frame_id))
 
-        return qs.filter(shop_Q, status_Q, building_Q, time_Q).filter(delivery_time_Q).order_by('-id')  # noqa
+        return qs.filter(shop_Q, status_Q, building_Q, time_Q).filter(time_frame_Q).order_by('-id')  # noqa
 
     def get_context_data(self, **kwargs):
         """
@@ -325,10 +335,10 @@ class ShopOrderListView(StaffuserRequiredMixin, ShopManagerRequiredMixin,
         """
         data = super(ShopOrderListView, self).get_context_data(**kwargs)
         data.update({
+            'shop': self.staff.shop,
             'buildings': self.request.user.staff.shop.building_set.all(),
             'STATUS_CHOICES': Order.STATUS_CHOICES,
-            'staff_statuses': [PACKING_DONE, ON_THE_WAY],
-            'delivery_times': DELIVERY_TIMES
+            'staff_statuses': [PACKING_DONE, ON_THE_WAY]
         })
         data.update(self.request.GET.dict())
 

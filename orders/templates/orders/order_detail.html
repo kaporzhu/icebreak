@@ -41,7 +41,7 @@
                             <abbr title="配送员,{{ order.delivery_man.phone }}">{{ order.delivery_man.user.get_full_name }}</abbr>
                             {% endif %}
                         </td>
-                        <td class="text-center text-middle">用餐时间：<br />{{ order.delivery_time }}</td>
+                        <td class="text-center text-middle">送达时间：<br />{{ order.delivery_time }}</td>
                         <td class="text-center text-middle">下单时间：<br />{{ order.created_at|date:"m-d H:i" }}</td>
                     </tr>
                     <tr>

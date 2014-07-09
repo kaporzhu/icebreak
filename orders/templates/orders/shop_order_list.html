@@ -53,13 +53,13 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <select name="delivery_time" class="form-control input-sm">
+                        <select name="time_frame" class="form-control input-sm">
                             <option value="all">所有时段</option>
-                            {% for time in delivery_times %}
-                                {% if time.time == delivery_time %}
-                                <option selected="selected" value="{{ time.time }}">{{ time.time }}</option>
+                            {% for time in shop.time_frames %}
+                                {% if time_frame == time.id|lower %}
+                                <option selected="selected" value="{{ time.id }}">{{ time.name }}</option>
                                 {% else %}
-                                <option value="{{ time.time }}">{{ time.time }}</option>
+                                <option value="{{ time.id }}">{{ time.name }}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -84,8 +84,8 @@
                         <th></th>
                         <th>套餐</th>
                         <th>配送信息</th>
-                        <th>用餐时间</th>
                         <th>下单时间</th>
+                        <th>配送时间</th>
                         <th>状态</th>
                     </tr>
                     {% for order in object_list %}
@@ -102,8 +102,8 @@
                             </ul>
                         </td>
                         <td>{{ order.address }}<br />{{ order.phone }}, {{ order.name }}</td>
-                        <td>{{ order.delivery_time }}</td>
-                        <td>{{ order.created_at|date:"m-d H:i" }}</td>
+                        <td>{{ order.created_at|date:"H:i" }}</td>
+                        <td>{{ order.time_frame }}:{{ order.delivery_time }}</td>
                         <td class="status {{ order.status_color }}">{{ order.get_status_display }}</td>
                     </tr>
                     {% endfor %}

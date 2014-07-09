@@ -178,7 +178,7 @@
     <div class="docker">
         <span class="icon text-center"> <span class="glyphicon glyphicon-shopping-cart"></span> </span>
         <span class="foods-overview">请选择</span>
-        <a id="checkout-btn" href="{% url 'orders:checkout' %}" class="btn btn-yellow btn-sm pull-right">去结账 ></a>
+        <a id="checkout-btn" href="{% url 'orders:checkout' %}?shop={{ shop.slug }}" class="btn btn-yellow btn-sm pull-right">去结账 ></a>
     </div>
     <div class="foods-list-wrapper">
         <p class="foods-list-title">购物车&nbsp;[<a id="empty-shoppingcart-btn" href="javascript:void(0)">清空</a>]</p>
