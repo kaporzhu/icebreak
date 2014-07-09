@@ -209,7 +209,7 @@ class UpdateStaffView(SuperuserRequiredMixin, UpdateView):
         """
         form.save()
         self.object.user.username = form.data['username']
-        self.object.user.name = form.data['name']
+        self.object.user.first_name = form.data['name']
         self.object.user.is_active = form.data['is_active']
         self.object.user.save()
         return super(UpdateStaffView, self).form_valid(form)

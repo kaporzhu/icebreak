@@ -24,7 +24,7 @@
             <div class="row">
                 {% for staff in shop.staffs %}
                 <div class="col-sm-3 text-center">
-                    <img height="60" src="{% if staff.avatar %}{{ staff.avatar }}{% else %}{% static 'image/default_avatar.png' %}{% endif %}" /><br />
+                    <img height="65" src="{% if staff.avatar %}{{ staff.avatar }}{% else %}{% static 'image/default_avatar.png' %}{% endif %}" /><br />
                     <span>{{ staff.role_name }}：{{ staff.full_name }}</span>
                 </div>
                 {% endfor %}
