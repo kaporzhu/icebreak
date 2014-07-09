@@ -53,7 +53,6 @@ INSTALLED_APPS = (
 
     # 3rd libs
     'compressor',
-    'debug_toolbar',
     'easy_thumbnails',
     'south',
 ) + LOCAL_APPS
@@ -69,7 +68,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'icebreak.urls'
@@ -128,10 +126,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-DEBUG_TOOLBAR_CONFIG = {
-    'JQUERY_URL': '/static/libs/jquery/jquery-1.11.1.min.js'
-}
 
 MASTER_KEY = ''
 SMS_NOTIFICATION_ENABLED = False

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from settings import *  # noqa
+
+
 DEBUG = True
 
 TEMPLATE_DEBUG = True
@@ -21,4 +24,10 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         'LOCATION': 'unique-snowflake'
     }
+}
+
+INSTALLED_APPS += ('debug_toolbar',)
+MIDDLEWARE_CLASSES += ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+DEBUG_TOOLBAR_CONFIG = {
+    'JQUERY_URL': '/static/libs/jquery/jquery-1.11.1.min.js'
 }
