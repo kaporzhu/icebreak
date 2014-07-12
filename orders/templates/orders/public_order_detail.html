@@ -39,9 +39,9 @@
                         </td>
                     </tr>
                 </table>
-                {% if order.status == DISTRIBUTING %}
-                <p>配送员位置(<a href="javascript:location.reload();">刷新页面</a>查看最新位置)</p>
-                <hr />
+                {% if order.status == DISTRIBUTING or order.status == ON_THE_WAY %}
+                <p>最新进度(<a href="javascript:location.reload();">刷新页面</a>查看最新位置)</p>
+                <p><span class="label label-default">灰色：配送中</span> <span class="label label-success">绿色：已送达</span></p>
                 <div class="row">
                     {% include "orders/order_room_chart.html" %}
                 </div>

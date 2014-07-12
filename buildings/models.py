@@ -5,7 +5,7 @@ from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 
-from orders.constants import DISTRIBUTING
+from orders.constants import DISTRIBUTING, ON_THE_WAY
 from shops.models import Shop
 
 
@@ -120,7 +120,7 @@ class Building(models.Model):
             start = datetime(now.year, now.month, now.day, 0, 0)
             end = datetime(now.year, now.month, now.day, 23, 59)
             whole = self.whole()
-            for order in Order.objects.filter(building=self, status=DISTRIBUTING).filter(created_at__range=(start, end)):  # noqa
+            for order in Order.objects.filter(building=self, status__in=[ON_THE_WAY, DISTRIBUTING]).filter(created_at__range=(start, end)):  # noqa
                 if self.is_multiple:
                     whole['zones'][order.zone.id]['has_order'] = True
                     whole['zones'][order.zone.id]['rooms'][order.room.id].update({'status': DISTRIBUTING})

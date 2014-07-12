@@ -9,7 +9,7 @@
                 <tr><td>
                     <span>{{ item.floor }}楼</span>
                     {% for room in item.rooms %}
-                        {% if room.status == DISTRIBUTING %}
+                        {% if room.status == DISTRIBUTING or room.status == ON_THE_WAY %}
                             <span class="label label-default">{{ room.number }}</span>
                         {% elif room.status == DONE %}
                             <span class="label label-success" title="{{ room.delivery_time }}送达">{{ room.number }}</span>

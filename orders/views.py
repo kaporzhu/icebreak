@@ -200,7 +200,7 @@ class OrderDetailView(LoginRequiredMixin, DetailView):
         if self.object.user != self.request.user:
             raise Http404
         data.update({'DISTRIBUTING': DISTRIBUTING, 'DONE': DONE,
-                     'UNPAID': UNPAID})
+                     'UNPAID': UNPAID, 'ON_THE_WAY': ON_THE_WAY})
         return data
 
 
@@ -218,7 +218,8 @@ class PublicOrderDetailView(DetailView):
         Add extra data to context
         """
         data = super(PublicOrderDetailView, self).get_context_data(**kwargs)
-        data.update({'DISTRIBUTING': DISTRIBUTING, 'DONE': DONE})
+        data.update({'DISTRIBUTING': DISTRIBUTING, 'DONE': DONE,
+                     'ON_THE_WAY': ON_THE_WAY})
         return data
 
 
@@ -500,14 +501,18 @@ class AppBatchStatusUpdateView(AppRequestMixin, JSONResponseMixin, View):
                 order.status = ON_THE_WAY
                 order.delivery_man = self.staff
                 order.save()
-                path = reverse('orders:public_detail',
-                               kwargs={'short_code': order.short_code})
-                url = '{}{}'.format(site.domain, path)
-                send_sms(order.phone,
-                         settings.SMS_TEMPLATES['order_reminder'].format(url))
+                try:
+                    path = reverse('orders:public_detail',
+                                   kwargs={'short_code': order.short_code})
+                    url = '{}{}'.format(site.domain, path)
+                    send_sms(
+                        order.phone,
+                        settings.SMS_TEMPLATES['order_reminder'].format(url))
+                except:
+                    pass
+            building.whole_with_orders(refersh=True)
         elif status == DISTRIBUTING:
             for order in Order.objects.filter(building=building, status=ON_THE_WAY):  # noqa
                 order.status = DISTRIBUTING
                 order.save()
-            building.whole_with_orders(refersh=True)
         return self.render_json_response({'success': True})
