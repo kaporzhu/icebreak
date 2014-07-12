@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
-import urllib
 import urllib2
+import urllib
 from xml.etree import ElementTree
 
 from django.conf import settings
-from django.core.mail import send_mail
 
 
 def send_sms(phone, content):
     """
-    Send sms to the user.
+    Send sms to the phone.
     SMS service response:
         code    int        返回值为2时，表示提交成功
         smsid   string     仅当提交成功后，此字段值才有意义（消息ID）
@@ -35,14 +34,13 @@ def send_sms(phone, content):
             4072 短信内容与模板不匹配
             4073 短信内容超出长度限制
             408  同一手机号码一分钟之内发送频率超过10条，系统将冻结你的帐号
-
-
     """
     if not settings.SMS_NOTIFICATION_ENABLED:
         print '*'*50
         print 'SMS notification is disabled, print to console'
         print 'SMS to', phone, content.encode('utf-8')
         print '*'*50
+        return (True, '')
     else:
         params = {
             'account': settings.SMS_SERVER_USERNAME,
@@ -50,21 +48,19 @@ def send_sms(phone, content):
             'mobile': phone,
             'content': content.encode('utf-8')
         }
-        resp = urllib2.urlopen(settings.SMS_SERVER_URL,
-                               urllib.urlencode(params))
-        root = ElementTree.fromstring(resp.read())
-        code, msg = ('', '')
-        for child in root.getchildren():
-            if 'code' in child.tag:
-                code = child.text
-            elif 'msg' in child.tag:
-                msg = child.text
-        if code != '2':
-            # send sms error, send email to admin
-            send_mail(
-                u'发送短信通知出错',
-                u'code:{}\nmsg:{}'.format(code, msg),
-                settings.DEFAULT_FROM_EMAIL,
-                [settings.ADMINS[0][1]],
-                fail_silently=True
-            )
+        try:
+            resp = urllib2.urlopen(settings.SMS_SERVER_URL,
+                                   urllib.urlencode(params))
+            root = ElementTree.fromstring(resp.read())
+            code, msg = ('', '')
+            for child in root.getchildren():
+                if 'code' in child.tag:
+                    code = child.text
+                elif 'msg' in child.tag:
+                    msg = child.text
+            if code == '2':
+                return (True, '')
+            else:
+                return (False, msg)
+        except Exception, e:
+            return (False, str(e))

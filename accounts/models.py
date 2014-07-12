@@ -2,10 +2,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
+from django.utils.crypto import get_random_string
 
 from buildings.models import Building, Zone, Room
 from shops.models import Shop
-from django.utils.crypto import get_random_string
 
 
 class Staff(models.Model):

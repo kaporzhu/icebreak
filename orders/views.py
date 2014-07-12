@@ -30,8 +30,8 @@ from buildings.models import Building
 from coupons.models import Coupon
 from foods.models import Food, FoodComment, TimeFrame
 from icebreak.mixins import AppRequestMixin
-from icebreak.utils import send_sms
 from shops.models import Shop
+from tasks.utils import send_sms_async
 
 
 class CheckoutView(TemplateView):
@@ -501,15 +501,12 @@ class AppBatchStatusUpdateView(AppRequestMixin, JSONResponseMixin, View):
                 order.status = ON_THE_WAY
                 order.delivery_man = self.staff
                 order.save()
-                try:
-                    path = reverse('orders:public_detail',
-                                   kwargs={'short_code': order.short_code})
-                    url = '{}{}'.format(site.domain, path)
-                    send_sms(
-                        order.phone,
-                        settings.SMS_TEMPLATES['order_reminder'].format(url))
-                except:
-                    pass
+                path = reverse('orders:public_detail',
+                               kwargs={'short_code': order.short_code})
+                url = '{}{}'.format(site.domain, path)
+                send_sms_async(
+                    order.phone,
+                    settings.SMS_TEMPLATES['order_reminder'].format(url))
             building.whole_with_orders(refersh=True)
         elif status == DISTRIBUTING:
             for order in Order.objects.filter(building=building, status=ON_THE_WAY):  # noqa

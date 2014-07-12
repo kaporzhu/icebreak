@@ -40,6 +40,7 @@ LOCAL_APPS = (
     'orders',
     'portals',
     'shops',
+    'tasks',
 )
 
 INSTALLED_APPS = (
