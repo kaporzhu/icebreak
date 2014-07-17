@@ -1,0 +1,50 @@
+{% extends "page.html" %}
+{% load staticfiles %}
+
+{% block extracss %}
+<link rel="stylesheet" href="{% static 'css/payment.css' %}">
+{% endblock %}
+
+{% block title %}{% if order.status == CREATED %}支付预付款{% else %}支付尾款{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="container body">
+        <div>
+            <h4>{% if order.status == CREATED %}支付预付款{% else %}支付尾款{% endif %}</h4>
+            <hr />
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p>总价 x 10% = 预付款&nbsp;&nbsp;(<span class="text-success">* 预付款可以全额退款的哦</span>)</p>
+                <p>{{ order.total_price }} x 10% = {{ order.prepayment }}</p>
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <form method="get" action="{% url 'payments:pay' %}" class="col-md-12 content">
+                <input type="hidden" name="code" value="{{ order.code }}" />
+                <p><b>在线网银支付</b></p>
+                {% for bank in BANKS %}
+                <label class="radio-inline" title="{{ bank.name }}">
+                    <input value="{{ bank.code }}" type="radio" name="bank" />
+                    <span class="bank" style="background-position-y: {{ bank.pos }}px"></span>
+                </label>
+                    {% if forloop.counter|divisibleby:"6" %}
+                    <br />
+                    {% endif %}
+                {% endfor %}
+                <br /><br />
+                <p><b>在线第三方支付</b></p>
+                <label class="radio-inline" title="支付宝">
+                    <input checked="checked" type="radio" value="alipay" name="bank" />
+                    <span class="third_party"></span>
+                </label>
+                <br /><br />
+                <p><button class="btn btn-primary" type="submit">去支付</button></p>
+            </form>
+        </div>
+    </div>
+    {% include "foot-steps.html" with active="pay" %}
+</div>
+{% endblock %}

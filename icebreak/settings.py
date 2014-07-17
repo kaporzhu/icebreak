@@ -38,6 +38,7 @@ LOCAL_APPS = (
     'foods',
     'icebreak',
     'orders',
+    'payments',
     'portals',
     'shops',
     'tasks',
@@ -137,6 +138,10 @@ SMS_TEMPLATES = {
     'validation_code': u'您的验证码是{}，三十分钟内有效',
     'order_reminder': u'您的订单已送出，点击链接查看最新进度 {}'
 }
+
+ALIPAY_PID = ''
+ALIPAY_KEY = ''
+ALIPAY_EMAIL = ''
 
 try:
     from local_settings import *  # noqa

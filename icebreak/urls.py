@@ -17,6 +17,7 @@ urlpatterns = patterns(
     url(r'^coupons/', include('coupons.urls', 'coupons', 'coupons')),
     url(r'^foods/', include('foods.urls', 'foods', 'foods')),
     url(r'^orders/', include('orders.urls', 'orders', 'orders')),
+    url(r'^payments/', include('payments.urls', 'payments', 'payments')),
     url(r'^shops/', include('shops.urls', 'shops', 'shops')),
 
     url(r'^admin/', include(admin.site.urls)),

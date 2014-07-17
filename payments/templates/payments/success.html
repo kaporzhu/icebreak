@@ -1,0 +1,20 @@
+{% extends "page.html" %}
+
+{% block title %}{% if order.status == PREPAID %}预付款支付成功{% else %}尾款付款成功{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="container body">
+        <div>
+            <h4>{% if order.status == PREPAID %}预付款支付成功{% else %}尾款付款成功{% endif %}</h4>
+            <hr />
+        </div>
+        <div class="row">
+            <div class="col-md-12 content">
+                <p>感谢您的支持 :-)</p>
+                <p><a href="{% url 'orders:detail' code=order.code %}">查看订单</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
