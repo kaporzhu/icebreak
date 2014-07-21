@@ -9,10 +9,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>{% block title %}{% endblock %}</title>
 
+        <link rel="stylesheet" href="http://libs.useso.com/js/bootstrap/3.2.0/css/bootstrap.min.css">
+        {% comment %}
         <link rel="stylesheet" href="{% static 'libs/bootstrap/css/bootstrap.min.css' %}">
-        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        {% endcomment %}
         {% block extracss %}{% endblock %}
         {% compress css %}
+            <link rel="stylesheet" href="{% static 'css/base.css' %}">
             {% block extracss_compressed %}
             {% endblock %}
         {% endcompress %}
@@ -24,16 +27,21 @@
         </div>
         {% include "footer.html" %}
 
-        <script src="{% static 'libs/jquery/jquery-1.11.1.min.js' %}"></script>
+        <script src="http://libs.useso.com/js/jquery/1.11.1/jquery.min.js"></script>
+        <script src="http://libs.useso.com/js/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="{% static 'libs/jquery-render/jquery.render.min.js' %}"></script>
+        {% comment %}
         <script src="{% static 'libs/bootstrap/js/bootstrap.min.js' %}"></script>
-        <script src="{% static 'libs/ractive/ractive-legacy.min.js' %}"></script>
+        <script src="{% static 'libs/jquery/jquery-1.11.1.min.js' %}"></script>
+        {% endcomment %}
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!--[if lt IE 10]>
-          <script src="{% static 'libs/placeholder/jquery.placeholder.js' %}"></script>
-        <![endif]-->
         <!--[if lt IE 9]>
-          <script src="{% static 'libs/ie/html5shiv.min.js' %}"></script>
-          <script src="{% static 'libs/ie/respond.min.js' %}"></script>
+            <script src="http://libs.useso.com/js/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="http://libs.useso.com/js/respond.js/1.4.2/respond.min.js"></script>
+            {% comment %}
+            <script src="{% static 'libs/ie/html5shiv.min.js' %}"></script>
+            <script src="{% static 'libs/ie/respond.min.js' %}"></script>
+            {% endcomment %}
         <![endif]-->
         {% block extrajs %}{% endblock %}
         {% compress js %}

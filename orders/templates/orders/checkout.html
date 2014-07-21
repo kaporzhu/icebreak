@@ -33,39 +33,37 @@
                 <div class="foot row text-right">
                 </div>
                 {% verbatim %}
-                <script id='food-item-template' type='text/ractive'>
-                {{#foods}}
-                <div class="food-item col-sm-12" data-id="{{ id }}" data-count="{{ count }}">
-                    <div class="row">
-                        <div class="col-sm-7">{{ name }}</div>
-                        <div class="col-sm-1 text-center">￥{{ price }}</div>
-                        <div class="col-sm-3 text-center">
-                            <div class="btn-group">
-                                <span class="btn btn-default btn-xs hidden-btn" data-id="{{ id }}" data-action="minusFood">‐</span>
-                                <span class="btn btn-default btn-xs food-count">{{ count }}</span>
-                                <span class="btn btn-default btn-xs hidden-btn" data-id="{{ id }}" data-action="addFood">+</span>
+                <script id='food-item-template' type='text/template'>
+                    <div class="food-item col-sm-12" data-id="{{id}}" data-count="{{count}}">
+                        <div class="row">
+                            <div class="col-sm-7">{{name}}</div>
+                            <div class="col-sm-1 text-center">￥{{price}}</div>
+                            <div class="col-sm-3 text-center">
+                                <div class="btn-group">
+                                    <span class="btn btn-default btn-xs hidden-btn" data-id="{{id}}" data-action="minusFood">‐</span>
+                                    <span class="btn btn-default btn-xs food-count">{{count}}</span>
+                                    <span class="btn btn-default btn-xs hidden-btn" data-id="{{id}}" data-action="addFood">+</span>
+                                </div>
                             </div>
+                            <div class="col-sm-1 text-center subtotal-price">￥{{subtotal_price}}&nbsp;<a href="#" class="hidden-btn" data-id="{{id}}" data-action="removeFood">x</a></div>
                         </div>
-                        <div class="col-sm-1 text-center subtotal-price">￥{{ subtotal_price }}&nbsp;<a href="#" class="hidden-btn" data-id="{{ id }}" data-action="removeFood">x</a></div>
                     </div>
-                </div>
-                {{/foods}}
                 </script>
-                <script id="shopping-cart-overview-template" type='text/ractive'>
+                <script id="shopping-cart-overview-template" type='text/template'>
                 <div class="col-sm-offset-7 col-sm-5">
                     <dl class="dl-horizontal">
                         <dt>总计：</dt>
-                        <dd>￥{{ total_price }}</dd>
+                        <dd>￥{{total_price}}</dd>
                         <dt></dt>
                         <dd>---------</dd>
-                        <dt class="discount {{# discount == 0 }}hidden{{/ 0 }}">促销优惠<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{ tip }}"></span>：</dt>
-                        <dd class="discount {{# discount == 0 }}hidden{{/ 0 }}">-￥<span>{{ discount }}</span></dd>
-                        <dt class="coupon {{^ coupon }}hidden{{/ coupon }}">优惠券：</dt>
-                        <dd class="coupon {{^ coupon }}hidden{{/ coupon }}">-￥<span>{{ coupon }}</span></dd>
+                        <dt class="discount">促销优惠<span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="right" title="{{tip}}"></span>：</dt>
+                        <dd class="discount">-￥<span>{{discount}}</span></dd>
+                        <dt class="coupon">优惠券：</dt>
+                        <dd class="coupon">-￥<span>{{coupon}}</span></dd>
                         <dt></dt>
                         <dd>---------</dd>
                         <dt><b>应付金额：<b></dt>
-                        <dd class="total-price"><b>￥<span>{{ final_price }}</span><b></dd>
+                        <dd class="total-price"><b>￥<span>{{final_price}}</span><b></dd>
                     </dl>
                 </div>
                 </script>
@@ -103,29 +101,29 @@
                                 {% endif %}
                             </div>
                             {% verbatim %}
-                            <script id='zones-select-template' type='text/ractive'>
+                            <script id='zones-select-template' type='text/template'>
                                 <select class="form-control input-sm zones" value>
                                     <option disabled="disabled" selected="selected" value="-1" class="default">--区域--</option>
-                                    {{#zones}}
-                                    <option value="{{ id }}">{{ name }}</option>
-                                    {{/zones}}
                                 </select>
                             </script>
-                            <script id='floors-select-template' type='text/ractive'>
+                            <script id='zones-select-option-template' type='text/template'>
+                                <option value="{{id}}">{{name}}</option>
+                            </script>
+                            <script id='floors-select-template' type='text/template'>
                                 <select class="form-control input-sm floors" value>
                                     <option disabled="disabled" selected="selected" value="-1" class="default">--楼层--</option>
-                                    {{#floors}}
-                                    <option value="{{ floor }}">{{ floor }}楼</option>
-                                    {{/floors}}
                                 </select>
                             </script>
-                            <script id='rooms-select-template' type='text/ractive'>
+                            <script id='floors-select-option-template' type='text/template'>
+                                <option value="{{floor}}">{{floor}}楼</option>
+                            </script>
+                            <script id='rooms-select-template' type='text/template'>
                                 <select class="form-control input-sm rooms" value>
                                     <option disabled="disabled" selected="selected" value="-1" class="default">--办公室--</option>
-                                    {{#rooms}}
-                                    <option value="{{ id }}">{{ number }}</option>
-                                    {{/rooms}}
                                 </select>
+                            </script>
+                            <script id='rooms-select-option-template' type='text/template'>
+                                <option value="{{id}}">{{number}}</option>
                             </script>
                             {% endverbatim %}
                         </form>

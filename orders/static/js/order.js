@@ -7,10 +7,7 @@ $(function(){
             return;
         }
         $('#shopping-cart .foods').html(
-            new Ractive({
-                template: '#food-item-template',
-                data: {foods: ShoppingCart.data}
-            }).toHTML()
+            $('#food-item-template').render(ShoppingCart.data, false)
         );
         var overview_data = {
             total_count: ShoppingCart.total_count.toFixed(2),
@@ -24,11 +21,14 @@ $(function(){
             overview_data.final_price = (overview_data.final_price-overview_data.coupon).toFixed(2);
         }
         $('#shopping-cart .foot').html(
-            new Ractive({
-                template: '#shopping-cart-overview-template',
-                data: overview_data
-            }).toHTML()
+            $('#shopping-cart-overview-template').render(overview_data)
         );
+        if (!overview_data.coupon) {
+            $('#shopping-cart .foot .coupon').addClass('hidden');
+        }
+        if (overview_data.discount == 0) {
+            $('#shopping-cart .foot .discount').addClass('hidden');
+        }
         $('.glyphicon-question-sign').tooltip();
     }
     updateShoppingCart();
@@ -70,23 +70,27 @@ $(function(){
     function render_next_select($selector, selected_ids) {
         $selector.nextAll('select').remove();
         var building = buildings[selected_ids.building];
-        var data = {};
-        var template = '';
+        var data = [];
+        var select_template = '';
+        var option_template = '';
         if ($selector.is('.buildings')) {
             if (building.is_multiple) {
                 var zones = [];
                 for (var id in building.zones) {
                     zones.push(building.zones[id]);
                 }
-                data = {zones: zones};
-                template = '#zones-select-template';
+                data = zones;
+                select_template = '#zones-select-template';
+                option_template = '#zones-select-option-template';
             } else {
-                data = {floors: generate_floors(building.floors)};
-                template = '#floors-select-template';
+                data = generate_floors(building.floors);
+                select_template = '#floors-select-template';
+                option_template = '#floors-select-option-template';
             }
         } else if($selector.is('.zones')) {
-            data = {floors: generate_floors(building.zones[selected_ids.zone].floors)};
-            template = '#floors-select-template';
+            data = generate_floors(building.zones[selected_ids.zone].floors);
+            select_template = '#floors-select-template';
+            option_template = '#floors-select-option-template';
         } else if ($selector.is('.floors')) {
             var rooms = [];
             var rooms_dict = {};
@@ -100,15 +104,13 @@ $(function(){
                     rooms.push(rooms_dict[id]);
                 }
             }
-            data = {rooms: rooms};
-            template = '#rooms-select-template';
+            data = rooms;
+            select_template = '#rooms-select-template';
+            option_template = '#rooms-select-option-template';
         }
 
         $selector.after(
-            new Ractive({
-                template: template,
-                data: data
-            }).toHTML()
+            $(select_template).render().append($(option_template).render(data))
         );
     }
     $(document).on('change', '#order-detail .floors', function(){

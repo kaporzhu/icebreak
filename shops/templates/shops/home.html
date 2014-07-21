@@ -32,15 +32,15 @@
         </div>
         <div class="col-md-4">
             <ul class="list-inline service">
-                <li class="no-border">
+                <li class="no-border popover-item" data-toggle="popover" data-content="Hi" data-placement="bottom" data-trigger="hover">
                     <b>安全</b>
                     <small>正规油，新鲜食材</small>
                 </li>
-                <li>
+                <li class="popover-item" data-toggle="popover" data-content="Hi" data-placement="bottom" data-trigger="hover">
                     <b>准时</b>
                     <small>指定时段送达</small>
                 </li>
-                <li>
+                <li class="popover-item" data-toggle="popover" data-content="Hi" data-placement="bottom" data-trigger="hover">
                     <b>实时</b>
                     <small>全程监控进度</small>
                 </li>
@@ -105,22 +105,22 @@
     <div class="food-detail" data-load-steps-url="{% url 'foods:load_steps' %}" data-load-comments-url="{% url 'foods:load_comments' %}">
     </div>
     {% verbatim %}
-    <script id='food-detail-template' type='text/ractive'>
-        <h3 class="text-center" data-id="{{ id }}">{{ name }}</h3>
+    <script id='food-detail-template' type='text/template'>
+        <h3 class="text-center" data-id="{{id}}">{{name}}</h3>
         <div class="description">
-            <img src="{{ image }}">
-            <p>{{ description }}</p>
+            <img src="{{image}}">
+            <p>{{description}}</p>
         </div>
         <br />
         <div class="detail">
             <ul id="tabs" class="nav nav-tabs" role="tablist">
               <li class="active"><a href="#ingredients" role="tab" data-toggle="tab">原材料</a></li>
-              <li class=""><a href="#steps" role="tab" data-id="{{ id }}" data-toggle="tab">厨师做法</a></li>
-              <li class=""><a href="#comments" data-page="1" role="tab" data-id="{{ id }}" data-toggle="tab">用户评价</a></li>
+              <li class=""><a href="#steps" role="tab" data-id="{{id}}" data-toggle="tab">厨师做法</a></li>
+              <li class=""><a href="#comments" data-page="1" role="tab" data-id="{{id}}" data-toggle="tab">用户评价</a></li>
             </ul>
             <div id="tab_content" class="tab-content">
               <div class="tab-pane fade active in" id="ingredients">
-                <textarea class="form-control" readonly="readonly">{{ ingredients }}</textarea>
+                <textarea class="form-control" readonly="readonly">{{ingredients}}</textarea>
               </div>
               <div class="tab-pane fade" id="steps">
                 <div class="text-center">
@@ -142,34 +142,26 @@
             </div>
         </div>
     </script>
-    <script id='food-steps-template' type='text/ractive'>
-        <ol>
-            {{#steps}}
-            <li class="step">
-                <p class="text">{{ description }}</p>
-                <img src="{{ image }}" />
-            </li>
-            {{/steps}}
-        </ol>
+    <script id='food-steps-template' type='text/template'>
+        <li class="step">
+            <p class="text">{{description}}</p>
+            <img src="{{image}}" />
+        </li>
     </script>
-    <script id='food-comments-template' type='text/ractive'>
-        <ul class="list-unstyled">
-            {{#comments}}
-            <li class="comment">
-                <p class="info">
-                    <small>{{ name }}({{ building }}) {{ created_at }}</small>
-                    <small class="pull-right rating-stars" data-rating="{{ rating }}">
-                        <i class="star">★</i>
-                        <i class="star">★</i>
-                        <i class="star">★</i>
-                        <i class="star">★</i>
-                        <i class="star">★</i>
-                    </small>
-                </p>
-                <p>{{ content }}</p>
-            </li>
-            {{/comments}}
-        </ul>
+    <script id='food-comments-template' type='text/template'>
+        <li class="comment">
+            <p class="info">
+                <small>{{name}}({{building}}) {{created_at}}</small>
+                <small class="pull-right rating-stars" data-rating="{{rating}}">
+                    <i class="star">★</i>
+                    <i class="star">★</i>
+                    <i class="star">★</i>
+                    <i class="star">★</i>
+                    <i class="star">★</i>
+                </small>
+            </p>
+            <p>{{content}}</p>
+        </li>
     </script>
     {% endverbatim %}
 </div>
@@ -185,24 +177,22 @@
         <table class="table foods-list">
         </table>
         {% verbatim %}
-        <script id='foods-list-item-template' type='text/ractive'>
-            {{#foods}}
+        <script id='foods-list-item-template' type='text/template'>
             <tr>
-                <td class="food-name">{{ name }}</td>
+                <td class="food-name">{{name}}</td>
                 <td>
                     <div class="btn-group">
-                        <span class="btn btn-default btn-xs hidden-btn" data-id="{{ id }}" data-action="minusFood">‐</span>
-                        <span class="btn btn-default btn-xs food-count">{{ count }}</span>
-                        <span class="btn btn-default btn-xs hidden-btn" data-id="{{ id }}" data-action="addFood">+</span>
+                        <span class="btn btn-default btn-xs hidden-btn" data-id="{{id}}" data-action="minusFood">‐</span>
+                        <span class="btn btn-default btn-xs food-count">{{count}}</span>
+                        <span class="btn btn-default btn-xs hidden-btn" data-id="{{id}}" data-action="addFood">+</span>
                     </div>
                 </td>
-                <td class="food-price">￥{{ subtotal_price }}&nbsp;&nbsp;</td>
-                <td><a href="javascript:void(0)" class="hidden-btn" data-id="{{ id }}" data-action="removeFood">x</a></td>
+                <td class="food-price">￥{{subtotal_price}}&nbsp;&nbsp;</td>
+                <td><a href="javascript:void(0)" class="hidden-btn" data-id="{{id}}" data-action="removeFood">x</a></td>
             </tr>
-            {{/foods}}
         </script>
-        <script id='foods-overview-template' type='text/ractive'>
-            &nbsp;<span>{{ total_count }}份</span>&nbsp;<span>￥{{ total_price }}</span>
+        <script id='foods-overview-template' type='text/template'>
+            &nbsp;<span>{{total_count}}份</span>&nbsp;<span>￥{{total_price}}</span>
         </script>
         {% endverbatim %}
     </div>

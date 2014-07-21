@@ -104,15 +104,15 @@
 }
 
 #foods-list .food .foot .count {
-    overflow: hidden;
     border-radius: 2px;
     background: #3199e8;
     color: white;
     width: 15px;
-    text-align: center;
+    overflow: hidden;
     font-size: 12px;
-    display: inline-block;
     visibility: hidden;
+    text-align: center;
+    display: inline-block;
 }
 
 #foods-list .food .foot .add-food-btn {
@@ -137,7 +137,6 @@
 }
 
 #foods-list .foot .count-today span {
-    padding: 0 5px;
     font-weight: bold;
 }
 
@@ -416,6 +415,7 @@
 
 #shop-info .service li {
     border-left: 1px solid #ededed;
+    cursor: pointer;
 }
 
 #shop-info .service li.no-border {

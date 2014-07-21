@@ -1,5 +1,7 @@
 $(function(){
 
+    $('.popover-item').popover();
+
     $('#shopping-cart .foods-overview').click(function(){
         toggleFoodsList();
     });
@@ -43,18 +45,16 @@ $(function(){
             }
         }
         $('#food-detail-wrapper .food-detail').html(
-            new Ractive({
-                template:'#food-detail-template',
-                data: {
-                    name: $food.find('button').data('name'),
-                    image: $food.find('img').attr('src'),
-                    description: $food.find('button').data('description'),
-                    ingredients: $food.find('button').data('ingredients'),
-                    id: $food.find('button').data('id'),
-                }
-            }).toHTML()
+            $('#food-detail-template').render({
+                name: $food.find('button').data('name'),
+                image: $food.find('img').attr('src'),
+                description: $food.find('button').data('description'),
+                ingredients: $food.find('button').data('ingredients'),
+                id: $food.find('button').data('id'),
+            }, false)
         );
         $('#food-detail-wrapper').animate({right: '0px'});
+        toggleFoodsList(false);
     });
     $('#food-detail-wrapper .hide-btn').click(function(){
         $('#food-detail-wrapper').animate({right: '-380px'});
@@ -70,12 +70,9 @@ $(function(){
                 data: {id: $this.data('id')},
                 success: function(steps) {
                     $this.data('loaded', true);
-                    $panel.html(
-                        new Ractive({
-                            template:'#food-steps-template',
-                            data: {steps: steps}
-                        }).toHTML()
-                    );
+                    $('<ol>').html(
+                        $('#food-steps-template').render(steps, false)
+                    ).appendTo($panel.empty());
                 }
             });
         }
@@ -94,10 +91,7 @@ $(function(){
                 success: function(comments) {
                     $comments_tab.data('loaded', true);
                     $comments_tab.data('page', page+1);
-                    var $comments_html = $(new Ractive({
-                        template:'#food-comments-template',
-                        data: {comments: comments}
-                    }).toHTML());
+                    var $comments_html = $('<ul class="list-unstyled">').append($('#food-comments-template').render(comments));
                     if (type == 'initial') {
                         $panel.find('.body').html($comments_html);
                     } else {
@@ -148,7 +142,7 @@ function updateFoodCount() {
         var food = ShoppingCart.data[i];
         var $count = $('#food-' + food.id).find('.foot .count');
         if (food.count > 0) {
-            $count.css('visibility', 'visible').text(food.count);
+            $count.css('visibility', 'visible').text(food.count).prop('title', '已经选择' + food.count + '份');
         } else {
             $count.css('visibility', 'hidden').text('');
         }
@@ -164,10 +158,7 @@ function updateShoppingCart() {
     localStorage.time_frame = available_time_frame;
 
     $('#shopping-cart .foods-list').html(
-        new Ractive({
-            template:'#foods-list-item-template',
-            data: {foods: ShoppingCart.data}
-        }).toHTML()
+        $('#foods-list-item-template').render(ShoppingCart.data, false)
     );
     if (ShoppingCart.total_count == 0) {
         toggleFoodsList(false);
@@ -175,10 +166,10 @@ function updateShoppingCart() {
         $('#checkout-btn').hide();
     } else {
         $('#shopping-cart .foods-overview').html(
-            new Ractive({
-                template: '#foods-overview-template',
-                data: {total_count: ShoppingCart.total_count, total_price: ShoppingCart.total_price}
-            }).toHTML()
+            $('#foods-overview-template').render({
+                total_count: ShoppingCart.total_count,
+                total_price: ShoppingCart.total_price
+            }, false)
         );
         $('#checkout-btn').show();
     }

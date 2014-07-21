@@ -1,6 +1,6 @@
 <html>
     {% load handsome_template_tags %}
-    <body onload2="window.print()">
+    <body onload2="window.print();">
         <style>
             * {
                 font-size: 10px;
@@ -19,7 +19,7 @@
                 {% for i in count_range %}
                 <div class="food">
                     <div><b>{{ order_food.food.name }}</b></div>
-                    <img width="230" src="{{ order_food.qrcode }}" />
+                    <img width="130" src="{{ order_food.qrcode }}" />
                     <div>微信扫一扫，给我们反馈</div>
                     <div>订单编号{{ order.code }}</div>
                     <hr />
