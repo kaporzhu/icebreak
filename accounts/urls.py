@@ -3,7 +3,8 @@ from django.conf.urls import patterns, url
 
 from .views import(
     ValidateUserView, SendValidationCodeView, ValidateCodeView, PhoneLoginView,
-    LogoutView, AddStaffView, UpdateStaffView, AppLoginView
+    LogoutView, AddStaffView, UpdateStaffView, AppLoginView, StaffHomeView,
+    CreateMessageView
 )
 
 
@@ -20,4 +21,6 @@ urlpatterns = patterns(
         ValidateCodeView.as_view(), name='validate_code'),
     url(r'^add_staff/$', AddStaffView.as_view(), name='add_staff'),
     url(r'^update_staff/(?P<pk>\d+)/$', UpdateStaffView.as_view(), name='update_staff'),
+    url(r'^staff/(?P<pk>\d+)/$', StaffHomeView.as_view(), name='staff_home'),
+    url(r'^staff/(?P<pk>\d+)/create_message/$', CreateMessageView.as_view(), name='create_message'),
 )

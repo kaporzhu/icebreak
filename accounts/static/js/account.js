@@ -19,6 +19,32 @@ $(function(){
             }
         });
     });
+
+    // post message in staff home
+    $('#create-message-btn').click(function(){
+        if ($('#create-message-form textarea').val().length == 0) {
+            alert('请填写留言内容');
+            return;
+        }
+        $(this).parents('form').submit();
+    });
+
+    // reply to message
+    $('.reply-btn').click(function(){
+        $('.reply_to').removeClass('hidden');
+        var name = $(this).parents('li').find('.name').text();
+        var content = $(this).parents('li').find('.content').text();
+        $('.reply_to .name').text('回复' + name);
+        $('.reply_to .content').text(content);
+        $('#create-message-form textarea').focus();
+        $('#create-message-form input[name="reply_to"]').val($(this).parents('li').data('id'));
+    });
+
+    // highlight message by the user
+    $(window).on('hashchange', function() {
+        $('.highlight').removeClass('highlight');
+        $('.' + location.hash.slice(1)).addClass('highlight');
+    });
 });
 
 function send_validation_code_timer() {

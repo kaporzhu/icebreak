@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.utils.crypto import get_random_string
 
+from .constants import CHEF, DELIVERYMAN, MANAGER
 from buildings.models import Building, Zone, Room
 from shops.models import Shop
 
@@ -12,23 +13,35 @@ class Staff(models.Model):
     """
     Staff model
     """
+    ROLE_CHOICES = (
+        (MANAGER, u'店长'),
+        (DELIVERYMAN, u'配送员'),
+        (CHEF, u'厨师'),
+    )
+
     user = models.OneToOneField(User)
     phone = models.CharField(u'手机号', max_length=16, blank=True, null=True)
-    is_deliveryman = models.BooleanField(u'配送员')
-    is_shop_manager = models.BooleanField(u'店长')
     shop = models.ForeignKey(Shop)
+    role = models.CharField(max_length=16, choices=ROLE_CHOICES,
+                            default=DELIVERYMAN)
+    intro = models.TextField(blank=True, null=True)
     api_key = models.CharField(max_length=16, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    @property
-    def role_name(self):
-        if self.is_shop_manager:
-            return u'店长'
-        elif self.is_deliveryman:
-            return u'配送员'
-        else:
-            return ''
+
+class StaffMessage(models.Model):
+    """
+    Message between user and the staff
+    """
+    staff = models.ForeignKey(Staff)
+    user = models.ForeignKey(User, blank=True, null=True)
+    reply_to = models.ForeignKey('self', blank=True, null=True)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('-id',)
 
 
 class Address(models.Model):

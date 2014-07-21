@@ -39,7 +39,8 @@ class Shop(models.Model):
                 else:
                     avatar = None
                 staffs.append({
-                    'role_name': staff.role_name,
+                    'id': staff.id,
+                    'role_name': staff.get_role_display(),
                     'full_name': staff.user.get_full_name(),
                     'avatar': avatar
                 })

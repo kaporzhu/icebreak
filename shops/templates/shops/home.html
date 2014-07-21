@@ -1,5 +1,5 @@
 {% extends "page.html" %}
-{% load thumbnail static %}
+{% load static %}
 
 {% block extracss_compressed %}
 <link rel="stylesheet" href="{% static 'css/shop.css' %}">
@@ -23,10 +23,10 @@
         <div class="col-md-6">
             <div class="row">
                 {% for staff in shop.staffs %}
-                <div class="col-sm-3 text-center">
+                <a class="col-sm-3 text-center" target="_blank" href="{% url 'accounts:staff_home' pk=staff.id %}">
                     <img height="65" src="{% if staff.avatar %}{{ staff.avatar }}{% else %}{% static 'image/default_avatar.png' %}{% endif %}" /><br />
                     <span>{{ staff.role_name }}：{{ staff.full_name }}</span>
-                </div>
+                </a>
                 {% endfor %}
             </div>
         </div>

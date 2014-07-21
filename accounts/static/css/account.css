@@ -1,0 +1,12 @@
+ul.messages li {
+    border-bottom: lightgray 1px solid;
+    padding: 10px;
+}
+
+ul.messages li.highlight {
+    background-color: lightyellow;
+}
+
+.well-sm {
+    margin-bottom: 5px;
+}

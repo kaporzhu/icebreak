@@ -6,19 +6,20 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic.base import View, RedirectView
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import FormView, CreateView, UpdateView
 from django.utils.crypto import get_random_string
 
 from braces.views import(
     AjaxResponseMixin, JsonRequestResponseMixin, SuperuserRequiredMixin,
-    JSONResponseMixin
+    JSONResponseMixin, LoginRequiredMixin
 )
 
 from .constants import VALIDATION_CODE_PREFIX, VALIDATION_CODE_COUNT_PREFIX
-from .forms import PhoneLoginForm, StaffForm
-from .models import Address, Staff
+from .forms import PhoneLoginForm, StaffForm, MessageForm
+from .models import Address, Staff, StaffMessage
 from icebreak.utils import send_sms
 from shops.models import Shop
 
@@ -217,3 +218,35 @@ class UpdateStaffView(SuperuserRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('shops:detail',
                             kwargs={'pk': self.object.shop.id})
+
+
+class StaffHomeView(DetailView):
+    """
+    Home page for staff
+    """
+    model = Staff
+    template_name = 'accounts/staff_home.html'
+
+
+class CreateMessageView(LoginRequiredMixin, FormView):
+    """
+    Leave a message for the staff
+    """
+    form_class = MessageForm
+
+    def form_valid(self, form):
+        """
+        Save the message
+        """
+        data = form.cleaned_data
+        staff = Staff.objects.get(pk=self.kwargs['pk'])
+        msg = StaffMessage(staff=staff, content=data['content'])
+        if self.request.user.is_authenticated():
+            msg.user = self.request.user
+        if data.get('reply_to'):
+            msg.reply_to = data['reply_to']
+        msg.save()
+        return super(CreateMessageView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('accounts:staff_home', kwargs={'pk': self.kwargs['pk']})

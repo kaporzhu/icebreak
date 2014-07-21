@@ -8,7 +8,7 @@ from django.core.cache import cache
 
 from .constants import VALIDATION_CODE_PREFIX
 
-from .models import Staff
+from .models import Staff, StaffMessage
 
 
 class PhoneLoginForm(forms.Form):
@@ -56,3 +56,12 @@ class StaffForm(forms.ModelForm):
     class Meta:
         model = Staff
         exclude = ('user','shop', 'api_key')
+
+
+class MessageForm(forms.ModelForm):
+    """
+    Form for staff message
+    """
+    class Meta:
+        model = StaffMessage
+        fields = ('content', 'reply_to')
