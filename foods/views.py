@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.core.urlresolvers import reverse_lazy
+from django.db.models import Q
 from django.views.generic.base import View
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import CreateView, UpdateView
@@ -103,7 +104,7 @@ class LoadCommentsView(AjaxResponseMixin, JSONResponseMixin, View):
     Load comments for the food
     """
 
-    page_size = 1
+    page_size = 20
 
     def get_ajax(self, request, *args, **kwargs):
         """
@@ -111,13 +112,19 @@ class LoadCommentsView(AjaxResponseMixin, JSONResponseMixin, View):
         """
         food = Food.objects.get(pk=request.GET['id'])
         page = int(request.GET.get('page', '1'))
+        rating = request.GET.get('rating', 'all')
+        if rating == 'all':
+            rating_Q = Q()
+        else:
+            rating_Q = Q(rating=rating)
         comments_json = []
-        for comment in food.foodcomment_set.all().order_by('-id')[(page-1)*self.page_size: page*self.page_size]:
+        for comment in food.foodcomment_set.filter(rating_Q).order_by('-id')[(page-1)*self.page_size: page*self.page_size]:
             comments_json.append({
-                'content': comment.content,
+                'content': comment.content if comment.content else comment.get_rating_display(),
                 'building': comment.address.building.name,
                 'name': comment.address.name,
-                'rating': comment.rating,
+                'rating': comment.get_rating_display(),
+                'rating_class': comment.rating_class,
                 'created_at': comment.created_at.strftime('%m-%d %H:%M')
             })
         return self.render_json_response(comments_json)

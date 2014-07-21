@@ -6,12 +6,13 @@ $(function(){
         toggleFoodsList();
     });
 
-    $('.add-food-btn').click(function(){
+    $('.add-food-btn').click(function(evt){
         $('#food-detail-wrapper').animate({right: '-380px'});
         ShoppingCart.addFood($(this).data('id'), $(this).data('name'), $(this).data('price'), $(this).data('is-primary'));
         updateShoppingCart();
         updateFoodCount();
         toggleFoodsList(true);
+        return false;
     });
 
     updateFoodCount();
@@ -36,8 +37,9 @@ $(function(){
     });
 
     // show food detail
-    $('#foods-list .food .body, #foods-list .food .foot .name').click(function(){
-        var $food = $(this).parents('.food');
+    $('#foods-list .food').click(function(){
+        var $food = $(this);
+        var $button = $food.find('button');
         if ($('#food-detail-wrapper').css('right') == '0px') {
             if ($('#food-detail-wrapper h3').data('id') == $food.find('button').data('id')) {
                 $('#food-detail-wrapper').animate({right: '-380px'});
@@ -46,11 +48,15 @@ $(function(){
         }
         $('#food-detail-wrapper .food-detail').html(
             $('#food-detail-template').render({
-                name: $food.find('button').data('name'),
+                name: $button.data('name'),
                 image: $food.find('img').attr('src'),
-                description: $food.find('button').data('description'),
-                ingredients: $food.find('button').data('ingredients'),
-                id: $food.find('button').data('id'),
+                description: $button.data('description'),
+                ingredients: $button.data('ingredients'),
+                id: $button.data('id'),
+                comment_count: $button.data('comment-count'),
+                delicious_comment_count: $button.data('delicious-comment-count'),
+                soso_comment_count: $button.data('soso-comment-count'),
+                bad_comment_count: $button.data('bad-comment-count')
             }, false)
         );
         $('#food-detail-wrapper').animate({right: '0px'});
@@ -84,34 +90,30 @@ $(function(){
         var $panel = $($comments_tab.attr('href'));
         var page = $comments_tab.data('page');
         $('#load_more_comments').hide();
-        if ((type == 'initial' && !$comments_tab.data('loaded')) || (type == 'more')) {
+        if ((type == 'initial' && !$comments_tab.data('loaded')) || (type == 'more') || (type == 'switch')) {
             $.ajax({
                 url: $('#food-detail-wrapper .food-detail').data('load-comments-url'),
-                data: {id: $comments_tab.data('id'), page: page},
+                data: {id: $comments_tab.data('id'), page: page, rating: $panel.find('.head input:checked').val()},
                 success: function(comments) {
                     $comments_tab.data('loaded', true);
-                    $comments_tab.data('page', page+1);
-                    var $comments_html = $('<ul class="list-unstyled">').append($('#food-comments-template').render(comments));
-                    if (type == 'initial') {
-                        $panel.find('.body').html($comments_html);
-                    } else {
-                        $panel.find('.body').append($comments_html);
+                    var $comments = $('<ul class="list-unstyled">').append($('#food-comments-template').render(comments));
+                    if (type == 'initial' || type == 'switch') {
+                        $panel.find('.body').html($comments);
+                        page = 2;
+                    } else if (type == 'more') {
+                        $comments_tab.data('page', page+1);
+                        $panel.find('.body').append($comments);
                     }
-                    if (comments.length > 0) {
+                    if (comments.length == 20) {
                         $('#load_more_comments').show();
                     }
-                    $('.rating-stars').each(function(){
-                        var rating = $(this).data('rating');
-                        for (var i=0; i<rating; i++) {
-                            $($(this).children('i').get(i)).addClass('on');
-                        }
-                    });
                 }
             });
         }
     }
     $(document).on('shown.bs.tab', '#tabs a[href="#comments"]', function(){load_comments('initial');});
     $(document).on('click', '#load_more_comments', function(){load_comments('more');});
+    $(document).on('change', '#comments .head input:radio', function(){load_comments('switch');});
 
 });
 

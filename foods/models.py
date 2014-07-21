@@ -9,6 +9,7 @@ from easy_thumbnails.files import get_thumbnailer
 
 from accounts.models import Address
 from shops.models import Shop
+from foods.constants import DELICIOUS, SOSO, BAD
 
 
 class Food(models.Model):
@@ -22,8 +23,6 @@ class Food(models.Model):
     count = models.SmallIntegerField(default=True)
     sales = models.IntegerField(default=0)
     count_today = models.SmallIntegerField(default=0)
-    average_rate = models.FloatField(default=0)
-    rate_count = models.IntegerField(default=0)
     description = models.TextField(blank=True)
     ingredients = models.TextField(blank=True)
     image = models.ImageField(upload_to='foods')
@@ -54,11 +53,25 @@ class FoodComment(models.Model):
     """
     Comment for the food
     """
+    RATING_CHOICES = (
+        (DELICIOUS, u'好吃'),
+        (SOSO, u'一般'),
+        (BAD, u'不好吃'),
+    )
     food = models.ForeignKey(Food)
     address = models.ForeignKey(Address, blank=True, null=True)
-    rating = models.SmallIntegerField(blank=True, null=True)
+    rating = models.CharField(max_length=16, choices=RATING_CHOICES,
+                              db_index=True, default=DELICIOUS)
     content = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def rating_class(self):
+        if self.rating == DELICIOUS:
+            return 'glyphicon-thumbs-up'
+        elif self.rating == BAD:
+            return 'glyphicon-thumbs-down'
+        return ''
 
 
 class TimeFrame(models.Model):
@@ -104,6 +117,10 @@ class TimeFrame(models.Model):
                     'is_primary': food.is_primary,
                     'name': food.name,
                     'price': food.price,
+                    'comment_count': food.foodcomment_set.count(),
+                    'delicious_comment_count': food.foodcomment_set.filter(rating=DELICIOUS).count(),
+                    'soso_comment_count': food.foodcomment_set.filter(rating=SOSO).count(),
+                    'bad_comment_count': food.foodcomment_set.filter(rating=BAD).count(),
                     'description': food.description,
                     'ingredients': food.ingredients,
                     'image': get_thumbnailer(food.image).get_thumbnail({'size': (256, 256)}).url  # noqa

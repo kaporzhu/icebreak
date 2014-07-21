@@ -69,10 +69,14 @@
                             <div class="foot">
                                 <span class="name">{{ food.name }}</span>
                                 <span class="count"></span>
-                                <button data-id="{{ food.id }}" data-name="{{ food.name }}" data-is-primary="{{ food.is_primary }}" data-price="{{ food.price }}" data-description="{{ food.description }}" data-ingredients="{{ food.ingredients }}" class="btn btn-xs add-food-btn pull-right">￥{{ food.price }}</button>
-                                <span class="sell-out-tip pull-right">已售完</span>
-                                <br />
+                                <button data-id="{{ food.id }}" data-name="{{ food.name }}" data-is-primary="{{ food.is_primary }}" data-price="{{ food.price }}" data-comment-count="{{ food.comment_count }}" data-delicious-comment-count="{{ food.delicious_comment_count }}" data-soso-comment-count="{{ food.soso_comment_count }}" data-bad-comment-count="{{ food.bad_comment_count }}" data-description="{{ food.description }}" data-ingredients="{{ food.ingredients }}" class="btn btn-xs add-food-btn pull-right">￥{{ food.price }}</button>
+                                <span class="sell-out-tip pull-right">已售完</span><br />
                                 <small class="count-today">剩余：<span></span> 份</small>
+                                {% if food.comment_count > 0 %}
+                                <small class="comment-count pull-right">一共有{{ food.comment_count }}条评价</small>
+                                {% else %}
+                                <small class="comment-count pull-right">暂时没有评价</small>
+                                {% endif %}
                             </div>
                         </div>
                         {% endfor %}
@@ -116,7 +120,7 @@
             <ul id="tabs" class="nav nav-tabs" role="tablist">
               <li class="active"><a href="#ingredients" role="tab" data-toggle="tab">原材料</a></li>
               <li class=""><a href="#steps" role="tab" data-id="{{id}}" data-toggle="tab">厨师做法</a></li>
-              <li class=""><a href="#comments" data-page="1" role="tab" data-id="{{id}}" data-toggle="tab">用户评价</a></li>
+              <li class=""><a href="#comments" data-page="1" role="tab" data-id="{{id}}" data-toggle="tab">用户评价<small>({{comment_count}}条)</small></a></li>
             </ul>
             <div id="tab_content" class="tab-content">
               <div class="tab-pane fade active in" id="ingredients">
@@ -129,6 +133,21 @@
                 </div>
               </div>
               <div class="tab-pane fade" id="comments">
+                <div class="head">
+                    <label class="radio-inline">
+                        <input type="radio" name="rating" checked="checked" value="all" />全部<small>({{comment_count}})</small>
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="rating" value="delicious" />好吃<small>({{delicious_comment_count}})</small>
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="rating" value="soso" />一般<small>({{soso_comment_count}})</small>
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="rating" value="bad" />不好吃<small>({{bad_comment_count}})</small>
+                    </label>
+                    <hr />
+                </div>
                 <div class="body">
                     <div class="text-center">
                         <br /><br />
@@ -152,13 +171,7 @@
         <li class="comment">
             <p class="info">
                 <small>{{name}}({{building}}) {{created_at}}</small>
-                <small class="pull-right rating-stars" data-rating="{{rating}}">
-                    <i class="star">★</i>
-                    <i class="star">★</i>
-                    <i class="star">★</i>
-                    <i class="star">★</i>
-                    <i class="star">★</i>
-                </small>
+                <span title="{{rating}}" class="pull-right glyphicon {{rating_class}}"></span>
             </p>
             <p>{{content}}</p>
         </li>

@@ -3,7 +3,7 @@ html {
 }
 body {
     height: 100%;
-    font: 13px/1.6em "Microsoft Yahei","Helvetica Neue",Arial,sans-serif;
+    font: 13px/1.6em "Microsoft YaHei","微软雅黑",STXihei,"华文细黑",serif;
     letter-spacing: -0.01em;
     word-spacing: 0.2em;
     /*background-color: #f9f9f9;*/
