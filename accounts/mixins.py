@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.http.response import Http404
 
+from .constants import MANAGER
+
 
 class ShopManagerRequiredMixin(object):
     """
@@ -8,7 +10,7 @@ class ShopManagerRequiredMixin(object):
     """
     def dispatch(self, request, *args, **kwargs):
         staff = request.user.staff
-        if not staff.is_shop_manager:
+        if staff.role != MANAGER:
             raise Http404
         self.staff = staff
         return super(ShopManagerRequiredMixin, self).dispatch(request, *args, **kwargs)

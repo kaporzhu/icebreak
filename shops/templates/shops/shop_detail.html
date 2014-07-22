@@ -26,7 +26,7 @@
                 <td>
                     <ul class="list-unstyled">
                         {% for staff in object.staff_set.all %}
-                        <li><a href="{% url 'accounts:update_staff' pk=staff.id %}">{{ staff.user.get_full_name }} </a>(staff.get_role_display)</li>
+                        <li><a href="{% url 'accounts:update_staff' pk=staff.id %}">{{ staff.user.get_full_name }} </a>({{ staff.get_role_display }})</li>
                         {% endfor %}
                         <li><a href="{% url 'accounts:add_staff' %}?shop_id={{ object.id }}">添加</a></li>
                     </ul>

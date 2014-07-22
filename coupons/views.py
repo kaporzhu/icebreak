@@ -16,6 +16,7 @@ from braces.views import(
 
 from .forms import CreateCouponForm
 from .models import Coupon
+from accounts.constants import MANAGER
 from accounts.mixins import ShopManagerRequiredMixin
 from shops.models import Shop
 
@@ -56,7 +57,7 @@ class CouponCreateView(StaffuserRequiredMixin, FormView):
         """
         Generate code
         """
-        if not self.request.user.staff.is_shop_manager:
+        if self.request.user.staff.role != MANAGER:
             return HttpResponseForbidden()
         amount = int(form.data['amount'])
         discount = float(form.data['discount'])

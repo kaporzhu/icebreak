@@ -48,14 +48,25 @@ class StaffForm(forms.ModelForm):
     """
     Model form for Staff
     """
-    is_active = forms.BooleanField(label=u'启用账号', required=False)
+    is_active = forms.BooleanField(label=u'启用账号', required=False,
+                                   initial=True)
     username = forms.CharField(label=u'用户名')
     password = forms.CharField(label=u'密码', required=False)
     name = forms.CharField(label=u'名字')
 
     class Meta:
         model = Staff
-        exclude = ('user','shop', 'api_key')
+        exclude = ('user','shop', 'api_key', 'intro')
+
+
+class StaffProfileForm(forms.ModelForm):
+    """
+    Model form for staff too. Update profile data for staff self.
+    """
+    name = forms.CharField(label=u'名字')
+    class Meta:
+        model = Staff
+        fields = ('phone', 'intro', 'avatar')
 
 
 class MessageForm(forms.ModelForm):

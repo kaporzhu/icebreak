@@ -14,11 +14,11 @@ from django.utils.crypto import get_random_string
 
 from braces.views import(
     AjaxResponseMixin, JsonRequestResponseMixin, SuperuserRequiredMixin,
-    JSONResponseMixin, LoginRequiredMixin
+    JSONResponseMixin, LoginRequiredMixin, StaffuserRequiredMixin
 )
 
 from .constants import VALIDATION_CODE_PREFIX, VALIDATION_CODE_COUNT_PREFIX
-from .forms import PhoneLoginForm, StaffForm, MessageForm
+from .forms import PhoneLoginForm, StaffForm, MessageForm, StaffProfileForm
 from .models import Address, Staff, StaffMessage
 from icebreak.utils import send_sms
 from shops.models import Shop
@@ -250,3 +250,38 @@ class CreateMessageView(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse('accounts:staff_home', kwargs={'pk': self.kwargs['pk']})
+
+
+class UpdateProfileView(StaffuserRequiredMixin, UpdateView):
+    """
+    Update staff profile
+    """
+    model = Staff
+    form_class = StaffProfileForm
+    template_name = 'accounts/staff_profile_form.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user.staff
+
+    def get_success_url(self):
+        return reverse('accounts:staff_home',
+                       kwargs={'pk': self.object.id})
+
+    def get_initial(self):
+        """
+        Add extra initial data to the form
+        """
+        initial = super(UpdateProfileView, self).get_initial()
+        initial.update({
+            'name': self.object.user.get_full_name()
+        })
+        return initial
+
+    def form_valid(self, form):
+        """
+        Update staff info
+        """
+        form.save()
+        self.object.user.first_name = form.data['name']
+        self.object.user.save()
+        return super(UpdateProfileView, self).form_valid(form)

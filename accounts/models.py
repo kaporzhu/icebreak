@@ -22,11 +22,11 @@ class Staff(models.Model):
     user = models.OneToOneField(User)
     phone = models.CharField(u'手机号', max_length=16)
     shop = models.ForeignKey(Shop)
-    role = models.CharField(max_length=16, choices=ROLE_CHOICES,
+    role = models.CharField(u'职务', max_length=16, choices=ROLE_CHOICES,
                             default=DELIVERYMAN)
-    intro = models.TextField(blank=True, null=True)
+    intro = models.TextField(u'个人简介', blank=True, null=True)
     api_key = models.CharField(max_length=16)
-    avatar = models.ImageField(upload_to='avatars')
+    avatar = models.ImageField(u'头像', upload_to='avatars')
     created_at = models.DateTimeField(auto_now_add=True)
 
 
