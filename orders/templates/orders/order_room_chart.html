@@ -3,11 +3,11 @@
         {% for zone_id, zone in whole.zones.items %}
         {% if zone.has_order %}
         <div class="col-sm-4">
-            <table class="table table-bordered">
+            <table class="table table-bordered building">
                 <tr><td class="text-center">{{ whole.name }}{{ zone.name }}</td></tr>
                 {% for item in zone.rooms_by_floor %}
                 <tr><td>
-                    <span>{{ item.floor }}楼</span>
+                    <span class="floor-name">{{ item.floor }}</span>
                     {% for room in item.rooms %}
                         {% if room.status == DISTRIBUTING or room.status == ON_THE_WAY %}
                             <span class="label label-default">{{ room.number }}</span>

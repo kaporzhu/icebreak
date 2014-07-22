@@ -201,3 +201,15 @@ a.highlight:hover {
 dt {
     font-weight: 200;
 }
+
+.building {
+    width: auto;
+}
+
+.building .floor-name {
+    display: inline-block;
+    width: 20px;
+    text-align: left;
+    font-weight: bold;
+    color: lightgray;
+}

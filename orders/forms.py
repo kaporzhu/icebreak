@@ -10,8 +10,8 @@ class OrderForm(forms.ModelForm):
     """
     class Meta:
         model = Order
-        exclude = ('user', 'status', 'total_price', 'phone', 'coupon', 'shop',
-                   'delivery_man', 'discount', 'steps')
+        fields = ('delivery_time', 'phone', 'name', 'building', 'zone', 'room',
+                  'time_frame')
 
 
 class CommentForm(forms.Form):

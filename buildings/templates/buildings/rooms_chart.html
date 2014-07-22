@@ -1,7 +1,11 @@
 {% extends "page.html" %}
-{% load handsome_template_tags %}
+{% load static %}
 
 {% block title %}写字楼结构{% endblock %}
+
+{% block extracss_compressed %}
+<link rel="stylesheet" href="{% static 'css/building.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container well-shadow">
@@ -15,15 +19,15 @@
     </div>
 
     <div class="row">
-        <div class="col-md-3">
-            <table class="table table-bordered">
+        <div class="col-md-12">
+            <table class="table table-bordered building">
                 <tr>
                     <td class="text-center">{{ building }}{{ zone }}</td>
                 </tr>
                 {% for item in floor_rooms %}
                     <tr>
                         <td>
-                            <span>{{ item.floor }}楼</span>
+                            <span class="floor-name">{{ item.floor }}</span>
                             {% for room in item.rooms %}
                             <span class="label label-default">{{ room.number }}</span>
                             {% endfor %}

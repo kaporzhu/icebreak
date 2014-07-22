@@ -363,7 +363,10 @@ class PrintOrdersView(StaffuserRequiredMixin, TemplateView):
         Get orders from ids
         """
         data = super(PrintOrdersView, self).get_context_data(**kwargs)
-        ids = self.request.GET['ids'].split(',')
+        if self.request.GET.get('ids'):
+            ids = self.request.GET['ids'].split(',')
+        else:
+            ids = []
         orders = []
         for order in Order.objects.in_bulk(ids).values():
             orders.append(order)
@@ -385,7 +388,10 @@ class PrintOrderFoodsView(StaffuserRequiredMixin, TemplateView):
         Get orders from ids
         """
         data = super(PrintOrderFoodsView, self).get_context_data(**kwargs)
-        ids = self.request.GET['ids'].split(',')
+        if self.request.GET.get('ids'):
+            ids = self.request.GET['ids'].split(',')
+        else:
+            ids = []
         orders = []
         for order in Order.objects.in_bulk(ids).values():
             orders.append(order)

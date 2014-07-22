@@ -1,0 +1,11 @@
+.building {
+    width: auto;
+}
+
+.floor-name {
+    display: inline-block;
+    width: 20px;
+    text-align: left;
+    font-weight: bold;
+    color: lightgray;
+}
