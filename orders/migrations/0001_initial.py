@@ -11,11 +11,20 @@ class Migration(SchemaMigration):
         # Adding model 'Order'
         db.create_table(u'orders_order', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('short_code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
+            ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('shop', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['shops.Shop'])),
+            ('delivery_man', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['accounts.Staff'], null=True, blank=True)),
             ('total_price', self.gf('django.db.models.fields.FloatField')()),
             ('coupon', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['coupons.Coupon'], null=True, blank=True)),
+            ('discount', self.gf('django.db.models.fields.FloatField')(null=True, blank=True)),
+            ('delivery_time', self.gf('django.db.models.fields.CharField')(max_length=32)),
+            ('time_frame', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['foods.TimeFrame'])),
             ('status', self.gf('django.db.models.fields.CharField')(default='unpaid', max_length=32, db_index=True)),
-            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('paid_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, null=True, blank=True)),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, db_index=True, blank=True)),
+            ('steps', self.gf('django.db.models.fields.TextField')(default='{"on the way": {"date": "", "time": "", "is_done": false, "label": "\\u914d\\u9001\\u5458\\u51fa\\u53d1"}, "paid": {"date": "", "time": "", "is_done": false, "label": "\\u4ed8\\u6b3e"}, "packing done": {"date": "", "time": "", "is_done": false, "label": "\\u6253\\u5305\\u5b8c\\u6210"}, "distributing": {"date": "", "time": "", "is_done": false, "label": "\\u5230\\u8fbe\\u5199\\u5b57\\u697c"}, "unpaid": {"date": "", "time": "", "is_done": true, "label": "\\u4e0b\\u5355"}, "done": {"date": "", "time": "", "is_done": false, "label": "\\u5b8c\\u6210"}, "printed": {"date": "", "time": "", "is_done": false, "label": "\\u6253\\u5370\\u8ba2\\u5355"}}')),
             ('phone', self.gf('django.db.models.fields.CharField')(max_length=16)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=128)),
             ('building', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['buildings.Building'])),
@@ -24,25 +33,41 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'orders', ['Order'])
 
-        # Adding M2M table for field foods on 'Order'
-        m2m_table_name = db.shorten_name(u'orders_order_foods')
-        db.create_table(m2m_table_name, (
-            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('order', models.ForeignKey(orm[u'orders.order'], null=False)),
-            ('food', models.ForeignKey(orm[u'foods.food'], null=False))
+        # Adding model 'OrderFood'
+        db.create_table(u'orders_orderfood', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
+            ('food', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['foods.Food'])),
+            ('order', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['orders.Order'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('count', self.gf('django.db.models.fields.SmallIntegerField')()),
+            ('price', self.gf('django.db.models.fields.FloatField')()),
+            ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
         ))
-        db.create_unique(m2m_table_name, ['order_id', 'food_id'])
+        db.send_create_signal(u'orders', ['OrderFood'])
 
 
     def backwards(self, orm):
         # Deleting model 'Order'
         db.delete_table(u'orders_order')
 
-        # Removing M2M table for field foods on 'Order'
-        db.delete_table(db.shorten_name(u'orders_order_foods'))
+        # Deleting model 'OrderFood'
+        db.delete_table(u'orders_orderfood')
 
 
     models = {
+        u'accounts.staff': {
+            'Meta': {'object_name': 'Staff'},
+            'api_key': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
+            'avatar': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'intro': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
+            'role': ('django.db.models.fields.CharField', [], {'default': "'delivery man'", 'max_length': '16'}),
+            'shop': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shops.Shop']"}),
+            'user': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['auth.User']", 'unique': 'True'})
+        },
         u'auth.group': {
             'Meta': {'object_name': 'Group'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -86,7 +111,7 @@ class Migration(SchemaMigration):
             'building': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['buildings.Building']"}),
             'company_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'floor': ('django.db.models.fields.SmallIntegerField', [], {}),
+            'floor': ('django.db.models.fields.SmallIntegerField', [], {'db_index': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'number': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'zone': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['buildings.Zone']", 'null': 'True', 'blank': 'True'})
@@ -110,52 +135,90 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Coupon'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '16'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'shop_coupons'", 'to': u"orm['auth.User']"}),
             'discount': ('django.db.models.fields.FloatField', [], {}),
             'expired_at': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_used': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'shop': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shops.Shop']"}),
             'used_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'used_by': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'})
         },
         u'foods.food': {
             'Meta': {'object_name': 'Food'},
             'count': ('django.db.models.fields.SmallIntegerField', [], {'default': 'True'}),
+            'count_today': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
             'ingredients': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'db_index': 'True'}),
+            'is_primary': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'price': ('django.db.models.fields.FloatField', [], {}),
+            'sales': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'shop': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shops.Shop']"}),
             'tips': ('django.db.models.fields.TextField', [], {'blank': 'True'})
+        },
+        u'foods.timeframe': {
+            'Meta': {'object_name': 'TimeFrame'},
+            'end_time': ('django.db.models.fields.TimeField', [], {}),
+            'foods': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['foods.Food']", 'symmetrical': 'False'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'sections': ('django.db.models.fields.TextField', [], {}),
+            'shop': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shops.Shop']"}),
+            'start_time': ('django.db.models.fields.TimeField', [], {})
         },
         u'orders.order': {
             'Meta': {'object_name': 'Order'},
             'building': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['buildings.Building']"}),
+            'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'}),
             'coupon': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['coupons.Coupon']", 'null': 'True', 'blank': 'True'}),
-            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'foods': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['foods.Food']", 'symmetrical': 'False'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'db_index': 'True', 'blank': 'True'}),
+            'delivery_man': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['accounts.Staff']", 'null': 'True', 'blank': 'True'}),
+            'delivery_time': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
+            'discount': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'paid_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'null': 'True', 'blank': 'True'}),
             'phone': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'room': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['buildings.Room']"}),
+            'shop': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shops.Shop']"}),
+            'short_code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'}),
             'status': ('django.db.models.fields.CharField', [], {'default': "'unpaid'", 'max_length': '32', 'db_index': 'True'}),
+            'steps': ('django.db.models.fields.TextField', [], {'default': '\'{"on the way": {"date": "", "time": "", "is_done": false, "label": "\\\\u914d\\\\u9001\\\\u5458\\\\u51fa\\\\u53d1"}, "paid": {"date": "", "time": "", "is_done": false, "label": "\\\\u4ed8\\\\u6b3e"}, "packing done": {"date": "", "time": "", "is_done": false, "label": "\\\\u6253\\\\u5305\\\\u5b8c\\\\u6210"}, "distributing": {"date": "", "time": "", "is_done": false, "label": "\\\\u5230\\\\u8fbe\\\\u5199\\\\u5b57\\\\u697c"}, "unpaid": {"date": "", "time": "", "is_done": true, "label": "\\\\u4e0b\\\\u5355"}, "done": {"date": "", "time": "", "is_done": false, "label": "\\\\u5b8c\\\\u6210"}, "printed": {"date": "", "time": "", "is_done": false, "label": "\\\\u6253\\\\u5370\\\\u8ba2\\\\u5355"}}\''}),
+            'time_frame': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['foods.TimeFrame']"}),
             'total_price': ('django.db.models.fields.FloatField', [], {}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"}),
             'zone': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['buildings.Zone']", 'null': 'True', 'blank': 'True'})
         },
+        u'orders.orderfood': {
+            'Meta': {'object_name': 'OrderFood'},
+            'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'}),
+            'count': ('django.db.models.fields.SmallIntegerField', [], {}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'food': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['foods.Food']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'order': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['orders.Order']"}),
+            'price': ('django.db.models.fields.FloatField', [], {}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
+        },
         u'shops.shop': {
             'Meta': {'object_name': 'Shop'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'close_tip': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_closed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'latitude': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'longitude': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'open_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'phone': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'})
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '32', 'unique': 'True', 'null': 'True', 'blank': 'True'})
         }
     }
 

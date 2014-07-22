@@ -11,7 +11,7 @@ class Shop(models.Model):
     Each shop covers about 3 office buildings.
     """
     name = models.CharField(max_length=128)
-    slug = models.CharField(max_length=32, unique=True, blank=True, null=True)
+    slug = models.CharField(max_length=32, unique=True)
     address = models.CharField(max_length=256)
     phone = models.CharField(max_length=16, blank=True)
     longitude = models.FloatField(blank=True, null=True)

@@ -42,16 +42,16 @@ class Order(models.Model):
     # we can check this with the new status. if it's changed, update the steps
     __original_status = None
 
-    short_code = models.CharField(max_length=32, unique=True, blank=True, null=True)  # noqa
-    code = models.CharField(max_length=32, unique=True, blank=True, null=True)
+    short_code = models.CharField(max_length=32, unique=True)
+    code = models.CharField(max_length=32, unique=True)
     user = models.ForeignKey(User)
-    shop = models.ForeignKey(Shop, blank=True, null=True)
+    shop = models.ForeignKey(Shop)
     delivery_man = models.ForeignKey(Staff, blank=True, null=True)
     total_price = models.FloatField()
     coupon = models.ForeignKey(Coupon, blank=True, null=True)
     discount = models.FloatField(blank=True, null=True)
-    delivery_time = models.CharField(max_length=32, blank=True, null=True)
-    time_frame = models.ForeignKey(TimeFrame, blank=True, null=True)
+    delivery_time = models.CharField(max_length=32)
+    time_frame = models.ForeignKey(TimeFrame)
     status = models.CharField(max_length=32, choices=STATUS_CHOICES,
                               default=UNPAID, db_index=True)
     paid_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -137,7 +137,7 @@ class OrderFood(models.Model):
     """
     Food for order
     """
-    code = models.CharField(max_length=32, unique=True, blank=True, null=True)
+    code = models.CharField(max_length=32, unique=True)
     food = models.ForeignKey(Food)
     order = models.ForeignKey(Order)
     user = models.ForeignKey(User)

@@ -84,7 +84,7 @@ class TimeFrame(models.Model):
     foods = models.ManyToManyField(verbose_name=u'菜品', to=Food)
     start_time = models.TimeField(u'开始时间')
     end_time = models.TimeField(u'结束时间')
-    sections = models.TextField(u'下单时段', blank=True, null=True)
+    sections = models.TextField(u'下单时段')
     is_active = models.BooleanField(u'启用', default=True)
 
     def __unicode__(self):

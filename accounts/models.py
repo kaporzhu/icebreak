@@ -20,13 +20,13 @@ class Staff(models.Model):
     )
 
     user = models.OneToOneField(User)
-    phone = models.CharField(u'手机号', max_length=16, blank=True, null=True)
+    phone = models.CharField(u'手机号', max_length=16)
     shop = models.ForeignKey(Shop)
     role = models.CharField(max_length=16, choices=ROLE_CHOICES,
                             default=DELIVERYMAN)
     intro = models.TextField(blank=True, null=True)
-    api_key = models.CharField(max_length=16, blank=True, null=True)
-    avatar = models.ImageField(upload_to='avatars', blank=True, null=True)
+    api_key = models.CharField(max_length=16)
+    avatar = models.ImageField(upload_to='avatars')
     created_at = models.DateTimeField(auto_now_add=True)
 
 

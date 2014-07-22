@@ -34,7 +34,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('building', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['buildings.Building'])),
             ('zone', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['buildings.Zone'], null=True, blank=True)),
-            ('floor', self.gf('django.db.models.fields.SmallIntegerField')()),
+            ('floor', self.gf('django.db.models.fields.SmallIntegerField')(db_index=True)),
             ('number', self.gf('django.db.models.fields.CharField')(max_length=16)),
             ('company_name', self.gf('django.db.models.fields.CharField')(max_length=128, blank=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
@@ -68,7 +68,7 @@ class Migration(SchemaMigration):
             'building': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['buildings.Building']"}),
             'company_name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'floor': ('django.db.models.fields.SmallIntegerField', [], {}),
+            'floor': ('django.db.models.fields.SmallIntegerField', [], {'db_index': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'number': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
             'zone': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['buildings.Zone']", 'null': 'True', 'blank': 'True'})
@@ -84,13 +84,16 @@ class Migration(SchemaMigration):
         u'shops.shop': {
             'Meta': {'object_name': 'Shop'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'close_tip': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_closed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'latitude': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'longitude': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'open_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'phone': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'})
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '32', 'unique': 'True', 'null': 'True', 'blank': 'True'})
         }
     }
 

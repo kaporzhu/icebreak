@@ -13,11 +13,13 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('code', self.gf('django.db.models.fields.CharField')(unique=True, max_length=16)),
             ('discount', self.gf('django.db.models.fields.FloatField')()),
+            ('shop', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['shops.Shop'])),
             ('expired_at', self.gf('django.db.models.fields.DateTimeField')()),
             ('is_used', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('used_by', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
             ('used_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
             ('created_at', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+            ('creator', self.gf('django.db.models.fields.related.ForeignKey')(related_name='shop_coupons', to=orm['auth.User'])),
         ))
         db.send_create_signal(u'coupons', ['Coupon'])
 
@@ -68,12 +70,28 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Coupon'},
             'code': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '16'}),
             'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'shop_coupons'", 'to': u"orm['auth.User']"}),
             'discount': ('django.db.models.fields.FloatField', [], {}),
             'expired_at': ('django.db.models.fields.DateTimeField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_used': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'shop': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['shops.Shop']"}),
             'used_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'used_by': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'})
+        },
+        u'shops.shop': {
+            'Meta': {'object_name': 'Shop'},
+            'address': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
+            'close_tip': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'created_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_closed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'latitude': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'longitude': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'open_at': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'phone': ('django.db.models.fields.CharField', [], {'max_length': '16', 'blank': 'True'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '32', 'unique': 'True', 'null': 'True', 'blank': 'True'})
         }
     }
 
